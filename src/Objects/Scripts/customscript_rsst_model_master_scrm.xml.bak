@@ -1,0 +1,22 @@
+<restlet scriptid="customscript_rsst_model_master_scrm">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ADVS RSST Model Master CRM</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/Vehicle Module/CRM Model Master/ADVS_RSST_Model_Master_CRM.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_rsst_model_master_scrm">
+      <allemployees>T</allemployees>
+      <allpartners>T</allpartners>
+      <allroles>T</allroles>
+      <audslctrole>CUSTOMER_CENTER|NETSUITE_SUPPORT_CENTER|NETSUITE_SUPPORT_CENTER__BASIC|ONLINE_FORM_USER</audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>EMERGENCY</loglevel>
+      <status>RELEASED</status>
+      <title>ADVS RSST Model Master CRM Dep</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

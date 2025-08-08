@@ -1,0 +1,32 @@
+<customlist scriptid="customlist_advs_category_head_list">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Category Head List</name>
+  <customvalues>
+    <customvalue scriptid="val_12637313_t1064792_842">
+      <isinactive>F</isinactive>
+      <value>Passenger</value>
+    </customvalue>
+    <customvalue scriptid="val_12637314_t1064792_927">
+      <isinactive>F</isinactive>
+      <value>SUV</value>
+    </customvalue>
+    <customvalue scriptid="val_12637315_t1064792_495">
+      <isinactive>F</isinactive>
+      <value>Commercial</value>
+    </customvalue>
+    <customvalue scriptid="val_12637316_t1064792_671">
+      <isinactive>F</isinactive>
+      <value>Pick UP</value>
+    </customvalue>
+    <customvalue scriptid="val_12655772_t1064792_792">
+      <isinactive>F</isinactive>
+      <value>Coupe</value>
+    </customvalue>
+    <customvalue scriptid="val_12667021_t1064792_381">
+      <isinactive>F</isinactive>
+      <value>Sedan</value>
+    </customvalue>
+  </customvalues>
+</customlist>

@@ -1,0 +1,36 @@
+<customlist scriptid="customlist_advs_mm_reason_for_no_testd">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Reason for NO Test Drive</name>
+  <customvalues>
+    <customvalue scriptid="val_2214252_t1064792_206">
+      <isinactive>F</isinactive>
+      <value>CUSTOMER DID NOT HAVE TIME</value>
+    </customvalue>
+    <customvalue scriptid="val_2214253_t1064792_787">
+      <isinactive>F</isinactive>
+      <value>QUOTATION BY TELEPHONE</value>
+    </customvalue>
+    <customvalue scriptid="val_2214254_t1064792_145">
+      <isinactive>F</isinactive>
+      <value>PLAN POSTPONE</value>
+    </customvalue>
+    <customvalue scriptid="val_2214255_t1064792_431">
+      <isinactive>F</isinactive>
+      <value> IT WILL PROVE IT ANOTHER DAY</value>
+    </customvalue>
+    <customvalue scriptid="val_2214256_t1064792_510">
+      <isinactive>F</isinactive>
+      <value>MODEL NOT AVAILABLE</value>
+    </customvalue>
+    <customvalue scriptid="val_2214257_t1064792_165">
+      <isinactive>F</isinactive>
+      <value>HE WAS NOT INTERESTED</value>
+    </customvalue>
+    <customvalue scriptid="val_2214258_t1064792_931">
+      <isinactive>F</isinactive>
+      <value>I ONLY WENT TO SEE THE CAR</value>
+    </customvalue>
+  </customvalues>
+</customlist>

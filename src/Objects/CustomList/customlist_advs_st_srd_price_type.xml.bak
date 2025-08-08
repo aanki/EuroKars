@@ -1,0 +1,24 @@
+<customlist scriptid="customlist_advs_st_srd_price_type">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>SRD Price Type</name>
+  <customvalues>
+    <customvalue scriptid="val_25804171_5544214_sb1_355">
+      <isinactive>F</isinactive>
+      <value>LIST_PRICE</value>
+    </customvalue>
+    <customvalue scriptid="val_25804172_5544214_sb1_710">
+      <isinactive>T</isinactive>
+      <value>PURCHASE_PRICE</value>
+    </customvalue>
+    <customvalue scriptid="val_25804173_5544214_sb1_499">
+      <isinactive>F</isinactive>
+      <value>RATE_DISCOUNT</value>
+    </customvalue>
+    <customvalue scriptid="val_25804186_5544214_sb1_802">
+      <isinactive>F</isinactive>
+      <value>RATE</value>
+    </customvalue>
+  </customvalues>
+</customlist>

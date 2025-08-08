@@ -1,0 +1,24 @@
+<customlist scriptid="customlist_advs_pckg">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Package Status</name>
+  <customvalues>
+    <customvalue scriptid="val_46617_4860644_sb4_850">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Planning</value>
+    </customvalue>
+    <customvalue scriptid="val_46618_4860644_sb4_278">
+      <abbreviation>R</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Released</value>
+    </customvalue>
+    <customvalue scriptid="val_46619_4860644_sb4_667">
+      <abbreviation>F</abbreviation>
+      <isinactive>F</isinactive>
+      <value>For approval</value>
+    </customvalue>
+  </customvalues>
+</customlist>

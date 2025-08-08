@@ -1,0 +1,60 @@
+  <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Test Drive Form</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+      </head>
+      <body>
+        <div class="container mt-4">
+          <form>
+            <!-- Add your form HTML here -->
+            ${getFormBody()}
+          </form>
+        </div>
+
+        <script type="text/javascript">
+          var gk_isXlsx = false;
+          var gk_xlsxFileLookup = {};
+          var gk_fileData = {};
+          function filledCell(cell) {
+            return cell !== '' && cell != null;
+          }
+          function loadFileData(filename) {
+            if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+              try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+              } catch (e) {
+                console.error(e);
+                return "";
+              }
+            }
+            return gk_fileData[filename] || "";
+          }
+
+          $(document).ready(function() {
+            $('#add-item').click(function() {
+              var newItem = $('.test-drive-item:first').clone();
+              newItem.find('input').val('');
+              $('#test-drive-container').append(newItem);
+            });
+          });
+        </script>
+      </body>
+      </html>

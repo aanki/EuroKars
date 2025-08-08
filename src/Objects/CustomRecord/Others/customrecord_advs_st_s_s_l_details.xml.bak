@@ -1,0 +1,389 @@
+<customrecordtype scriptid="customrecord_advs_st_s_s_l_details">
+  <accesstype>CUSTRECORDENTRYPERM</accesstype>
+  <allowattachments>T</allowattachments>
+  <allowinlinedeleting>T</allowinlinedeleting>
+  <allowinlinedetaching>T</allowinlinedetaching>
+  <allowinlineediting>T</allowinlineediting>
+  <allowmobileaccess>F</allowmobileaccess>
+  <allownumberingoverride>F</allownumberingoverride>
+  <allowquickadd>T</allowquickadd>
+  <allowquicksearch>F</allowquicksearch>
+  <allowuiaccess>T</allowuiaccess>
+  <customsegment></customsegment>
+  <description></description>
+  <enabledle>T</enabledle>
+  <enablekeywords>T</enablekeywords>
+  <enablemailmerge>F</enablemailmerge>
+  <enablenametranslation>F</enablenametranslation>
+  <enablenumbering>F</enablenumbering>
+  <enableoptimisticlocking>T</enableoptimisticlocking>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <icon></icon>
+  <iconbuiltin>T</iconbuiltin>
+  <iconindex></iconindex>
+  <includeinsearchmenu>T</includeinsearchmenu>
+  <includename>F</includename>
+  <isinactive>F</isinactive>
+  <isordered>F</isordered>
+  <numberinginit></numberinginit>
+  <numberingmindigits></numberingmindigits>
+  <numberingprefix></numberingprefix>
+  <numberingsuffix></numberingsuffix>
+  <recordname>Check List Setup Sections Lines</recordname>
+  <showcreationdate>F</showcreationdate>
+  <showcreationdateonlist>F</showcreationdateonlist>
+  <showid>F</showid>
+  <showlastmodified>F</showlastmodified>
+  <showlastmodifiedonlist>F</showlastmodifiedonlist>
+  <shownotes>T</shownotes>
+  <showowner>F</showowner>
+  <showownerallowchange>F</showownerallowchange>
+  <showowneronlist>F</showowneronlist>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_st_c_l_s_s_l_details">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>TEXT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>T</ismandatory>
+      <isparent>F</isparent>
+      <label>Details</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_st_c_l_s_s_l_head_link">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>SELECT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>T</isparent>
+      <label>Head Link</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete>NO_ACTION</onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype>[scriptid=customrecord_advs_st_c_l_setup_section]</selectrecordtype>
+      <showinlist>F</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_st_c_l_s_s_l_sequence">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>T</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>INTEGER</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Sequence</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_16827377_t1064792_308">
+      <custrecord_st_c_l_s_s_l_details>Accessory Drive Belt(s)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>1</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827378_t1064792_621">
+      <custrecord_st_c_l_s_s_l_details>Cabin Air Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>2</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827379_t1064792_392">
+      <custrecord_st_c_l_s_s_l_details>Engine Air Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>3</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827380_t1064792_890">
+      <custrecord_st_c_l_s_s_l_details>Engine Coolant</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>4</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827381_t1064792_846">
+      <custrecord_st_c_l_s_s_l_details>Fuel Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>5</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827382_t1064792_155">
+      <custrecord_st_c_l_s_s_l_details>Oil Change</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>6</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827383_t1064792_800">
+      <custrecord_st_c_l_s_s_l_details>Oil Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>7</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827384_t1064792_942">
+      <custrecord_st_c_l_s_s_l_details>Seat Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>8</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827385_t1064792_204">
+      <custrecord_st_c_l_s_s_l_details>Spark Plugs</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>9</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827386_t1064792_440">
+      <custrecord_st_c_l_s_s_l_details>Tire Rotation</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>10</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827387_t1064792_684">
+      <custrecord_st_c_l_s_s_l_details>Transmission Filter</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>11</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827388_t1064792_728">
+      <custrecord_st_c_l_s_s_l_details>Transmission Fluid</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link></custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>12</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827389_t1064792_547">
+      <custrecord_st_c_l_s_s_l_details>Engine oil</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>1</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827390_t1064792_359">
+      <custrecord_st_c_l_s_s_l_details>Brake Reservoir</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>2</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827391_t1064792_901">
+      <custrecord_st_c_l_s_s_l_details>Power Steering</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>3</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827392_t1064792_516">
+      <custrecord_st_c_l_s_s_l_details>Window Washer</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>4</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827393_t1064792_375">
+      <custrecord_st_c_l_s_s_l_details>Transmission</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>5</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827394_t1064792_587">
+      <custrecord_st_c_l_s_s_l_details>Coolant Recover Reservoir</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826782_t1064792_532]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>6</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827395_t1064792_731">
+      <custrecord_st_c_l_s_s_l_details>Left Front</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826784_t1064792_492]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>1</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827396_t1064792_970">
+      <custrecord_st_c_l_s_s_l_details>Left Rear</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826784_t1064792_492]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>2</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827397_t1064792_361">
+      <custrecord_st_c_l_s_s_l_details>Right Front</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826784_t1064792_492]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>3</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827398_t1064792_817">
+      <custrecord_st_c_l_s_s_l_details>Right Rear</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826784_t1064792_492]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>4</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827406_t1064792_408">
+      <custrecord_st_c_l_s_s_l_details>Operation of horn, interior lights, exterior lamps, turn signals, hazard and brake lamps</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>1</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827407_t1064792_451">
+      <custrecord_st_c_l_s_s_l_details>Radiator, heater, and air-conditioning hoses for leaks and damage</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>2</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827408_t1064792_565">
+      <custrecord_st_c_l_s_s_l_details>Windshield for cracks, chips and pitting</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>3</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827409_t1064792_846">
+      <custrecord_st_c_l_s_s_l_details>Windshield washer spray, wiper operation and wiper blades</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>4</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827410_t1064792_120">
+      <custrecord_st_c_l_s_s_l_details>Accessory drive belt(s)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>5</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827411_t1064792_279">
+      <custrecord_st_c_l_s_s_l_details>Brake system (including lines, hoses, and parking brake) and wheel end for end-play and bearing noise</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>6</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827412_t1064792_503">
+      <custrecord_st_c_l_s_s_l_details>Clutch operation (if equipped)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>7</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827413_t1064792_634">
+      <custrecord_st_c_l_s_s_l_details>Constant velocity (CV) drive axle boots (if equipped)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>8</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827414_t1064792_460">
+      <custrecord_st_c_l_s_s_l_details>Drive shaft, transmission, u-joint and shift linkage (if equipped) and lubricate (as needed)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>9</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827415_t1064792_917">
+      <custrecord_st_c_l_s_s_l_details>Engine Cooling system, hoses and clamps</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>10</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827416_t1064792_160">
+      <custrecord_st_c_l_s_s_l_details>Exhaust system (leaks, damage, loose parts)</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>11</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827417_t1064792_314">
+      <custrecord_st_c_l_s_s_l_details>Oil and/or fluid leaks</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>12</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827418_t1064792_268">
+      <custrecord_st_c_l_s_s_l_details>Shocks/struts and other suspension components for leaks and/or damage</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>13</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16827419_t1064792_833">
+      <custrecord_st_c_l_s_s_l_details>Steering and steering linkages</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826783_t1064792_855]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>14</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_16833135_t1064792_945">
+      <custrecord_st_c_l_s_s_l_details>Transmission Fluid</custrecord_st_c_l_s_s_l_details>
+      <custrecord_st_c_l_s_s_l_head_link>[scriptid=customrecord_advs_st_c_l_setup_section.val_16826781_t1064792_759]</custrecord_st_c_l_s_s_l_head_link>
+      <custrecord_st_c_l_s_s_l_sequence>12</custrecord_st_c_l_s_s_l_sequence>
+      <isinactive>F</isinactive>
+    </instance>
+  </instances>
+</customrecordtype>

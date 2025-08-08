@@ -1,0 +1,24 @@
+<customlist scriptid="customlist2146">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>COE Bid Vehicle Category</name>
+  <customvalues>
+    <customvalue scriptid="val_189863_9908878_608">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Category A</value>
+    </customvalue>
+    <customvalue scriptid="val_189864_9908878_917">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Category B</value>
+    </customvalue>
+    <customvalue scriptid="val_189865_9908878_746">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Category C</value>
+    </customvalue>
+  </customvalues>
+</customlist>

@@ -1,0 +1,48 @@
+<mapreducescript scriptid="customscript_advs_mrat_part_price_master">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ADVS MRAT PART PRICE MASTER</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <scriptfile>[/SuiteScripts/Service Module 2.0/S30C/ADVS_MRAT_PART_PRICE_BUFFER.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_advs_mrat_part_price_mast_2">
+      <buffersize>1</buffersize>
+      <concurrencylimit>10</concurrencylimit>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <queueallstagesatonce>T</queueallstagesatonce>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS MRAT PART PRICE MASTER DEP 2</title>
+      <yieldaftermins>3</yieldaftermins>
+      <recurrence>
+        <daily>
+          <everyxdays>1</everyxdays>
+          <repeat></repeat>
+          <startdate>2023-04-15</startdate>
+          <starttime>22:30:00Z</starttime>
+        </daily>
+      </recurrence>
+    </scriptdeployment>
+    <scriptdeployment scriptid="customdeploy_advs_mrat_part_price_master">
+      <buffersize>1</buffersize>
+      <concurrencylimit>10</concurrencylimit>
+      <isdeployed>F</isdeployed>
+      <loglevel>EMERGENCY</loglevel>
+      <queueallstagesatonce>T</queueallstagesatonce>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS MRAT PART PRICE MASTER DEP</title>
+      <yieldaftermins>3</yieldaftermins>
+      <recurrence>
+        <single>
+          <repeat>PT12H</repeat>
+          <startdate>2020-06-13</startdate>
+          <starttime>11:30:00Z</starttime>
+        </single>
+      </recurrence>
+    </scriptdeployment>
+  </scriptdeployments>
+</mapreducescript>

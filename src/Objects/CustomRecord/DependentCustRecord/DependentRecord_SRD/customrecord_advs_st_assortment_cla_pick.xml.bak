@@ -1,0 +1,295 @@
+<customrecordtype scriptid="customrecord_advs_st_assortment_cla_pick">
+  <accesstype>USEPERMISSIONLIST</accesstype>
+  <allowattachments>T</allowattachments>
+  <allowinlinedeleting>F</allowinlinedeleting>
+  <allowinlinedetaching>T</allowinlinedetaching>
+  <allowinlineediting>F</allowinlineediting>
+  <allowmobileaccess>F</allowmobileaccess>
+  <allownumberingoverride>F</allownumberingoverride>
+  <allowquickadd>T</allowquickadd>
+  <allowquicksearch>F</allowquicksearch>
+  <allowuiaccess>T</allowuiaccess>
+  <customsegment></customsegment>
+  <description></description>
+  <enabledle>T</enabledle>
+  <enablekeywords>T</enablekeywords>
+  <enablemailmerge>F</enablemailmerge>
+  <enablenumbering>F</enablenumbering>
+  <enableoptimisticlocking>T</enableoptimisticlocking>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <icon></icon>
+  <iconbuiltin>T</iconbuiltin>
+  <iconindex></iconindex>
+  <includeinsearchmenu>T</includeinsearchmenu>
+  <includename>T</includename>
+  <isinactive>F</isinactive>
+  <isordered>F</isordered>
+  <numberinginit></numberinginit>
+  <numberingmindigits></numberingmindigits>
+  <numberingprefix></numberingprefix>
+  <numberingsuffix></numberingsuffix>
+  <recordname>Assortment class Pick (ALIOS)</recordname>
+  <showcreationdate>F</showcreationdate>
+  <showcreationdateonlist>F</showcreationdateonlist>
+  <showid>F</showid>
+  <showlastmodified>F</showlastmodified>
+  <showlastmodifiedonlist>F</showlastmodifiedonlist>
+  <shownotes>T</shownotes>
+  <showowner>F</showowner>
+  <showownerallowchange>F</showownerallowchange>
+  <showowneronlist>F</showowneronlist>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_st_asso_class_link">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>SELECT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>T</ismandatory>
+      <isparent>T</isparent>
+      <label>Assortment classification</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete>NO_ACTION</onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype>[scriptid=customrecord_advs_st_alios_classificatio]</selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_st_asso_class_code">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>TEXT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>T</ismandatory>
+      <isparent>F</isparent>
+      <label>Code</label>
+      <linktext></linktext>
+      <maxlength>1</maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_21273664_5544214_sb1_463">
+      <custrecord_st_asso_class_code>1</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>1 (Pick12 greater than 300)</name>
+    </instance>
+    <instance scriptid="val_21273665_5544214_sb1_929">
+      <custrecord_st_asso_class_code>2</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>2 (Pick12 from 101 to 300)</name>
+    </instance>
+    <instance scriptid="val_21273666_5544214_sb1_988">
+      <custrecord_st_asso_class_code>3</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>3 (Pick12 from 61 to 100)</name>
+    </instance>
+    <instance scriptid="val_21273667_5544214_sb1_387">
+      <custrecord_st_asso_class_code>4</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>4 (Pick12 from 25 to 60)</name>
+    </instance>
+    <instance scriptid="val_21273668_5544214_sb1_514">
+      <custrecord_st_asso_class_code>5</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>5 (Pick12 from 13 to 24)</name>
+    </instance>
+    <instance scriptid="val_21273669_5544214_sb1_372">
+      <custrecord_st_asso_class_code>6</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>6 (Pick12 from 7 to 12)</name>
+    </instance>
+    <instance scriptid="val_21273670_5544214_sb1_587">
+      <custrecord_st_asso_class_code>M</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273631_5544214_sb1_615]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>M (Manual replenishment parts)</name>
+    </instance>
+    <instance scriptid="val_21273671_5544214_sb1_323">
+      <custrecord_st_asso_class_code>1</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>1 (Pick12 greater than 300)</name>
+    </instance>
+    <instance scriptid="val_21273672_5544214_sb1_685">
+      <custrecord_st_asso_class_code>2</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>2 (Pick12 from 101 to 300)</name>
+    </instance>
+    <instance scriptid="val_21273673_5544214_sb1_161">
+      <custrecord_st_asso_class_code>3</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>3 (Pick12 from 61 to 100)</name>
+    </instance>
+    <instance scriptid="val_21273674_5544214_sb1_923">
+      <custrecord_st_asso_class_code>4</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>4 (Pick12 from 25 to 60)</name>
+    </instance>
+    <instance scriptid="val_21273675_5544214_sb1_290">
+      <custrecord_st_asso_class_code>5</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>5 (Pick12 from 13 to 24)</name>
+    </instance>
+    <instance scriptid="val_21273676_5544214_sb1_410">
+      <custrecord_st_asso_class_code>6</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>6 (Pick12 from 7 to 12)</name>
+    </instance>
+    <instance scriptid="val_21273677_5544214_sb1_161">
+      <custrecord_st_asso_class_code>7</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273632_5544214_sb1_657]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>7 (Pick12 from 4 to 6)</name>
+    </instance>
+    <instance scriptid="val_21273678_5544214_sb1_939">
+      <custrecord_st_asso_class_code>8</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273633_5544214_sb1_590]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>8 (Pick12 from 1 to 3)</name>
+    </instance>
+    <instance scriptid="val_21273679_5544214_sb1_365">
+      <custrecord_st_asso_class_code>V</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273633_5544214_sb1_590]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>V (Scrapping proposal – last consumption older than 2 years)</name>
+    </instance>
+    <instance scriptid="val_21273680_5544214_sb1_513">
+      <custrecord_st_asso_class_code>N</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273633_5544214_sb1_590]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>N (From new parts – from SX, SY, SZ and Pick12=0)</name>
+    </instance>
+    <instance scriptid="val_21273681_5544214_sb1_996">
+      <custrecord_st_asso_class_code>E</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273633_5544214_sb1_590]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>E (Throw outs – not from SX, SY, SZ)</name>
+    </instance>
+    <instance scriptid="val_21273682_5544214_sb1_345">
+      <custrecord_st_asso_class_code>A</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273633_5544214_sb1_590]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>A (Actions required – Pick12 = 0)</name>
+    </instance>
+    <instance scriptid="val_21273683_5544214_sb1_734">
+      <custrecord_st_asso_class_code>X</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>X ( New parts { &amp;lt; 6 months } Equal or greater than 25 Pick)</name>
+    </instance>
+    <instance scriptid="val_21273684_5544214_sb1_376">
+      <custrecord_st_asso_class_code>Y</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>Y (New parts { &amp;lt; 6 months } From 4 to 24 Pick)</name>
+    </instance>
+    <instance scriptid="val_21273685_5544214_sb1_998">
+      <custrecord_st_asso_class_code>Z</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>Z (New parts { &amp;lt; 6 months } From 0 to 3 Pick)</name>
+    </instance>
+    <instance scriptid="val_21273686_5544214_sb1_352">
+      <custrecord_st_asso_class_code>E</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>E (Throw outs – from SX, SY, SZ)</name>
+    </instance>
+    <instance scriptid="val_21273687_5544214_sb1_848">
+      <custrecord_st_asso_class_code>C</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>C (Coded parts)</name>
+    </instance>
+    <instance scriptid="val_21273688_5544214_sb1_219">
+      <custrecord_st_asso_class_code>K</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>K (Service parts {product class 97 / demand flag 97})</name>
+    </instance>
+    <instance scriptid="val_21273689_5544214_sb1_524">
+      <custrecord_st_asso_class_code>D</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273635_5544214_sb1_465]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>D (Others {not assignable to other assortment class})</name>
+    </instance>
+    <instance scriptid="val_21273690_5544214_sb1_450">
+      <custrecord_st_asso_class_code>I</custrecord_st_asso_class_code>
+      <custrecord_st_asso_class_link>[scriptid=customrecord_advs_st_alios_classificatio.val_21273634_5544214_sb1_163]</custrecord_st_asso_class_link>
+      <isinactive>F</isinactive>
+      <name>I (No stock and no consumption for 12 months)</name>
+    </instance>
+  </instances>
+  <permissions>
+    <permission>
+      <permittedlevel>FULL</permittedlevel>
+      <permittedrole>ADMINISTRATOR</permittedrole>
+      <restriction></restriction>
+    </permission>
+  </permissions>
+</customrecordtype>

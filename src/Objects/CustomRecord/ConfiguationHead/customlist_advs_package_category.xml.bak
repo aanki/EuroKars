@@ -1,0 +1,34 @@
+<customlist scriptid="customlist_advs_package_category">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Package Category</name>
+  <customvalues>
+    <customvalue scriptid="val_46635_4860644_sb4_818">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Courtesy</value>
+    </customvalue>
+    <customvalue scriptid="val_46636_4860644_sb4_204">
+      <abbreviation>R</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Regular</value>
+    </customvalue>
+    <customvalue scriptid="val_46637_4860644_sb4_278">
+      <abbreviation>D</abbreviation>
+      <isinactive>T</isinactive>
+      <value>Deafult Model Package</value>
+    </customvalue>
+    <customvalue scriptid="val_46638_4860644_sb4_505">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Promotion</value>
+    </customvalue>
+    <customvalue scriptid="val_46639_4860644_sb4_321">
+      <abbreviation>S</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Sub Contract</value>
+    </customvalue>
+  </customvalues>
+</customlist>

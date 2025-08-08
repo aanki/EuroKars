@@ -1,0 +1,43 @@
+<customsegment scriptid="cseg_advs_veh_statu">
+  <defaultrecordaccesslevel>VIEW</defaultrecordaccesslevel>
+  <defaultsearchaccesslevel>VIEW</defaultsearchaccesslevel>
+  <defaultselection></defaultselection>
+  <description></description>
+  <displaytype>NORMAL</displaytype>
+  <fieldtype>SELECT</fieldtype>
+  <filteredby></filteredby>
+  <hasglimpact>T</hasglimpact>
+  <help></help>
+  <ismandatory>F</ismandatory>
+  <label>Vehicle Status (Segment)</label>
+  <recordtype>[scriptid=customrecord_cseg_advs_veh_statu]</recordtype>
+  <valuesdisplayorder>SUBLIST</valuesdisplayorder>
+  <segmentapplication>
+    <transactionbody>
+    </transactionbody>
+    <transactionline>
+      <sourcelist>[type=transactioncolumncustomfield, scriptid=cseg_cseg_advs_vin]</sourcelist>
+      <applications>
+        <application>
+          <id>SALE</id>
+          <isapplied>T</isapplied>
+        </application>
+        <application>
+          <id>PURCHASE</id>
+          <isapplied>T</isapplied>
+        </application>
+      </applications>
+    </transactionline>
+    <entities>
+    </entities>
+    <crm>
+    </crm>
+    <items>
+      <subtype>BOTH</subtype>
+    </items>
+    <otherrecords>
+    </otherrecords>
+    <customrecords>
+    </customrecords>
+  </segmentapplication>
+</customsegment>

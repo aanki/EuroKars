@@ -1,0 +1,70 @@
+<scheduledscript scriptid="customscript_advs_scat_part_pur_invoice">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ADVS SCAT CREATE PART PUR INVOICE</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <scriptfile>[/SuiteScripts/Service Module 2.0/S30C/ADVS_SCAT_CREATE_PART_PUR_INVOICE.js]</scriptfile>
+  <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_advs_at_parts_vendor">
+      <accesslevel>2</accesslevel>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection>[ACCOUNT_SPECIFIC_VALUE]</defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <fieldtype>SELECT</fieldtype>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <label>Parts Vendor</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete>SET_NULL</onparentdelete>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype>-3</selectrecordtype>
+      <setting>COMPANY</setting>
+      <storevalue>T</storevalue>
+    </scriptcustomfield>
+  </scriptcustomfields>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_advs_scat_part_pur_invoice_">
+      <custscript_advs_at_parts_vendor>[ACCOUNT_SPECIFIC_VALUE]</custscript_advs_at_parts_vendor>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS SCAT CREATE PART PUR INVOICE 2 DEP</title>
+      <recurrence>
+        <daily>
+          <everyxdays>1</everyxdays>
+          <repeat></repeat>
+          <startdate>2020-07-10</startdate>
+          <starttime>21:00:00Z</starttime>
+        </daily>
+      </recurrence>
+    </scriptdeployment>
+    <scriptdeployment scriptid="customdeploy_advs_scat_part_pur_invoice">
+      <custscript_advs_at_parts_vendor></custscript_advs_at_parts_vendor>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS SCAT CREATE PART PUR INVOICE DEP</title>
+      <recurrence>
+        <daily>
+          <everyxdays>1</everyxdays>
+          <repeat>PT15M</repeat>
+          <startdate>2020-04-07</startdate>
+          <starttime>00:30:00Z</starttime>
+        </daily>
+      </recurrence>
+    </scriptdeployment>
+  </scriptdeployments>
+</scheduledscript>

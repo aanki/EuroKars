@@ -1,0 +1,315 @@
+<customrecordtype scriptid="customrecord_advs_pt_task_type">
+  <accesstype>NONENEEDED</accesstype>
+  <allowattachments>T</allowattachments>
+  <allowinlinedeleting>T</allowinlinedeleting>
+  <allowinlinedetaching>T</allowinlinedetaching>
+  <allowinlineediting>T</allowinlineediting>
+  <allowmobileaccess>F</allowmobileaccess>
+  <allownumberingoverride>F</allownumberingoverride>
+  <allowquickadd>T</allowquickadd>
+  <allowquicksearch>F</allowquicksearch>
+  <allowuiaccess>T</allowuiaccess>
+  <customsegment></customsegment>
+  <description></description>
+  <enabledle>T</enabledle>
+  <enablekeywords>T</enablekeywords>
+  <enablemailmerge>F</enablemailmerge>
+  <enablenumbering>F</enablenumbering>
+  <enableoptimisticlocking>T</enableoptimisticlocking>
+  <enablesystemnotes>T</enablesystemnotes>
+  <externalrolepermissionlevel>NONE</externalrolepermissionlevel>
+  <hierarchical>F</hierarchical>
+  <icon></icon>
+  <iconbuiltin>T</iconbuiltin>
+  <iconindex></iconindex>
+  <includeinsearchmenu>T</includeinsearchmenu>
+  <includename>T</includename>
+  <isinactive>F</isinactive>
+  <isordered>F</isordered>
+  <numberinginit></numberinginit>
+  <numberingmindigits></numberingmindigits>
+  <numberingprefix></numberingprefix>
+  <numberingsuffix></numberingsuffix>
+  <publicpermissionlevel>NONE</publicpermissionlevel>
+  <recordname>ADVS TASK Type</recordname>
+  <showcreationdate>F</showcreationdate>
+  <showcreationdateonlist>F</showcreationdateonlist>
+  <showid>F</showid>
+  <showlastmodified>F</showlastmodified>
+  <showlastmodifiedonlist>F</showlastmodifiedonlist>
+  <shownotes>T</shownotes>
+  <showowner>F</showowner>
+  <showownerallowchange>F</showownerallowchange>
+  <showowneronlist>F</showowneronlist>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_advs_pt_tsktyp_description">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>TEXT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Description</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_advs_pt_tsktyp_code">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>TEXT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Code</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_advs_repair_required_for_job">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description></description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <enabletextenhance>F</enabletextenhance>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>CHECKBOX</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help></help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Required For Job</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>T</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+  </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_25534940_5544214_sb1_974">
+      <custrecord_advs_pt_tsktyp_code>H-INT</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>H Hours - Internal</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>T</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>H Hours - Internal</name>
+    </instance>
+    <instance scriptid="val_25534941_5544214_sb1_261">
+      <custrecord_advs_pt_tsktyp_code>K-EXT</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>K Hours - External</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>T</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>K Hours - External</name>
+    </instance>
+    <instance scriptid="val_25534942_5544214_sb1_446">
+      <custrecord_advs_pt_tsktyp_code>K-WARR</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>K Hours - Warranty</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>T</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>K Hours - Warranty</name>
+    </instance>
+    <instance scriptid="val_25534943_5544214_sb1_764">
+      <custrecord_advs_pt_tsktyp_code>W10</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>General Workshop</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>General Workshop</name>
+    </instance>
+    <instance scriptid="val_25534944_5544214_sb1_478">
+      <custrecord_advs_pt_tsktyp_code>W11</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Idle Time</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Idle Time</name>
+    </instance>
+    <instance scriptid="val_25534945_5544214_sb1_380">
+      <custrecord_advs_pt_tsktyp_code>W13</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Workshop Reworking and Workshop Warrenty</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Workshop Reworking and Workshop Warrenty</name>
+    </instance>
+    <instance scriptid="val_25534946_5544214_sb1_515">
+      <custrecord_advs_pt_tsktyp_code>W14</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Repair on Workshop Vehicle</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Repair on Workshop Vehicle</name>
+    </instance>
+    <instance scriptid="val_25534947_5544214_sb1_956">
+      <custrecord_advs_pt_tsktyp_code>W15</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Any Other Variable W-Time</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Any Other Variable W-Time</name>
+    </instance>
+    <instance scriptid="val_25534948_5544214_sb1_867">
+      <custrecord_advs_pt_tsktyp_code>W18</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Sickness</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Sickness</name>
+    </instance>
+    <instance scriptid="val_25534949_5544214_sb1_580">
+      <custrecord_advs_pt_tsktyp_code>W20</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Training ( Internal)</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Training ( Internal)</name>
+    </instance>
+    <instance scriptid="val_25534950_5544214_sb1_233">
+      <custrecord_advs_pt_tsktyp_code>W25</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Vacations ( Annual Leave)</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Vacations ( Annual Leave)</name>
+    </instance>
+    <instance scriptid="val_25534951_5544214_sb1_911">
+      <custrecord_advs_pt_tsktyp_code>W26</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Training (External)</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Training (External)</name>
+    </instance>
+    <instance scriptid="val_25534952_5544214_sb1_827">
+      <custrecord_advs_pt_tsktyp_code>W27</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Public Holidays</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Public Holidays</name>
+    </instance>
+    <instance scriptid="val_25534953_5544214_sb1_686">
+      <custrecord_advs_pt_tsktyp_code>W29</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Any Other Fixed W-Time</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Any Other Fixed W-Time</name>
+    </instance>
+    <instance scriptid="val_25601647_5544214_sb1_737">
+      <custrecord_advs_pt_tsktyp_code>W30</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Waiting for Next order</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Waiting for Next order</name>
+    </instance>
+    <instance scriptid="val_25601648_5544214_sb1_773">
+      <custrecord_advs_pt_tsktyp_code>W31</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Waiting for spare parts</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Waiting for spare parts</name>
+    </instance>
+    <instance scriptid="val_25601649_5544214_sb1_750">
+      <custrecord_advs_pt_tsktyp_code>W32</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Waiting for customer confirmation</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Waiting for customer confirmation</name>
+    </instance>
+    <instance scriptid="val_25601650_5544214_sb1_289">
+      <custrecord_advs_pt_tsktyp_code>W33</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Repair of tools/vehicles</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Repair of tools/vehicles</name>
+    </instance>
+    <instance scriptid="val_25601651_5544214_sb1_118">
+      <custrecord_advs_pt_tsktyp_code>W34</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Deputising for foreman</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Deputising for foreman</name>
+    </instance>
+    <instance scriptid="val_25601652_5544214_sb1_124">
+      <custrecord_advs_pt_tsktyp_code>W35</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Other W hours</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Other W hours</name>
+    </instance>
+    <instance scriptid="val_69233224_5544214_871">
+      <custrecord_advs_pt_tsktyp_code>9999887</custrecord_advs_pt_tsktyp_code>
+      <custrecord_advs_pt_tsktyp_description>Bodywork as per Insurance approval</custrecord_advs_pt_tsktyp_description>
+      <custrecord_advs_repair_required_for_job>F</custrecord_advs_repair_required_for_job>
+      <isinactive>F</isinactive>
+      <name>Bodywork as per Insurance approval</name>
+    </instance>
+  </instances>
+</customrecordtype>

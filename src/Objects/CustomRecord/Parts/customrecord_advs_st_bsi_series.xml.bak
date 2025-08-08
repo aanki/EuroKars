@@ -1,0 +1,183 @@
+<customrecordtype scriptid="customrecord_advs_st_bsi_series">
+  <accesstype>USEPERMISSIONLIST</accesstype>
+  <allowattachments>T</allowattachments>
+  <allowinlinedeleting>F</allowinlinedeleting>
+  <allowinlinedetaching>T</allowinlinedetaching>
+  <allowinlineediting>F</allowinlineediting>
+  <allowmobileaccess>F</allowmobileaccess>
+  <allownumberingoverride>F</allownumberingoverride>
+  <allowquickadd>T</allowquickadd>
+  <allowquicksearch>F</allowquicksearch>
+  <allowuiaccess>T</allowuiaccess>
+  <customsegment></customsegment>
+  <description></description>
+  <enabledle>T</enabledle>
+  <enablekeywords>T</enablekeywords>
+  <enablemailmerge>F</enablemailmerge>
+  <enablenumbering>F</enablenumbering>
+  <enableoptimisticlocking>T</enableoptimisticlocking>
+  <enablesystemnotes>T</enablesystemnotes>
+  <hierarchical>F</hierarchical>
+  <icon></icon>
+  <iconbuiltin>T</iconbuiltin>
+  <iconindex></iconindex>
+  <includeinsearchmenu>T</includeinsearchmenu>
+  <includename>T</includename>
+  <isinactive>F</isinactive>
+  <isordered>F</isordered>
+  <numberinginit></numberinginit>
+  <numberingmindigits></numberingmindigits>
+  <numberingprefix></numberingprefix>
+  <numberingsuffix></numberingsuffix>
+  <recordname>BSI/BRI Series</recordname>
+  <showcreationdate>F</showcreationdate>
+  <showcreationdateonlist>F</showcreationdateonlist>
+  <showid>F</showid>
+  <showlastmodified>F</showlastmodified>
+  <showlastmodifiedonlist>F</showlastmodifiedonlist>
+  <shownotes>T</shownotes>
+  <showowner>F</showowner>
+  <showownerallowchange>F</showownerallowchange>
+  <showowneronlist>F</showowneronlist>
+  <instances>
+    <instance scriptid="val_174394_5544214_519">
+      <isinactive>F</isinactive>
+      <name>1</name>
+    </instance>
+    <instance scriptid="val_174409_5544214_259">
+      <isinactive>F</isinactive>
+      <name>2</name>
+    </instance>
+    <instance scriptid="val_174411_5544214_835">
+      <isinactive>F</isinactive>
+      <name>3</name>
+    </instance>
+    <instance scriptid="val_174606_5544214_950">
+      <isinactive>F</isinactive>
+      <name>4</name>
+    </instance>
+    <instance scriptid="val_174641_5544214_280">
+      <isinactive>F</isinactive>
+      <name>5</name>
+    </instance>
+    <instance scriptid="val_174674_5544214_420">
+      <isinactive>F</isinactive>
+      <name>6</name>
+    </instance>
+    <instance scriptid="val_174695_5544214_727">
+      <isinactive>F</isinactive>
+      <name>7</name>
+    </instance>
+    <instance scriptid="val_174867_5544214_299">
+      <isinactive>F</isinactive>
+      <name>8</name>
+    </instance>
+    <instance scriptid="val_174903_5544214_859">
+      <isinactive>F</isinactive>
+      <name>M2</name>
+    </instance>
+    <instance scriptid="val_174928_5544214_665">
+      <isinactive>F</isinactive>
+      <name>M3</name>
+    </instance>
+    <instance scriptid="val_174948_5544214_537">
+      <isinactive>F</isinactive>
+      <name>M4</name>
+    </instance>
+    <instance scriptid="val_174979_5544214_482">
+      <isinactive>F</isinactive>
+      <name>M5</name>
+    </instance>
+    <instance scriptid="val_174986_5544214_577">
+      <isinactive>F</isinactive>
+      <name>M6</name>
+    </instance>
+    <instance scriptid="val_175016_5544214_125">
+      <isinactive>F</isinactive>
+      <name>M8</name>
+    </instance>
+    <instance scriptid="val_175050_5544214_398">
+      <isinactive>F</isinactive>
+      <name>X1</name>
+    </instance>
+    <instance scriptid="val_175071_5544214_795">
+      <isinactive>F</isinactive>
+      <name>X2</name>
+    </instance>
+    <instance scriptid="val_175092_5544214_132">
+      <isinactive>F</isinactive>
+      <name>X3</name>
+    </instance>
+    <instance scriptid="val_175104_5544214_117">
+      <isinactive>F</isinactive>
+      <name>X4</name>
+    </instance>
+    <instance scriptid="val_175124_5544214_723">
+      <isinactive>F</isinactive>
+      <name>X5</name>
+    </instance>
+    <instance scriptid="val_175165_5544214_798">
+      <isinactive>F</isinactive>
+      <name>X6</name>
+    </instance>
+    <instance scriptid="val_175202_5544214_435">
+      <isinactive>F</isinactive>
+      <name>X7</name>
+    </instance>
+    <instance scriptid="val_175667_5544214_307">
+      <isinactive>F</isinactive>
+      <name>X3M</name>
+    </instance>
+    <instance scriptid="val_175668_5544214_846">
+      <isinactive>F</isinactive>
+      <name>X4M</name>
+    </instance>
+    <instance scriptid="val_175669_5544214_322">
+      <isinactive>F</isinactive>
+      <name>X5M</name>
+    </instance>
+    <instance scriptid="val_175670_5544214_593">
+      <isinactive>F</isinactive>
+      <name>X6M</name>
+    </instance>
+    <instance scriptid="val_175671_5544214_287">
+      <isinactive>F</isinactive>
+      <name>Z4</name>
+    </instance>
+    <instance scriptid="val_175672_5544214_484">
+      <isinactive>F</isinactive>
+      <name>MINI</name>
+    </instance>
+    <instance scriptid="val_175673_5544214_136">
+      <isinactive>F</isinactive>
+      <name>JCW</name>
+    </instance>
+    <instance scriptid="val_175674_5544214_895">
+      <isinactive>F</isinactive>
+      <name>I3 REX</name>
+    </instance>
+    <instance scriptid="val_175675_5544214_349">
+      <isinactive>F</isinactive>
+      <name>I3 BEV</name>
+    </instance>
+    <instance scriptid="val_175700_5544214_574">
+      <isinactive>F</isinactive>
+      <name>I8</name>
+    </instance>
+    <instance scriptid="val_37548398_5544214_320">
+      <isinactive>F</isinactive>
+      <name>E</name>
+    </instance>
+    <instance scriptid="val_40340130_5544214_394">
+      <isinactive>F</isinactive>
+      <name>2 GC</name>
+    </instance>
+  </instances>
+  <permissions>
+    <permission>
+      <permittedlevel>FULL</permittedlevel>
+      <permittedrole>ADMINISTRATOR</permittedrole>
+      <restriction></restriction>
+    </permission>
+  </permissions>
+</customrecordtype>

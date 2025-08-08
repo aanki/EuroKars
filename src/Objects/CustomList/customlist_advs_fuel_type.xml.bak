@@ -1,0 +1,16 @@
+<customlist scriptid="customlist_advs_fuel_type">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Fuel Type</name>
+  <customvalues>
+    <customvalue scriptid="val_13436_t1064792_894">
+      <isinactive>F</isinactive>
+      <value>Petrol</value>
+    </customvalue>
+    <customvalue scriptid="val_13437_t1064792_767">
+      <isinactive>F</isinactive>
+      <value>Diesel</value>
+    </customvalue>
+  </customvalues>
+</customlist>

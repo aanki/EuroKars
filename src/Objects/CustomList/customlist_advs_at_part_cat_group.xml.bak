@@ -1,0 +1,16 @@
+<customlist scriptid="customlist_advs_at_part_cat_group">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Part Category Group</name>
+  <customvalues>
+    <customvalue scriptid="val_21135314_5544214_sb1_768">
+      <isinactive>F</isinactive>
+      <value>Accessories</value>
+    </customvalue>
+    <customvalue scriptid="val_21135315_5544214_sb1_409">
+      <isinactive>F</isinactive>
+      <value>Parts</value>
+    </customvalue>
+  </customvalues>
+</customlist>

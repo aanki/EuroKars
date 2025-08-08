@@ -1,0 +1,14 @@
+<sublist scriptid="custsublist_7_5544214_463">
+  <billofmaterials>F</billofmaterials>
+  <field></field>
+  <inventoryitem>T</inventoryitem>
+  <itemgroup>F</itemgroup>
+  <kit>F</kit>
+  <label>Exterior</label>
+  <noninventoryitem>F</noninventoryitem>
+  <othercharge>F</othercharge>
+  <savedsearch>[scriptid=customsearch242]</savedsearch>
+  <service>F</service>
+  <sublisttype>ITEM</sublisttype>
+  <tab>[scriptid=custtab_advs_item_exterior]</tab>
+</sublist>

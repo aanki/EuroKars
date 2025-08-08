@@ -1,0 +1,40 @@
+<customlist scriptid="customlist_advs_st_fuel_level">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Fuel Level</name>
+  <customvalues>
+    <customvalue scriptid="val_3702937_t1064792_178">
+      <isinactive>F</isinactive>
+      <value>1/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702938_t1064792_208">
+      <isinactive>F</isinactive>
+      <value>2/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702939_t1064792_915">
+      <isinactive>F</isinactive>
+      <value>3/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702940_t1064792_176">
+      <isinactive>F</isinactive>
+      <value>4/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702941_t1064792_715">
+      <isinactive>F</isinactive>
+      <value>5/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702942_t1064792_163">
+      <isinactive>F</isinactive>
+      <value>6/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702943_t1064792_570">
+      <isinactive>F</isinactive>
+      <value>7/8</value>
+    </customvalue>
+    <customvalue scriptid="val_3702944_t1064792_380">
+      <isinactive>F</isinactive>
+      <value>8/8</value>
+    </customvalue>
+  </customvalues>
+</customlist>

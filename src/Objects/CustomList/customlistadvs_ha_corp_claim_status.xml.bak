@@ -1,0 +1,34 @@
+<customlist scriptid="customlistadvs_ha_corp_claim_status">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Corporate Claim Status</name>
+  <customvalues>
+    <customvalue scriptid="val_21472300_5544214_sb1_144">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Rejected</value>
+    </customvalue>
+    <customvalue scriptid="val_25581146_5544214_sb1_882">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Payment Done</value>
+    </customvalue>
+    <customvalue scriptid="val_21472297_5544214_sb1_384">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Pending for Submission</value>
+    </customvalue>
+    <customvalue scriptid="val_21472298_5544214_sb1_340">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Submitted</value>
+    </customvalue>
+    <customvalue scriptid="val_21472299_5544214_sb1_386">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Approved</value>
+    </customvalue>
+  </customvalues>
+</customlist>

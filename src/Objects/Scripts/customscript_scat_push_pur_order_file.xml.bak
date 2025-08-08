@@ -1,0 +1,38 @@
+<scheduledscript scriptid="customscript_scat_push_pur_order_file">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ADVS SCAT PUSH PUR ORDER FILE</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <scriptfile>[/SuiteScripts/Service Module 2.0/SA10/ADVS_SCAT_PUSH_PUR_ORDER_FILE.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_scat_push_pur_order_file_2">
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS SCAT PUSH PUR ORDER FILE 2</title>
+      <recurrence>
+        <daily>
+          <everyxdays>1</everyxdays>
+          <repeat>PT30M</repeat>
+          <startdate>2022-11-02</startdate>
+          <starttime>03:30:00Z</starttime>
+        </daily>
+      </recurrence>
+    </scriptdeployment>
+    <scriptdeployment scriptid="customdeploy_scat_push_pur_order_file">
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>NOTSCHEDULED</status>
+      <title>ADVS SCAT PUSH PUR ORDER FILE</title>
+      <recurrence>
+        <single>
+          <repeat></repeat>
+          <startdate>2020-05-26</startdate>
+          <starttime>12:30:00Z</starttime>
+        </single>
+      </recurrence>
+    </scriptdeployment>
+  </scriptdeployments>
+</scheduledscript>

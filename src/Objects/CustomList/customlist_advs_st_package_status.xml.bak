@@ -1,0 +1,24 @@
+<customlist scriptid="customlist_advs_st_package_status">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Package Status</name>
+  <customvalues>
+    <customvalue scriptid="val_167405_5544214_461">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Inactive</value>
+    </customvalue>
+    <customvalue scriptid="val_167406_5544214_367">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Planned</value>
+    </customvalue>
+    <customvalue scriptid="val_167407_5544214_622">
+      <abbreviation>A</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Active</value>
+    </customvalue>
+  </customvalues>
+</customlist>

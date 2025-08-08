@@ -1,0 +1,36 @@
+<customlist scriptid="customlistadvs_week_list">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>ADVS Week List</name>
+  <customvalues>
+    <customvalue scriptid="val_558576_t1064792_744">
+      <isinactive>F</isinactive>
+      <value>Sunday</value>
+    </customvalue>
+    <customvalue scriptid="val_558577_t1064792_820">
+      <isinactive>F</isinactive>
+      <value>Monday</value>
+    </customvalue>
+    <customvalue scriptid="val_558578_t1064792_937">
+      <isinactive>F</isinactive>
+      <value>Tuesday</value>
+    </customvalue>
+    <customvalue scriptid="val_558579_t1064792_238">
+      <isinactive>F</isinactive>
+      <value>Wednesday</value>
+    </customvalue>
+    <customvalue scriptid="val_558580_t1064792_654">
+      <isinactive>F</isinactive>
+      <value>Thursday</value>
+    </customvalue>
+    <customvalue scriptid="val_558581_t1064792_365">
+      <isinactive>F</isinactive>
+      <value>Friday</value>
+    </customvalue>
+    <customvalue scriptid="val_558582_t1064792_332">
+      <isinactive>F</isinactive>
+      <value>Saturday</value>
+    </customvalue>
+  </customvalues>
+</customlist>

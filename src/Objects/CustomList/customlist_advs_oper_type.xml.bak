@@ -1,0 +1,16 @@
+<customlist scriptid="customlist_advs_oper_type">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>Operation Type</name>
+  <customvalues>
+    <customvalue scriptid="val_6481334_t1064792_732">
+      <isinactive>F</isinactive>
+      <value>Local</value>
+    </customvalue>
+    <customvalue scriptid="val_6481335_t1064792_761">
+      <isinactive>F</isinactive>
+      <value>Motor Fleet</value>
+    </customvalue>
+  </customvalues>
+</customlist>

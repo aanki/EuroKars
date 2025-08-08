@@ -1,0 +1,54 @@
+<customlist scriptid="customlist_advs_reservation_status">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Reservation Status</name>
+  <customvalues>
+    <customvalue scriptid="val_108057_5544214_904">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Sold</value>
+    </customvalue>
+    <customvalue scriptid="val_108058_5544214_633">
+      <abbreviation>I</abbreviation>
+      <isinactive>T</isinactive>
+      <value>In Transit</value>
+    </customvalue>
+    <customvalue scriptid="val_108054_5544214_973">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Stock</value>
+    </customvalue>
+    <customvalue scriptid="val_108055_5544214_874">
+      <abbreviation>B</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Booked</value>
+    </customvalue>
+    <customvalue scriptid="val_108056_5544214_746">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Fulfilled</value>
+    </customvalue>
+    <customvalue scriptid="val_159953_5544214_714">
+      <abbreviation>H</abbreviation>
+      <isinactive>F</isinactive>
+      <value>HUB Vehicle</value>
+    </customvalue>
+    <customvalue scriptid="val_159954_5544214_415">
+      <abbreviation>D</abbreviation>
+      <isinactive>T</isinactive>
+      <value>Dealer Vehicle</value>
+    </customvalue>
+    <customvalue scriptid="val_20252717_5544214_642">
+      <abbreviation></abbreviation>
+      <isinactive>T</isinactive>
+      <value>Hold</value>
+    </customvalue>
+    <customvalue scriptid="val_20254220_5544214_997">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Sold to Dealer</value>
+    </customvalue>
+  </customvalues>
+</customlist>

@@ -1,0 +1,24 @@
+<customlist scriptid="customlist2147">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>COE Bid Status</name>
+  <customvalues>
+    <customvalue scriptid="val_189868_9908878_540">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>COE Secured </value>
+    </customvalue>
+    <customvalue scriptid="val_189869_9908878_330">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>COE Bid Submitted </value>
+    </customvalue>
+    <customvalue scriptid="val_189870_9908878_530">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>COE Rejected </value>
+    </customvalue>
+  </customvalues>
+</customlist>

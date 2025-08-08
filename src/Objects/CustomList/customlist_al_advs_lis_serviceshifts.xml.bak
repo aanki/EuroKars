@@ -1,0 +1,7 @@
+<customlist scriptid="customlist_al_advs_lis_serviceshifts">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>F</isordered>
+  <name>Service Shifts</name>
+</customlist>

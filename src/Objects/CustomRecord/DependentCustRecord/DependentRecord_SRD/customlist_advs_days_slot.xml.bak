@@ -1,0 +1,36 @@
+<customlist scriptid="customlist_advs_days_slot">
+  <description></description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>ADVS DAYS Slot</name>
+  <customvalues>
+    <customvalue scriptid="val_65005_t2123491_500">
+      <isinactive>F</isinactive>
+      <value>Monday</value>
+    </customvalue>
+    <customvalue scriptid="val_65006_t2123491_252">
+      <isinactive>F</isinactive>
+      <value>Tuesday</value>
+    </customvalue>
+    <customvalue scriptid="val_65007_t2123491_194">
+      <isinactive>F</isinactive>
+      <value>Wednesday</value>
+    </customvalue>
+    <customvalue scriptid="val_65008_t2123491_212">
+      <isinactive>F</isinactive>
+      <value>Thursday</value>
+    </customvalue>
+    <customvalue scriptid="val_65009_t2123491_660">
+      <isinactive>F</isinactive>
+      <value>Friday</value>
+    </customvalue>
+    <customvalue scriptid="val_65010_t2123491_168">
+      <isinactive>F</isinactive>
+      <value>Saturday</value>
+    </customvalue>
+    <customvalue scriptid="val_65011_t2123491_533">
+      <isinactive>F</isinactive>
+      <value>Sunday</value>
+    </customvalue>
+  </customvalues>
+</customlist>

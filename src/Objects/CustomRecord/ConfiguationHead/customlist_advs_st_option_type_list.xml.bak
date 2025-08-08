@@ -1,0 +1,29 @@
+<customlist scriptid="customlist_advs_st_option_type_list">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Option Type List</name>
+  <customvalues>
+    <customvalue scriptid="val_18240_t1714037_601">
+      <abbreviation>S</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Single</value>
+    </customvalue>
+    <customvalue scriptid="val_18241_t1714037_210">
+      <abbreviation>M</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Multi Select</value>
+    </customvalue>
+    <customvalue scriptid="val_18242_t1714037_471">
+      <abbreviation>E</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Exception</value>
+    </customvalue>
+    <customvalue scriptid="val_18487_t1714037_265">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Item Select</value>
+    </customvalue>
+  </customvalues>
+</customlist>

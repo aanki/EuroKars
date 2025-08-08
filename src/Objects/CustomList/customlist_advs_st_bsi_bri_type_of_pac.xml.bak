@@ -1,0 +1,19 @@
+<customlist scriptid="customlist_advs_st_bsi_bri_type_of_pac">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Type of Package (BSI/BRI)</name>
+  <customvalues>
+    <customvalue scriptid="val_168099_5544214_509">
+      <abbreviation>B</abbreviation>
+      <isinactive>F</isinactive>
+      <value>BSI</value>
+    </customvalue>
+    <customvalue scriptid="val_168100_5544214_398">
+      <abbreviation>B</abbreviation>
+      <isinactive>F</isinactive>
+      <value>BRI</value>
+    </customvalue>
+  </customvalues>
+</customlist>
