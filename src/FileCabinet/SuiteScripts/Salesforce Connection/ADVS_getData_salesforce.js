@@ -46,6 +46,7 @@ define(['N/record', 'N/search', 'N/error', 'N/log', 'N/task'], function (record,
                     if (customerID) {
                         // If customer exists, update the Customer record
 
+                        
                         var customerRec = record.load({
                             type: record.Type.CUSTOMER,
                             id: customerID,
