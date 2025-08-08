@@ -311,7 +311,8 @@ define(['N/log', 'N/file', 'N/record', 'N/format', 'N/search'], (log, file, reco
                             label: "Alignment Check Req"
                         })
                     ]
-            });
+            }); 
+            
 
             var dataArray = new Array();
 
