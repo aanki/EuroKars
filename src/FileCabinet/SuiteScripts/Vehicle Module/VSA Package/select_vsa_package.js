@@ -160,7 +160,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "<div id='bottomButtons' style='margin-top: 20px; display: flex; gap: 10px; align-items: center;'>" +
                     "<button id='btnsubmit' type='submit' class='btn btn-primary' onclick='submitPackage()' style='display:none; width:auto;'>SUBMIT</button>" +
                     "<button id='btnback' class='btn btn-secondary' onclick='showTable()'  style='display:none;'>BACK</button>" +
-                    "<button class='btn btn-danger' onclick='window.close()' style='margin-left:auto;'>CANCEL</button>" +
+                    "<button class='btn btn-danger' onclick='window.parent.closePopup()' style='margin-left:auto;'>CANCEL</button>" +
                     "</div>" +
                     "</div>" +
                     "</div>" +
@@ -1263,9 +1263,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      document.getElementById('btnsubmit').innerText = 'Submit';"; // Reset text
                 html += "      return;";
                 html += "    }";
-                html += "    if (window.opener) {";
-                html += "      window.opener.location.reload(true);";
-                html += "      window.close();";
+                html += "    if (window.parent) {";
+                html += "      window.parent.location.reload(true);";
+                html += "      window.parent.closePopup();";
                 html += "    }";
                 html += "  })";
                 html += "  .catch(err => {";
@@ -2136,7 +2136,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 try {
                     if (SpclDisciunt_level) {
                         soRec.setValue({ fieldId: 'custbody_package_max_approv_level', value: SpclDisciunt_level });
-                        soRec.setValue({ fieldId: 'custbody_package_approval_status', value: 5 }); // Submit for Approval
+                        soRec.setValue({ fieldId: 'custbody_package_approval_status', value: 1 }); // Submit for Approval
                         var JsonEmail = GetEmailSetup_Approver();
 
                         soRec.setValue({ fieldId: 'custbody_package_current_approver', value: JsonEmail.approverSM });

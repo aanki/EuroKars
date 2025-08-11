@@ -116,7 +116,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         soRec.setValue({ fieldId: 'custbody_special_dis', value: entry.specialDiscount });
                         soRec.setValue({ fieldId: 'custbody_special_dis_remarks', value: entry.specialDiscountRemark });
                         soRec.setValue({ fieldId: 'custbody_special_dis_status', value: stausID });
-                       
+
                         // Add update Remove Special Discount line
                         var specialDiscountItemID = 14869;
 
@@ -134,7 +134,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         if (stausID == 3) {         // Rejected
                             if (foundLine !== -1) {
                                 soRec.removeLine({ sublistId: 'item', line: foundLine });
-                                res.statusMessage="Special Discount line has been removed Sucessfully";
+                                res.statusMessage = "Special Discount line has been removed Sucessfully";
                             }
                         } else {
                             if (foundLine !== -1) {
@@ -143,8 +143,8 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                 soRec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol_advs_selected_inventory_type', value: 8 }); // Discount
                                 soRec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: entry.specialDiscount });
                                 soRec.commitLine({ sublistId: 'item' });
-                                res.statusMessage="Special Discount line has been updated Sucessfully";
-                                 
+                                res.statusMessage = "Special Discount line has been updated Sucessfully";
+
                             } else {
                                 // Add the line
                                 soRec.selectNewLine({ sublistId: 'item' });
@@ -152,34 +152,16 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                 soRec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: specialDiscountItemID });
                                 soRec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: entry.specialDiscount });
                                 soRec.commitLine({ sublistId: 'item' });
-                                res.statusMessage="Special Discount line has been added Sucessfully";
-                                 
+                                res.statusMessage = "Special Discount line has been added Sucessfully";
+
                             }
                         }
                         soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
 
-                        // updated special disount on Save Package Record
-                        // var childSavePckgID = findSelected_PackageRecord(SoId);
-                        // if (childSavePckgID) {
-                        //     record.submitFields({
-                        //         type: 'customrecord_save_vsa_package',
-                        //         id: childSavePckgID,
-                        //         values: {
-                        //             custrecord_selected_special_discount: entry.specialDiscount,
-                        //             custrecord_selected_spdis_remarks: entry.specialDiscountRemark,
-                        //             custrecord_selected_special_dis_status: stausID
-                        //         },
-                        //         options: {
-                        //             enableSourcing: false,
-                        //             ignoreMandatoryFields: true
-                        //         }
-                        //     });
-                        // }
-
                         // End ----- 
                         res.dmsId = SoId;
                         res.statusCode = 200;
-                       // res.statusMessage = 'Discount has been updated on VSA';
+
 
                     } else {
                         res.statusCode = 500;
@@ -238,12 +220,18 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                 sublistId: 'item',
                                 fieldId: 'custcol_advs_st_equip_sales'
                             });
+                            log.debug('vin ', vin);
 
                             if (inventoryType == 1 && !vin) {
                                 var CusutomerID = soRec.getValue({ fieldId: 'entity' });
                                 var sodate = soRec.getValue({ fieldId: 'trandate' });
                                 // Set the VIN to default value
-                                var VIN_ID = find_VehicleMaster_toadd_online(subsidiary, itemID);
+                                var VIN_ID_detail = find_VehicleMaster_toadd_online(subsidiary, itemID) || '';
+                                var vinParts = VIN_ID_detail.split('$');
+
+                                var VIN_ID = vinParts.length > 0 ? vinParts[0] : '';
+                                var VIN_Name = vinParts.length > 1 ? vinParts[1] : '';
+                                log.debug('VIN_ID STOCK_ALLOCATION 1', VIN_ID);
 
                                 if (VIN_ID) {
 
@@ -257,9 +245,35 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                         fieldId: 'custcol_advs_st_equip_sales',
                                         value: VIN_ID
                                     });
+
+                                    // // Inventory Detail
+                                    // try {
+                                    //     var inventoryDetailSubrecord = soRec.getCurrentSublistSubrecord({
+                                    //         sublistId: 'item',
+                                    //         fieldId: 'inventorydetail'
+                                    //     });
+                                    //     inventoryDetailSubrecord.selectNewLine({
+                                    //         sublistId: 'inventoryassignment'
+                                    //     });
+                                    //     inventoryDetailSubrecord.setCurrentSublistText({
+                                    //         sublistId: 'inventoryassignment',
+                                    //         fieldId: 'issueinventorynumber',
+                                    //         text: VIN_Name
+                                    //     });
+                                    //     inventoryDetailSubrecord.setCurrentSublistValue({
+                                    //         sublistId: 'inventoryassignment',
+                                    //         fieldId: 'quantity',
+                                    //         value: 1
+                                    //     });
+                                    //     inventoryDetailSubrecord.commitLine({ sublistId: 'inventoryassignment' });
+                                    // } catch (e) {
+                                    //     log.error('Error in assignInventoryDetail: ' + e.message);
+
+                                    // }
+
                                     soRec.commitLine({ sublistId: 'item' });
 
-                                    soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_assigned', value: true }); // Stock Assigned
+                                    soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_reserved', value: true }); // Stock Assigned
                                     soRec.setValue({ fieldId: 'custbody_advs_pdi_process_status', value: stausID });
                                     soRec.setValue({ fieldId: 'custbody_advs_customer_signed', value: entry.customerSigned });
                                     soRec.setValue({ fieldId: 'custbody_advs_sales_cons_signed', value: entry.scSigned });
@@ -268,7 +282,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                         type: 'customrecord_advs_vm',
                                         id: VIN_ID,
                                         values: {
-                                            custrecord_advs_vm_reservation_status: '5', // Assigned
+                                            custrecord_advs_vm_reservation_status: '4', // Assigned
                                             custrecord_advs_st_sales_ord_date: sodate,
                                             custrecord_advs_st_sales_ord_link: salesOrderId,
                                             custrecord_advs_vm_customer_number: CusutomerID
@@ -281,8 +295,12 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                     res.statusMessage = 'Stock is not available for this model';
                                     response.push(res);
                                     return;
-
                                 }
+                            } else {
+                                res.statusCode = 500;
+                                res.statusMessage = 'Stock is already assigned for this model';
+                                response.push(res);
+                                return;
                             }
                         }
 
@@ -291,7 +309,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         res.dmsId = soId;
                         res.statusCode = 200;
                         res.vehicleStockDmsId = VIN_ID;
-                        res.statusMessage = 'Stock has been allocated on VSA';
+                        res.statusMessage = 'Stock has been allocated on VSA Sucessfully';
 
                     } else {
                         res.statusCode = 500;
@@ -499,7 +517,8 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                     response.push(res);
                 }
                 log.debug('POST response KICKSTART_PDI', res);
-            } else if (entry.action == 'VSA_ITEM') {
+            }
+            else if (entry.action == 'VSA_ITEM') {
                 try {
                     var res = {
                         sfId: entry.sfId || null,
@@ -623,7 +642,6 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                             rec = record.create({ type: 'customerdeposit', isDynamic: true });
                             rec.setValue({ fieldId: 'customer', value: So_customer });
                             rec.setValue({ fieldId: 'salesorder', value: SoId });
-                            // rec.setValue({ fieldId: 'account', value: 122 }); 
                             rec.setValue({ fieldId: 'custbody_advs_salesforceid', value: entry.sfId });
                             res.statusMessage = 'VSA Deposit has been created sucessfully';
                         }
@@ -676,14 +694,14 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         var updated = false;
                         var Assign_VIN_ID = entry.vehicleStockDmsId;
                         var stausID = '';
-                        if (entry.vehicleStockStatus) {
-                            stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.vehicleStockStatus);
+                        if (entry.vsaStatus) {
+                            stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.vsaStatus);
                         }
                         log.debug('Assign_VIN_ID', Assign_VIN_ID + ' stausID ' + stausID);
 
                         var soRec = record.load({ type: record.Type.SALES_ORDER, id: salesOrderId, isDynamic: true });
-                        soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_assigned', value: false }); // Stock unAssigned
                         soRec.setValue({ fieldId: 'custbody_advs_pdi_process_status', value: stausID });
+                        //soRec.setValue({ fieldId: 'status', value: 'SalesOrd:C' });
 
                         if (Assign_VIN_ID) {
                             var lineCount = soRec.getLineCount({ sublistId: 'item' });
@@ -700,14 +718,47 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                     sublistId: 'item',
                                     fieldId: 'custcol_advs_st_equip_sales'
                                 });
-                                log.debug('lineVINId', lineVINId + ' Assign_VIN_ID ' + Assign_VIN_ID);
+                                var VIN_Name = soRec.getCurrentSublistText({
+                                    sublistId: 'item',
+                                    fieldId: 'custcol_advs_st_equip_sales'
+                                });
+                                log.debug('lineVINId', lineVINId + ' Assign_VIN_ID ' + Assign_VIN_ID+' VIN_Name '+VIN_Name);
 
                                 if (inventoryType == '1' && lineVINId == Assign_VIN_ID) {
+
                                     soRec.setCurrentSublistValue({
                                         sublistId: 'item',
                                         fieldId: 'custcol_advs_st_equip_sales',
                                         value: ''
                                     });
+                                    // // remove Inventoiry Detail
+                                    // try {
+                                    //     var inventoryDetailSubrecord = soRec.getCurrentSublistSubrecord({
+                                    //         sublistId: 'item',
+                                    //         fieldId: 'inventorydetail'
+                                    //     });
+
+                                    //     var invAssignCount = inventoryDetailSubrecord.getLineCount({
+                                    //         sublistId: 'inventoryassignment'
+                                    //     });
+
+                                    //     for (var j = invAssignCount - 1; j >= 0; j--) {
+                                    //         var currentVIN = inventoryDetailSubrecord.getSublistText({
+                                    //             sublistId: 'inventoryassignment',
+                                    //             fieldId: 'issueinventorynumber',
+                                    //             line: j
+                                    //         });
+
+                                    //         if (currentVIN === VIN_Name) {
+                                    //             inventoryDetailSubrecord.removeLine({
+                                    //                 sublistId: 'inventoryassignment',
+                                    //                 line: j
+                                    //             });
+                                    //         }
+                                    //     }
+                                    // } catch (e) {
+                                    //     log.error('No inventory detail for line ' + i, e.message);
+                                    // }
                                     soRec.commitLine({ sublistId: 'item' });
                                     updated = true;
                                     break;
@@ -1242,7 +1293,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             customerRec.setValue({ fieldId: 'isperson', value: 'T' });
             customerRec.setValue({ fieldId: 'firstname', value: entry.customerNRICName });
             customerRec.setValue({ fieldId: 'mobilephone', value: entry.customerMobilePhone });
-            log.debug('entry.fleetVSA', 'Yes');
+
         }
 
         customerRec.setValue({ fieldId: 'entityid', value: entry.customerEntityName });
@@ -1717,6 +1768,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
 
     function find_VehicleMaster_toadd_online(subsidiary, itemId) {
         var vinRecordId = '';
+        var VIN_Name = '';
         var vinSearch = search.create({
             type: 'customrecord_advs_vm',
             filters: [
@@ -1746,8 +1798,9 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         log.error("SO Vechile Master resultSet", resultSet);
         if (resultSet && resultSet.length > 0) {
             vinRecordId = resultSet[0].getValue('internalid');
+            VIN_Name = resultSet[0].getValue('name');
         }
-        return vinRecordId;
+        return vinRecordId + "$" + VIN_Name;
     }
     function find_Free_VehicleMaster_fromSalesforce(dmsID) {
         var vinRecordId = '';

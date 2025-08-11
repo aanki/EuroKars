@@ -5,7 +5,7 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #b7c0e8 0%, #9daae5 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   min-height: 100vh;
   color: #2d3748;
 }
@@ -233,7 +233,7 @@ table.vehicle-table th {
 }
 
 input:checked+.slider {
-  background-color: #2196F3;
+  background-color: #36cb4d;
 }
 
 input:checked+.slider:before {
@@ -566,7 +566,7 @@ input:checked+.slider:before {
 }
 
 .total-card {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2596be, #2596be);
   color: white;
   padding: 20px;
   border-radius: 12px;
@@ -589,7 +589,7 @@ input:checked+.slider:before {
   color: #1e293b;
   margin-bottom: 25px;
   text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2596be 0%, #196e8c 100%);
   color: white;
   padding: 20px;
   margin: -30px -30px 25px -30px;
