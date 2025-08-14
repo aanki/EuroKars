@@ -629,7 +629,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response finance_rate', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance');
+				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance','custrecord_sf_res_fin');
 				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
 
 			} catch (error) {
@@ -872,8 +872,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				var custom_filter = [
 					["isinactive", "is", "F"],
-					"AND",
-					["custrecord_sync_salesforce_pckg_item", "is", "T"],
+					// "AND",
+					// ["custrecord_sync_salesforce_pckg_item", "is", "T"],
 					"AND",
 					["custrecord_master_packg.custrecord_manufacture_vsa_pckg", "anyof", "1"], // Only Mazda
 					"AND",

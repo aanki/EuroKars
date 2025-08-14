@@ -533,4 +533,5 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
             return setupData;
         };
         return { onRequest };
+        
     });

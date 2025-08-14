@@ -7,9 +7,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
         function onRequest(context) {
             if (context.request.method === 'GET') {
 
-                //var form = serverWidget.createForm({ title: 'Package', hideNavBar: true });
+                // var form = serverWidget.createForm({ title: ' ', hideNavBar: true });
+                // form.clientScriptModulePath = '.ROC/ADVS_CS_ROC_Amendment.js';
 
-                //form.clientScriptModulePath = 'SuiteScripts/Vehicle Module/VSA Package/validation_on_packg_item.js';
                 var parentOPC = '';
                 var parentSpecialdisSM = '';
                 var parentSpecialdisGM = '';
@@ -249,6 +249,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             search.createColumn({ name: "custrecord_spcl_dis_sm" }),
                             search.createColumn({ name: "custrecord_spcl_dis_gm" }),
                             search.createColumn({ name: "custrecord_spcl_dis_md" }),
+                            search.createColumn({ name: "custrecord_over_trade" }),
+                            search.createColumn({ name: "custrecord_adopter_discount_vsa" }),
+                            search.createColumn({ name: "custrecord_mvc_resale_new_car" }),
+                            search.createColumn({ name: "custrecord_mvc_resale_used_car" }),
+                            search.createColumn({ name: "custrecord_mvc_scraped_new_car" }),
+                            search.createColumn({ name: "custrecord_mvc_scraped_used_car" }),
+                            search.createColumn({ name: "custrecord_scwd" }),
                             search.createColumn({
                                 name: "name",
                                 join: "CUSTRECORD_MASTER_PACKG",
@@ -273,6 +280,18 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             }),
                             search.createColumn({
                                 name: "custrecord_include_price_list",
+                                join: "CUSTRECORD_MASTER_PACKG"
+                            }),
+                            search.createColumn({
+                                name: "custrecord_pckgitem_optin",
+                                join: "CUSTRECORD_MASTER_PACKG"
+                            }),
+                            search.createColumn({
+                                name: "custrecord_pckgitem_optout",
+                                join: "CUSTRECORD_MASTER_PACKG"
+                            }),
+                            search.createColumn({
+                                name: "custrecord_pckg_line_item_app",
                                 join: "CUSTRECORD_MASTER_PACKG"
                             }),
                             search.createColumn({
@@ -328,6 +347,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     parentSpecialdisGM = result.getValue({ name: 'custrecord_spcl_dis_gm' });
                     parentSpecialdisMD = result.getValue({ name: 'custrecord_spcl_dis_md' });
                     parentOPC = result.getValue({ name: 'custrecord_opc_dis' });
+                    var parentOverTrade = result.getValue({ name: 'custrecord_over_trade' });
+                    var parentAdopter = result.getValue({ name: 'custrecord_adopter_discount_vsa' });
+                    var parentSCWD_limit = result.getValue({ name: 'custrecord_scwd' });
                     var chldName = result.getValue({ name: "name", join: "CUSTRECORD_MASTER_PACKG" });
                     var chlditemType = result.getValue({ name: "custrecord_pckg_item_type", join: "CUSTRECORD_MASTER_PACKG" });
                     var childCostGroup = result.getValue({ name: "custrecord_pckg_iem_cost_group", join: "CUSTRECORD_MASTER_PACKG" });
@@ -335,6 +357,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     var childCost = result.getValue({ name: "custrecord_pckg_item_cost", join: "CUSTRECORD_MASTER_PACKG" });
                     var childInternalID = result.getValue({ name: "internalid", join: "CUSTRECORD_MASTER_PACKG" });
                     var childInclidePrice = result.getValue({ name: "custrecord_include_price_list", join: "CUSTRECORD_MASTER_PACKG" });
+                    var childOptIN = result.getValue({ name: "custrecord_pckgitem_optin", join: "CUSTRECORD_MASTER_PACKG" });
+                    var childOptOUt = result.getValue({ name: "custrecord_pckgitem_optout", join: "CUSTRECORD_MASTER_PACKG" });
+                    var childLineItem = result.getValue({ name: "custrecord_pckg_line_item_app", join: "CUSTRECORD_MASTER_PACKG" });
                     //Configuration
                     var child_Config_name = result.getValue({ name: "name", join: "CUSTRECORD_PACKAGE_MASTER_HEAD" });
                     var child_Config_internalid = result.getValue({ name: "internalid", join: "CUSTRECORD_PACKAGE_MASTER_HEAD" });
@@ -353,7 +378,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             "<tr>" +
                             "<td>" + pckName + "</td>" +
                             "<td class='option-price' id='parentListPriceCell'>" + parentListPrice + "</td>" +
-                            "<td><button class='btn btn-select' type='button' onclick='showDetails(\"" + pckName + "\", \"" + parentId + "\", \"" + parentListPrice + "\", \"" + parentNonGurnteDisL + "\", \"" + parentFinanceRebate + "\", \"" + parentSpecialdisSM + "\", \"" + parentSpecialdisGM + "\", \"" + parentSpecialdisMD + "\", \"" + parentOPC + "\")'>Select</button></td>" +
+                            "<td><button class='btn btn-select' type='button' onclick='showDetails(\"" + pckName + "\", \"" + parentId + "\", \"" + parentListPrice + "\", \"" + parentNonGurnteDisL + "\", \"" +
+                            parentFinanceRebate + "\", \"" + parentSpecialdisSM + "\", \"" + parentSpecialdisGM + "\", \"" + parentSpecialdisMD + "\", \"" + parentOPC + "\", \"" + parentOverTrade + "\", \"" + parentAdopter + "\", \"" + parentSCWD_limit + "\")'>Select</button></td>" +
                             "</tr>";
                     }
                     if (childInternalID) {
@@ -367,11 +393,15 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             Unique_Child_item[childInternalID] = true;
                             childObject[parentId][childCostGroupText].push({
                                 parentId: parentId,
+                                childInternalID: childInternalID,
                                 childName: chldName,
                                 chlditemType: chlditemType,
                                 childCostGroup: childCostGroup,
                                 childCostGroupText: childCostGroupText,
                                 childCost: childCost,
+                                childOptIN: childOptIN,
+                                childOptOUt: childOptOUt,
+                                childLineItem: childLineItem,
                                 childIncludePrice: childInclidePrice
                             });
                         }
@@ -606,7 +636,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "var isPrefilled = " + (SelectedPckgHeadID ? "true" : "false") + ";";
                 html += "var SelectedPckgHeadID = '" + SelectedPckgHeadID + "';";
                 html += "var OpcdDiscount = '';";
-
+                html += "var parentOverTrade_lim = '';";
+                html += "var SCWD_lim = '';";
+                html += "var total_discountRebate = 0;";
 
                 html += "var financerate = " + JSON.stringify(financerate) + ";";
 
@@ -624,7 +656,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "return div.innerHTML;";
                 html += "}";
                 // Click on Select Package Button
-                html += "function showDetails(pckgName, parentId,listprice,coedisL,financeRebate,spclDisSM,spclDisGM,spclDisMD,opcDis) {";
+                html += "function showDetails(pckgName, parentId,listprice,coedisL,financeRebate,spclDisSM,spclDisGM,spclDisMD,opcDis,parentOverTrade,parentAdopter,parentSCWD_limit) {";
                 html += '  console.log("showDetails triggered", {pckgName, parentId});';
                 html += "  Parent_Pckg_ID = parentId;";
                 html += "  var prefillAddtinalCost = 0;";
@@ -635,8 +667,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  parentSpecialdisSM = spclDisSM;";
                 html += "  parentSpecialdisGM = spclDisGM;";
                 html += "  parentSpecialdisMD = spclDisMD;";
-
                 html += "  OpcdDiscount = opcDis;";
+                html += "  parentOverTrade_lim = Math.abs(parentOverTrade);";
+                html += "  SCWD_lim = Math.abs(parentSCWD_limit);";
 
                 //Show/Hide other tables 
                 html += "document.getElementById('availColourTable').style.display = 'block';";
@@ -711,31 +744,49 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "} else {";
                 // html += "updateTotalAmount();";
                 html += "}";
-                html += "updateTotalAmount();";
+                // html += "updateTotalAmount();";
 
                 // Fatching data from Parent and Child Array and updating row
                 html += "try {";
                 html += "var packgItem_data = child_Object[parentId];";
                 html += "if (!packgItem_data) {container.innerHTML = '<p style=\"color: red;\">No Item found for Package: ' + escapeHtml(pckgName) + '</p>'; return; }";
                 html += "var allAccHtml = '';";
+
                 html += "for (var costGroup in packgItem_data) {";
                 html += "var items = packgItem_data[costGroup];";
                 html += "var accHtml = '<button type=\"button\" class=\"accordion\" aria-expanded=\"false\" aria-controls=\"panel-' + escapeHtml(costGroup) + '\"><span class=\"arrow\">▶</span> ' + escapeHtml(costGroup) + '</button>';";
 
                 html += "accHtml += '<div class=\"panel\" id=\"panel-' + escapeHtml(costGroup) + '\">';";
                 html += "for (var i = 0; i < items.length; i++) {";
+                //get Discount Rebate amount
+                html += "if (!items[i].childIncludePrice && items[i].chlditemType=='1') {";
+                html += "    total_discountRebate = total_discountRebate + parseFloat(items[i].childCost || 0);";
+                html += "}";
+               
+                //get Opt-Out Value /Opt-IN Value to show
+                html += "var costValue = 0;";
+                html += "if (String(items[i].chlditemType) === '2') {"; // Can Top Up
+                html += "    costValue = items[i].childOptIN;";
+                html += "} else if (String(items[i].chlditemType) === '3') {"; // Can Opt Out
+                html += "    costValue = items[i].childOptOUt;";
+                html += "} else {"; // Default
+                html += "    costValue = items[i].childCost;";
+                html += "}";
+
+                //-----
                 html += "accHtml += '<div class=\"panel\" style=\"display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; margin-top: 12px; border-bottom: 1px solid #ccc; padding-bottom: 8px;\">';";
-                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + ' - </span><span style=\"color: green; font-weight: bold;\">$' + items[i].childCost + '</span></div>'; ";
+
+                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + ' - </span><span style=\"color: green; font-weight: bold;\">$' + costValue + '</span></div>'; ";
 
                 //---------Adding lock or slider based on checkbox
-                html += "if (items[i].childIncludePrice) {";
+                html += "if (items[i].chlditemType=='1') {";
                 html += "  accHtml += '<i class=\"fas fa-lock\" style=\"margin-left: 10px; color: #999;\"></i>';";
                 html += "} else {";
                 html += "  accHtml += '<label class=\"switch\" style=\"margin-left: 10px;\">';";
                 html += "  accHtml += '<input type=\"checkbox\" class=\"item-checkbox\" " +
                     "data-name=\"' + escapeHtml(items[i].childName) + '\" " +
                     "data-costgroup=\"' + escapeHtml(items[i].childCostGroup) + '\" " +
-                    "onchange=\"handleCheckboxChange(this, \\'' + escapeHtml(items[i].childName) + '\\',\\'' + escapeHtml(items[i].childCost) + '\\',\\'' + escapeHtml(items[i].childCostGroup) + '\\')\">';";
+                    "onchange=\"handleCheckboxChange(this, \\'' + escapeHtml(items[i].childName) + '\\',\\'' + escapeHtml(items[i].childCost) + '\\',\\'' + escapeHtml(items[i].childCostGroup) + '\\',\\'' + escapeHtml(items[i].chlditemType) + '\\',\\'' + escapeHtml(items[i].childOptIN) + '\\',\\'' + escapeHtml(items[i].childOptOUt) + '\\',\\'' +  items[i].childIncludePrice + '\\')\">';";
                 html += "  accHtml += '<span class=\"slider\"></span></label>';";
 
                 html += "}";
@@ -748,6 +799,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 html += "container.innerHTML = allAccHtml;";
                 html += "bindAccordions();";
+                html += "document.getElementById('disrebateamount').innerText = Number(total_discountRebate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });";
+                html += "updateTotalAmount();";
                 //Packg  Item Slider on  prefill data
                 html += "if (isPrefilled) {";
                 html += "  prefillChildItems.forEach(function(savedItem) {";
@@ -768,6 +821,31 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  });";
                 html += "    }";// End of isPrefilled
                 //-----------------------
+                // Adopter and Tradein 
+                html += "document.querySelectorAll(\"input[name='tradeAdapDis']\").forEach(function(radio) {";
+                html += "radio.addEventListener('change', function() {";
+                html += "var tradeRow = document.getElementById('row_tradeinrow');";
+                html += "var adopterRow = document.getElementById('row_adopterrow');";
+                html += "const tradeAmount = document.getElementById('tradeinamount');";
+                html += "const adopterAmount = document.getElementById('adopteramount');";
+                html += "var tradeInAmountField = document.getElementById('tradeInAmountWrapper');";
+                html += "if (document.getElementById('tradeIN').checked) {";
+                html += "tradeRow.style.display = '';";
+                html += "adopterRow.style.display = 'none';";
+                html += "tradeInAmountField.style.display = 'block';";
+                html += "adopterAmount.innerText =0;";
+
+                html += "} else if (document.getElementById('adopterdis').checked) {";
+                html += "adopterRow.style.display = '';";
+                html += "tradeRow.style.display = 'none';";
+                html += "tradeInAmountField.style.display = 'none';";
+                html += "adopterAmount.innerText = Number(parentAdopter).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
+                html += "};";
+                html += "updateTotalAmount();";
+                html += "});";
+                html += "});";
+
+                //----END
                 html += "} catch (e) {";
                 html += "container.innerHTML = '<p>Error loading details: ' + escapeHtml(e.message) + '</p>';";
                 html += "}";
@@ -776,6 +854,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "function showTable() {" +
                     "itemDataNew = [];" +
                     "itemData_Option_config = [];" +
+                    "total_discountRebate = 0;" +
                     "var table = document.querySelector('.vehicle-table');" +
                     "if (table) table.style.display = 'table';" +
                     "var detailsSection = document.getElementById('detailsSection');" +
@@ -818,6 +897,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  }";
                 html += "  function updateTotalAmount() {";
                 html += "    var packageAmount = parseAmount('packageAmount');";
+                html += "    var disrebateamount = parseAmount('disrebateamount');";
                 html += "    var financeAmount = parseAmount('financeAmount');";
                 html += "    var insuranceAmount = parseAmount('insuranceAmount');";
                 html += "    var additionalAmount = parseAmount('addtionalAmount');";
@@ -825,8 +905,12 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    var opcamount = parseAmount('opcamount');";
                 html += "    var scwdamount = parseAmount('scwdamount');";
                 html += "    var spcldisamount = parseAmount('spcldisamount');";
+                html += "    var tradeinamount = parseAmount('tradeinamount');";
+                html += "    var adopteramount = parseAmount('adopteramount');";
+                html += "    var cashinoptout = parseAmount('cashinoptout');";
                 html += "    var total = 0;";
                 html += "    total += packageAmount;";
+                html += "    total += disrebateamount;";
                 html += "    total += financeAmount;";
                 html += "    total += insuranceAmount;";
                 html += "    total += additionalAmount;";
@@ -834,6 +918,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    total += opcamount;";
                 html += "    total += scwdamount;";
                 html += "    total += spcldisamount;";
+                html += "    total += tradeinamount;";
+                html += "    total += adopteramount;";
+                html += "    total += cashinoptout;";
                 html += "    document.getElementById('totalAmount').innerText = total.toLocaleString('en-US', { minimumFractionDigits: 2 });";
                 html += "    var coeDisL = parseAmount('nongaurnateelamnt');";
                 html += "    var result = total + coeDisL;";
@@ -850,14 +937,31 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  }";
                 //-------
 
-                html += "function handleCheckboxChange(checkbox, childName,childCost,ChildCostGroup) {" +
+                html += "function handleCheckboxChange(checkbox, childName,childCost,ChildCostGroup,childItemType,OptinValue,OptoutValue,includePrice) {" +
+                    "var final_Cost = 0;" +
+                    "var optInCell;" +
+                    "var include = (includePrice === true || includePrice === 'true');" +
+                    // Determine target cell and cost
+                    "if (childItemType == '2' && !include) {" +   // Can Top Up
+                    "final_Cost = parseFloat(OptinValue) || 0;" +
+                    "optInCell = document.getElementById('addtionalAmount');" +
 
-                    "const optInCell = document.getElementById('addtionalAmount');" +
-                    "const currentOptInValue = parseFloat(optInCell.innerText.replace(/,/g, '')) || 0;" +
-                    "const currentchildCost = parseFloat(childCost) || 0;" +
-                    "const newOptInValue = checkbox.checked" +
-                    "? currentOptInValue + currentchildCost" +
-                    ": currentOptInValue - currentchildCost;" +
+                    "} else if (childItemType == '3' && include) {" +  // Can Opt Out
+                    "final_Cost = parseFloat(OptoutValue) || 0;" +
+                    "optInCell = document.getElementById('cashinoptout');" +
+
+                    "} else {" +
+                    "final_Cost = parseFloat(childCost) || 0;" +
+                    "optInCell = document.getElementById('addtionalAmount');" + // fallback
+                    "}" +
+
+                    // Read current value
+                    "var currentOptInValue = parseFloat(optInCell.innerText.replace(/,/g, '')) || 0;" +
+
+                    // Update based on checkbox state
+                    "var newOptInValue = checkbox.checked" +
+                    "? currentOptInValue + final_Cost" +
+                    ": currentOptInValue - final_Cost;" +
                     "optInCell.innerText = newOptInValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 });";
                 html += "updateTotalAmount();";
                 //value is pushing in array
@@ -967,6 +1071,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  filterInsuranceTable();";
                 html += "  var toggle = document.getElementById('unitSwitch');";
                 html += "  toggle.addEventListener('change', updatedisableRadio);";
+                html += "  var toggleAd = document.getElementById('adopterSwitch');";
+                html += "  toggleAd.addEventListener('change', updatedisableRadio);";
                 html += "  updatedisableRadio();";
 
                 // html += "  var loanInput = document.getElementById('loanamount');";
@@ -1036,10 +1142,31 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 // Funcation call when enter on SCWD field
                 html += "function updateSCWDAmount(input) {";
                 html += "  var value = input.value.replace(/[^0-9.]/g, '');";
-                html += "  input.value = value;";
-                html += "  var num = parseFloat(value);";
-                html += "  var displayValue = value ? '-' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';";
+                html += "  var num = parseFloat(value) || 0;";
+                html += "  if (num > SCWD_lim) {";
+                html += "    alert('Trade-in amount cannot exceed -' + SCWD_lim.toLocaleString('en-US', {minimumFractionDigits: 2}) + '.');";
+                html += "    num = SCWD_lim;";
+                html += "    input.value = SCWD_lim;";
+                html += "  } else {";
+                html += "    input.value = value;";
+                html += "  }";
+                html += "  var displayValue = num ? '-' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';";
                 html += "  document.getElementById('scwdamount').innerText = displayValue;";
+                html += "  updateTotalAmount();";
+                html += "}";
+                // Funcation call when enter on Tradein field
+                html += "function updateTradeINAmount(input) {";
+                html += "  var value = input.value.replace(/[^0-9.]/g, '');";
+                html += "  var num = parseFloat(value) || 0;";
+                html += "  if (num > parentOverTrade_lim) {";
+                html += "    alert('Trade-in amount cannot exceed -' + parentOverTrade_lim.toLocaleString('en-US', {minimumFractionDigits: 2}) + '.');";
+                html += "    num = parentOverTrade_lim;";
+                html += "    input.value = parentOverTrade_lim;";
+                html += "  } else {";
+                html += "    input.value = value;";
+                html += "  }";
+                html += "  var displayValue = num ? '-' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';";
+                html += "  document.getElementById('tradeinamount').innerText = displayValue;";
                 html += "  updateTotalAmount();";
                 html += "}";
 
@@ -1097,7 +1224,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "function updateToggleCount() {";
                 html += "  const packageId = document.getElementById('hidden_packageid').value;";
                 html += "  const counts = {};";
- 
+
                 html += "  const catMap = categoryMapNew[packageId];";
                 html += "  if (catMap) {";
                 html += "    for (const label in catMap) {";
@@ -1146,10 +1273,36 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    driverRadio.disabled = false;";
                 html += "    passengerRadio.disabled = false;";
                 html += "  }";
+                html += "  var toggleAd = document.getElementById('adopterSwitch');";
+                html += "  var tradeIN = document.getElementById('tradeIN');";
+                html += "  var adopterdis = document.getElementById('adopterdis');";
+                html += "var tradeRow = document.getElementById('row_tradeinrow');";
+                html += "var adopterRow = document.getElementById('row_adopterrow');";
+                html += "const tradeAmount = document.getElementById('tradeinamount');";
+                html += "const adopterAmount = document.getElementById('adopteramount');";
+                html += "const tradeInAmountWrapper = document.getElementById('tradeInAmountWrapper');";
+                html += "var tradeInAmount_field = document.getElementById('tradeInAmount_field');";
+
+                html += "  if (!toggleAd.checked) {";
+                html += "    tradeIN.checked = false;";
+                html += "    adopterdis.checked = false;";
+                html += "    tradeIN.disabled = true;";
+                html += "    adopterdis.disabled = true;";
+                html += "adopterRow.style.display = 'none';";
+                html += "tradeRow.style.display = 'none';";
+                html += "tradeAmount.innerText =0;";
+                html += "adopterAmount.innerText =0;";
+                html += "tradeInAmount_field.value ='';";
+                html += "tradeInAmountWrapper.style.display = 'none';";
+                html += "updateTotalAmount();";
+
+                html += "  } else {";
+                html += "    tradeIN.disabled = false;";
+                html += "    adopterdis.disabled = false;";
+                html += "  }";
                 html += "}";
                 // Update Colour Topup Amount
                 html += "function updateColourTopUpAmount(amount) {" +
-
                     "var formattedAmount = parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });" +
                     "document.getElementById('colourTopupAmount').innerText = formattedAmount;" +
                     "updateTotalAmount();" +
@@ -1364,10 +1517,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "panelHtml += '</div> ';";
                 html += '}';
 
-                html += '     container.innerHTML += accHtml + panelHtml;';
-                html += '        }';
+                html += 'container.innerHTML += accHtml + panelHtml;';
+                html += '}';
 
-                html += '        bindAccordions();';
+                html += 'bindAccordions();';
                 html += "if (isPrefilled) {";
                 html += '    if (typeof prefillChildConfig !== "undefined") {';
                 html += '      prefillChildConfig.forEach(function (item) {';
@@ -1666,6 +1819,30 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 html += "<div style='height: 1px; background-color: #ccc; margin: 10px 0;'></div>";
 
+                // Adopter and TradeIN
+                html += "<div class='form-row' style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; margin-top: 10px; padding: 10px; border: 1px solid #e0e0e0; border-radius: 5px;'>";
+
+                html += "<div>";
+                html += "  <div style='margin-bottom: 5px;'>";
+                html += "    <input type='radio' id='tradeIN' name='tradeAdapDis' value='tradeIN'>";
+                html += "    <label for='tradeIN'>Trade-in Discount</label>";
+                html += "  </div>";
+                html += "  <div id='tradeInAmountWrapper' style=' display:none; margin-top:8px; margin-bottom:8px;'>";
+                html += "    <input type='number' id='tradeInAmount_field' oninput='updateTradeINAmount(this)' placeholder='Enter trade-in amount' style='width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;'>";
+                html += "  </div>";
+                html += "  <div>";
+                html += "    <input type='radio' id='adopterdis' name='tradeAdapDis' value='adopterdis'>";
+                html += "    <label for='adopterdis'>Adopter Discount</label>";
+                html += "  </div>";
+                html += "</div>";
+
+                html += "<label class='switch'>";
+                html += "  <input type='checkbox' id='adopterSwitch' checked>";
+                html += "  <span class='slider round'></span>";
+                html += "</label>";
+
+                html += "</div>";
+                // --------
                 html += "<div class='form-row' style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; margin-top: 10px;'>";
                 html += "  <label for='opcdiscount' style='margin-right: 10px;'>Off-Peak Car (OPC) Discount</label>";
                 html += "  <label class='switch' style='margin-right: 10px;'>";
@@ -1704,7 +1881,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "</label>";
 
                 html += "</div>";
-
+                // SCWD
                 html += "<div style='height: 1px; background-color: #ccc; margin: 10px 0;'></div>";
                 html += '<div class="form-row">';
 
@@ -1738,23 +1915,28 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 html += "    <thead>";
                 html += "      <tr style='background-color: #f2f2f2;'>";
-                html += "        <th colspan='2' class='breakdown-title' style='padding: 12px; font-size: 16px; '>Total Amount Breakdown</th>";
+                html += "        <th colspan='2' class='breakdown-title' style='padding: 9px; font-size: 16px; '>Total Amount Breakdown</th>";
                 html += "      </tr>";
                 html += "    </thead>";
 
-                html += "    <tbody>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>List Price</td><td class='price-value' id='packageAmount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0</td></tr>";
-                html += "      <tr   id='row_opcamount' style='display: none;'><td class='price-label' style='padding: 7px; border-top: 1px solid #ddd;'>OPC</td><td class='price-value negative' id='opcamount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>SCWD</td><td class='price-value negative' id='scwdamount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>Special Discount</td><td class='price-value negative' id='spcldisamount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>Discount Rebate</td><td class='price-value negative' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>Finance Rebate</td><td class='price-value negative' id='financeAmount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td   style='padding: 7px; border-top: 1px solid #ddd;'>Insurance Rebate</td><td class='price-value negative' id='insuranceAmount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>Additional Options (Opt-In)</td><td class='price-value positive' id='addtionalAmount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr  ><td  style='padding: 7px; border-top: 1px solid #ddd;'>Top Up Amount (Different Color)</td><td class='price-value positive' id='colourTopupAmount' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0.00</td></tr>";
-                html += "      <tr   id='row_nongaurnateelamnt' style='display: none;'><td style='padding: 7px; border-top: 1px solid #ddd;'>Non-Guaranteed COE Discount L</td><td class='price-value negative' id='nongaurnateelamnt' style='padding: 7px; border-top: 1px solid #ddd; text-align: right;'>0</td></tr>";
-                html += "      <tr style='display: none;'><td>Hidden ID</td><td id='hidden_packageid' style='text-align: right;'>0</td></tr>";
-                html += "    </tbody>";
+                html += "<tbody>";
+                html += "  <tr><td class='price-label'>List Price</td><td class='price-value' id='packageAmount'>0</td></tr>";
+                html += "  <tr id='row_opcamount' style='display: none;'><td class='price-label'>OPC</td><td class='price-value negative' id='opcamount'>0</td></tr>";
+                html += "  <tr id='row_tradeinrow' style='display: none;'><td class='price-label'>Trade In Discount</td><td class='price-value negative' id='tradeinamount'>0.00</td></tr>";
+                html += "  <tr id='row_adopterrow' style='display: none;'><td class='price-label'>Adopter Discount</td><td class='price-value negative' id='adopteramount'>0.00</td></tr>";
+                html += "  <tr id='row_mvc' style='display: none;'><td class='price-label'>MVC Discount</td><td class='price-value negative' id='mvcamount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>SCWD</td><td class='price-value negative' id='scwdamount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Special Discount</td><td class='price-value negative' id='spcldisamount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Discount Rebate</td><td class='price-value negative' id='disrebateamount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Finance Rebate</td><td class='price-value negative' id='financeAmount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Insurance Rebate</td><td class='price-value negative' id='insuranceAmount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Cash-In-Lieu (Opt-Out)</td><td class='price-value positive' id='cashinoptout'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Additional Options (Opt-In)</td><td class='price-value positive' id='addtionalAmount'>0.00</td></tr>";
+                html += "  <tr><td class='price-label'>Top Up Amount (Different Color)</td><td class='price-value positive' id='colourTopupAmount'>0.00</td></tr>";
+                html += "  <tr id='row_nongaurnateelamnt' style='display: none;'><td class='price-label'>Non-Guaranteed COE Discount L</td><td class='price-value negative' id='nongaurnateelamnt'>0</td></tr>";
+                html += "  <tr style='display: none;'><td class='price-label'>Hidden ID</td><td class='price-value' id='hidden_packageid'>0</td></tr>";
+                html += "</tbody>";
+
 
                 html += "  </table>";
 
@@ -1868,7 +2050,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var SCWDItemID = 14813; // SCWD Item ID
                 var addtionalItemID = 14818; // Additional Item ID
                 var specialDiscountItemID = 14869; // Special discount Item ID
-                var DiffColourItemID = 14902; // Special discount Item ID
+                var DiffColourItemID = 14902;
+                var AdopterDisItemID = 14910;
+                var TradeINItemID = 14774;
+                var MVCDiscountItemID = 14913;
+                var OptOutItemID = 14914;
+                var COEDiscountItemID = 14915;
+                var DiscountRebateItemID = 14916;
 
 
                 var child_table = 'recmachcustrecord_parent_package_head';

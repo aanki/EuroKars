@@ -4,11 +4,28 @@
  */
 define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
 
+    // Some Hardoced ids
     var SalesOrder_CustomFrom = 356; //ADVS Vechile SO
+
+    var FinanceRebateItemID = 14801; // Finance Rebate Item ID
+    var InsuranceRebateItemID = 14800; // Insurance Rebate Item ID
+    var OpcDiscountItemID = 14812; // OPC Discount Item ID
+    var SCWDItemID = 14813; // SCWD Item ID
+    var addtionalItemID = 14818; // Additional Item ID
+    var TradeINItemID = 14774;
+    var AdopterDisItemID = 14910;
+    var specialDiscountItemID = 14869;
+    var DiffColourItemID = 14902;
+    var MVCDiscountItemID = 14913;
+    var OptOutItemID = 14914;
+    var COEDiscountItemID = 14915;
+    var DiscountRebateItemID = 14916;
+
     var VSASuccesmsg = '';
     var selected_pckgID = '';
     var TradeIn_record_ID = null;
     var VSA_update_Msg = 'VSA has been updated sucessfully';
+
 
     function post(request) {
 
@@ -247,29 +264,28 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                     });
 
                                     // // Inventory Detail
-                                    // try {
-                                    //     var inventoryDetailSubrecord = soRec.getCurrentSublistSubrecord({
-                                    //         sublistId: 'item',
-                                    //         fieldId: 'inventorydetail'
-                                    //     });
-                                    //     inventoryDetailSubrecord.selectNewLine({
-                                    //         sublistId: 'inventoryassignment'
-                                    //     });
-                                    //     inventoryDetailSubrecord.setCurrentSublistText({
-                                    //         sublistId: 'inventoryassignment',
-                                    //         fieldId: 'issueinventorynumber',
-                                    //         text: VIN_Name
-                                    //     });
-                                    //     inventoryDetailSubrecord.setCurrentSublistValue({
-                                    //         sublistId: 'inventoryassignment',
-                                    //         fieldId: 'quantity',
-                                    //         value: 1
-                                    //     });
-                                    //     inventoryDetailSubrecord.commitLine({ sublistId: 'inventoryassignment' });
-                                    // } catch (e) {
-                                    //     log.error('Error in assignInventoryDetail: ' + e.message);
-
-                                    // }
+                                    try {
+                                        var inventoryDetailSubrecord = soRec.getCurrentSublistSubrecord({
+                                            sublistId: 'item',
+                                            fieldId: 'inventorydetail'
+                                        });
+                                        inventoryDetailSubrecord.selectNewLine({
+                                            sublistId: 'inventoryassignment'
+                                        });
+                                        inventoryDetailSubrecord.setCurrentSublistText({
+                                            sublistId: 'inventoryassignment',
+                                            fieldId: 'issueinventorynumber',
+                                            text: VIN_Name
+                                        });
+                                        inventoryDetailSubrecord.setCurrentSublistValue({
+                                            sublistId: 'inventoryassignment',
+                                            fieldId: 'quantity',
+                                            value: 1
+                                        });
+                                        inventoryDetailSubrecord.commitLine({ sublistId: 'inventoryassignment' });
+                                    } catch (e) {
+                                        log.error('Error in assignInventoryDetail: ' + e.message);
+                                    }
 
                                     soRec.commitLine({ sublistId: 'item' });
 
@@ -296,12 +312,14 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                     response.push(res);
                                     return;
                                 }
-                            } else {
-                                res.statusCode = 500;
-                                res.statusMessage = 'Stock is already assigned for this model';
-                                response.push(res);
-                                return;
                             }
+
+                            // else {
+                            //     res.statusCode = 500;
+                            //     res.statusMessage = 'Stock is already assigned for this model';
+                            //     response.push(res);
+                            //     return;
+                            // }
                         }
 
                         var soId = soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
@@ -722,7 +740,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                     sublistId: 'item',
                                     fieldId: 'custcol_advs_st_equip_sales'
                                 });
-                                log.debug('lineVINId', lineVINId + ' Assign_VIN_ID ' + Assign_VIN_ID+' VIN_Name '+VIN_Name);
+                                log.debug('lineVINId', lineVINId + ' Assign_VIN_ID ' + Assign_VIN_ID + ' VIN_Name ' + VIN_Name);
 
                                 if (inventoryType == '1' && lineVINId == Assign_VIN_ID) {
 
@@ -731,34 +749,16 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                         fieldId: 'custcol_advs_st_equip_sales',
                                         value: ''
                                     });
-                                    // // remove Inventoiry Detail
-                                    // try {
-                                    //     var inventoryDetailSubrecord = soRec.getCurrentSublistSubrecord({
-                                    //         sublistId: 'item',
-                                    //         fieldId: 'inventorydetail'
-                                    //     });
-
-                                    //     var invAssignCount = inventoryDetailSubrecord.getLineCount({
-                                    //         sublistId: 'inventoryassignment'
-                                    //     });
-
-                                    //     for (var j = invAssignCount - 1; j >= 0; j--) {
-                                    //         var currentVIN = inventoryDetailSubrecord.getSublistText({
-                                    //             sublistId: 'inventoryassignment',
-                                    //             fieldId: 'issueinventorynumber',
-                                    //             line: j
-                                    //         });
-
-                                    //         if (currentVIN === VIN_Name) {
-                                    //             inventoryDetailSubrecord.removeLine({
-                                    //                 sublistId: 'inventoryassignment',
-                                    //                 line: j
-                                    //             });
-                                    //         }
-                                    //     }
-                                    // } catch (e) {
-                                    //     log.error('No inventory detail for line ' + i, e.message);
-                                    // }
+                                    // remove Inventoiry Detail
+                                    try {
+                                        soRec.removeCurrentSublistSubrecord({
+                                            sublistId: 'item',
+                                            fieldId: 'inventorydetail'
+                                        });
+                                    } catch (e) {
+                                        log.error('No inventory detail for line ' + i, e.message);
+                                    }
+                                    //---
                                     soRec.commitLine({ sublistId: 'item' });
                                     updated = true;
                                     break;
@@ -1291,6 +1291,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             customerRec.setValue({ fieldId: 'companyname', value: entry.customerNRICName });
         } else {
             customerRec.setValue({ fieldId: 'isperson', value: 'T' });
+            customerRec.setValue({ fieldId: 'salutation', value: entry.customerSalutation });
             customerRec.setValue({ fieldId: 'firstname', value: entry.customerNRICName });
             customerRec.setValue({ fieldId: 'mobilephone', value: entry.customerMobilePhone });
 
@@ -1374,12 +1375,12 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             soRec.setValue({ fieldId: 'custbody_special_dis_remarks', value: entry.specialDiscountRemark });
             soRec.setText({ fieldId: 'custbody_special_dis_status', text: entry.specialDiscountStatus });
             soRec.setValue({ fieldId: 'custbody_number_of_coebids', value: entry.numberOfCOEBids });
-
-
             VSASuccesmsg = 'VSA has been created sucessfully'
         }//
         soRec.setValue({ fieldId: 'custbody_obu_touchscreen', value: entry.obuTouchScreen });
         soRec.setValue({ fieldId: 'custbody_obu_install_loc', value: entry.obuInstallationLocation });
+        soRec.setValue({ fieldId: 'custbody_opc_checkbox', value: entry.offPeakCar });
+        soRec.setValue({ fieldId: 'custbody_advs_quick_vsa', value: entry.quickVSA });
         if (entry.fleetVSA)
             soRec.setValue({ fieldId: 'custbody_advs_fleet_vsa', value: entry.fleetVSA });
 
@@ -1407,6 +1408,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             soRec.setValue({ fieldId: 'custbody_advs_loan_terms', value: entry.term });
             soRec.setValue({ fieldId: 'custbody_interest_rate', value: entry.interestRate });
             soRec.setValue({ fieldId: 'custbody_monthly_installement', value: entry.monthlyInstallment });
+            soRec.setValue({ fieldId: 'custbody_interest_pack_code', value: entry.interestPackageCode });
 
         } if (entry.addInsurance) {
             soRec.setValue({ fieldId: 'custbodyadvs_ins_per', value: entry.insurancePeriod });
@@ -1536,17 +1538,28 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         var tradeInDiscount = entry.tradeInDiscount;
         var adopterDiscount = entry.adopterDiscount;
         var specialDiscount = entry.specialDiscount;
+        var discountRebate = entry.discountRebate;
+        var optOutCashInLieu = entry.optOutCashInLieu;
+        var mvcDiscount = entry.mvcDiscount;
+        var differentColourTopUpAmount = entry.differentColourTopUpAmount;
+        var coeDiscount = entry.coeDiscount;
 
-        var FinanceRebateItemID = 14801; // Finance Rebate Item ID
-        var InsuranceRebateItemID = 14800; // Insurance Rebate Item ID
-        var OpcDiscountItemID = 14812; // OPC Discount Item ID
-        var SCWDItemID = 14813; // SCWD Item ID
-        var addtionalItemID = 14818; // Additional Item ID
-        var TradeINItemID = 14774;
-        var AdopterDisItemID = 14910;
-        var specialDiscountItemID = 14869;
+        var validAddition_amt = false;
+        var amtNum = Number(addtionalAmount); 
+        if (!isNaN(amtNum) && amtNum !== 0) {
+            validAddition_amt = true;
+        }
+         var validOptOut_amt = false;
+        var optOutCashInLieuNum = Number(optOutCashInLieu); 
+        if (!isNaN(optOutCashInLieuNum) && optOutCashInLieuNum !== 0) {
+            validOptOut_amt = true;
+        }
 
-        if (insuranceRebate < 0 || FinanceRebate < 0 || OpcDiscount < 0 || SCWD_rebate < 0 || tradeInDiscount < 0 || adopterDiscount < 0 || specialDiscount < 0 || addtionalAmount > 0) {
+
+        if (insuranceRebate < 0 || FinanceRebate < 0 || OpcDiscount < 0 || SCWD_rebate < 0 || tradeInDiscount < 0 ||
+            adopterDiscount < 0 || specialDiscount < 0 || validAddition_amt || discountRebate > 0 || validOptOut_amt || mvcDiscount < 0 ||
+            coeDiscount < 0 || differentColourTopUpAmount > 0) {
+
             var itemUpdateMap = [];
 
             if (insuranceRebate < 0) {
@@ -1570,8 +1583,23 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             if (specialDiscount < 0) {
                 itemUpdateMap.push({ id: specialDiscountItemID, rate: specialDiscount });
             }
-            if (addtionalAmount > 0) {
+            if (validAddition_amt) {
                 itemUpdateMap.push({ id: addtionalItemID, rate: addtionalAmount });
+            }
+            if (discountRebate > 0) {
+                itemUpdateMap.push({ id: DiscountRebateItemID, rate: discountRebate });
+            }
+            if (differentColourTopUpAmount > 0) {
+                itemUpdateMap.push({ id: DiffColourItemID, rate: differentColourTopUpAmount });
+            }
+            if (validOptOut_amt) {
+                itemUpdateMap.push({ id: OptOutItemID, rate: optOutCashInLieu });
+            }
+            if (mvcDiscount < 0) {
+                itemUpdateMap.push({ id: MVCDiscountItemID, rate: mvcDiscount });
+            }
+            if (coeDiscount < 0) {
+                itemUpdateMap.push({ id: COEDiscountItemID, rate: coeDiscount });
             }
 
             for (var i = 0; i < itemUpdateMap.length; i++) {
@@ -1661,6 +1689,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             ? record.load({ type: 'customrecord_advs_tradein_info_opp', id: TradinID, isDynamic: true })
             : record.create({ type: 'customrecord_advs_tradein_info_opp', isDynamic: true });
         rec.setValue({ fieldId: 'custrecord_advs_t_i_i_model_no', value: entry.tradeInVehicleModel });
+        rec.setValue({ fieldId: 'custrecord_trade_in_variant', value: entry.tradeInVehicleVariant });
         rec.setValue({ fieldId: 'custrecord_advs_t_i_o_brand', value: entry.tradeInVehicleMake });
         rec.setValue({ fieldId: 'custrecord_purchaser_name', value: entry.tradeINpurchaserdmsid });
         if (entry.tradeInVehicleRegistrationYear) {
@@ -1682,6 +1711,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         }
 
         rec.setValue({ fieldId: 'custrecord_advs_mileage', value: entry.tradeInVehicleMileage });
+        rec.setValue({ fieldId: 'custrecord415', value: entry.tradeInVehicleOverTrade });
         rec.setValue({ fieldId: 'custrecord413', value: entry.tradeInVehicleRegistrationNumber });
         rec.setValue({ fieldId: 'custrecord_advs_t_i_o_trade_amount', value: entry.tradeInVehicleTradeInValue });
         rec.setValue({ fieldId: 'custrecord_advs_t_i_info_so', value: SalesOrderID });

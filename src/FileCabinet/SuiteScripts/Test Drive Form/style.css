@@ -548,14 +548,20 @@ input:checked+.slider:before {
 }
 
 .price-label {
-  font-weight: 500;
-  color: #4b5563;
-}
+    padding: 7px;
+    border-top: 1px solid #ddd;
+    font-size: 14px; /* smaller font */
+    color: #1a202c;
+  }
 
-.price-value {
-  font-weight: 600;
-  color: #1a202c;
-}
+  .price-value {
+    padding: 7px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+    font-size: 14px; /* smaller font */
+    color: #1a202c;
+    font-weight: bold;
+  }
 
 .summary-title {
   font-size: 20px;
