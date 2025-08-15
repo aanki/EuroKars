@@ -482,9 +482,9 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                     log.debug('POST request KICKSTART_PDI', entry);
 
                     // Mandatory key
-                    if (!entry.sfId) {
+                    if (!entry.sfId || !entry.vehicleStockDmsId) {
                         res.statusCode = 500;
-                        res.statusMessage = 'Required: sfId';
+                        res.statusMessage = 'Required: sfId , vehicleStockDmsId';
                         response.push(res);
                         return;
                     }
@@ -495,29 +495,70 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         if (entry.vsaStatus) {
                             stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.vsaStatus);
                         }
+                        
+                        var PDI_Id = find_Record_Common('customrecord_pdi_section', entry.sfId, 'custrecord_salesforce_id_pdi');
+
+                        var rec = PDI_Id
+                            ? record.load({ type: 'customrecord_pdi_section', id: PDI_Id, isDynamic: true })
+                            : record.create({ type: 'customrecord_pdi_section', isDynamic: true });
+
+                        rec.setValue({ fieldId: 'custrecord_advs_transaction', value: SoId });
+                        if (entry.registrationDate) {
+                            var registrationDate = parseDateFromDDMMYYYY(entry.registrationDate);
+                            log.debug('registrationDate', registrationDate);
+                            rec.setValue({ fieldId: 'custrecord_registration_date', value: registrationDate });
+                        }
+                        if (entry.estimatedDeliveryDatePDI) {
+                            var estimatedDeliveryDatePDI = parseDateFromDDMMYYYY(entry.estimatedDeliveryDatePDI);
+                            rec.setValue({ fieldId: 'custrecord_estmt_delivery_date_pdi', value: estimatedDeliveryDatePDI });
+                        }
+                        rec.setValue({ fieldId: 'custrecord_pdi_ref_no', value: entry.pdiReferenceNo });
+                        rec.setValue({ fieldId: 'custrecord_pdi_remarks', value: entry.pdiRemarks });
+                        rec.setValue({ fieldId: 'custrecord_sm_pdi_notification', value: entry.pdiNotificationSent });
+                        rec.setValue({ fieldId: 'custrecord_sm_allows_pdi_notification', value: entry.allowsPDINotification });
+                        rec.setValue({ fieldId: 'custrecord_pdi_sold_chit_sent', value: entry.pdiSoldChitSent });
+                        rec.setValue({ fieldId: 'custrecord_start_pdi_approval_process', value: entry.startPDIApprovalProcess });
+                        rec.setValue({ fieldId: 'custrecord_salesforce_id_pdi', value: entry.sfId });
+                        rec.setValue({ fieldId: 'custrecord_advs_pdi_status', value: stausID });
+                        var PDIRec=rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+                        //PDI line
+                        // soRec.selectNewLine({ sublistId: child_PDI_table });
+
+                        // if (entry.registrationDate) {
+                        //     var registrationDate = parseDateFromDDMMYYYY(entry.registrationDate);
+                        //     soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_registration_date', value: registrationDate });
+                        // }
+
+                        // if (entry.estimatedDeliveryDatePDI) {
+                        //     var estimatedDeliveryDatePDI = parseDateFromDDMMYYYY(entry.estimatedDeliveryDatePDI);
+                        //     soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_estmt_delivery_date_pdi', value: estimatedDeliveryDatePDI });
+                        // }
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_ref_no", value: entry.pdiReferenceNo });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_remarks", value: entry.pdiRemarks });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_pdi_notification", value: entry.pdiNotificationSent });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_allows_pdi_notification", value: entry.allowsPDINotification });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_sold_chit_sent", value: entry.pdiSoldChitSent });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_start_pdi_approval_process", value: entry.startPDIApprovalProcess });
+                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_advs_pdi_status", value: stausID });
+                        // soRec.commitLine({ sublistId: child_PDI_table });
+
                         var soRec = record.load({ type: record.Type.SALES_ORDER, id: SoId, isDynamic: true });
+                        soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_assigned', value: true }); // Stock Assigned
                         var veh_assigned = soRec.getValue({ fieldId: 'custbody_advs_vehicle_stock_assigned' });
                         soRec.setValue({ fieldId: 'custbody_advs_pdi_process_status', value: stausID });
-                        //PDI line
-                        soRec.selectNewLine({ sublistId: child_PDI_table });
-                        if (entry.registrationDate instanceof Date) {
-                            soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_registration_date', value: entry.registrationDate });
-                        }
+                        soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
 
-                        if (entry.estimatedDeliveryDatePDI instanceof Date) {
-                            soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_estmt_delivery_date_pdi', value: entry.estimatedDeliveryDatePDI });
-                        }
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_ref_no", value: entry.pdiReferenceNo });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_remarks", value: entry.pdiRemarks });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_pdi_notification", value: entry.pdiNotificationSent });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_allows_pdi_notification", value: entry.allowsPDINotification });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_sold_chit_sent", value: entry.pdiSoldChitSent });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_start_pdi_approval_process", value: entry.startPDIApprovalProcess });
-                        soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_advs_pdi_status", value: stausID });
-                        soRec.commitLine({ sublistId: child_PDI_table });
-                        soRec.save();
 
-                        res.dmsId = SoId;
+                        record.submitFields({
+                            type: 'customrecord_advs_vm',
+                            id: entry.vehicleStockDmsId,
+                            values: {
+                                custrecord_advs_vm_reservation_status: '5'// Assigned
+
+                            }
+                        });
+
+                        res.dmsId = PDIRec;
                         res.vehicleStockAssigned = veh_assigned;
                         res.statusCode = 200;
                         res.statusMessage = 'PDI has been triggred sucessfully';
@@ -1545,19 +1586,26 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         var coeDiscount = entry.coeDiscount;
 
         var validAddition_amt = false;
-        var amtNum = Number(addtionalAmount); 
+        var amtNum = Number(addtionalAmount);
         if (!isNaN(amtNum) && amtNum !== 0) {
             validAddition_amt = true;
         }
-         var validOptOut_amt = false;
-        var optOutCashInLieuNum = Number(optOutCashInLieu); 
+        var validOptOut_amt = false;
+        var optOutCashInLieuNum = Number(optOutCashInLieu);
         if (!isNaN(optOutCashInLieuNum) && optOutCashInLieuNum !== 0) {
             validOptOut_amt = true;
         }
+        var validDisrebate_amt = false;
+        var discountRebateNum = Number(discountRebate);
+        if (!isNaN(discountRebateNum) && discountRebateNum !== 0) {
+            validDisrebate_amt = true;
+        }
+        log.debug('validDisrebate_amt', validDisrebate_amt);
+        log.debug('validAddition_amt', validAddition_amt);
 
 
         if (insuranceRebate < 0 || FinanceRebate < 0 || OpcDiscount < 0 || SCWD_rebate < 0 || tradeInDiscount < 0 ||
-            adopterDiscount < 0 || specialDiscount < 0 || validAddition_amt || discountRebate > 0 || validOptOut_amt || mvcDiscount < 0 ||
+            adopterDiscount < 0 || specialDiscount < 0 || validAddition_amt || validDisrebate_amt || validOptOut_amt || mvcDiscount < 0 ||
             coeDiscount < 0 || differentColourTopUpAmount > 0) {
 
             var itemUpdateMap = [];
@@ -1586,7 +1634,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
             if (validAddition_amt) {
                 itemUpdateMap.push({ id: addtionalItemID, rate: addtionalAmount });
             }
-            if (discountRebate > 0) {
+            if (validDisrebate_amt) {
                 itemUpdateMap.push({ id: DiscountRebateItemID, rate: discountRebate });
             }
             if (differentColourTopUpAmount > 0) {

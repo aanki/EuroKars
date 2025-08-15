@@ -159,7 +159,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 " <div class='header-actions'>";
                 html += "<div id='bottomButtons' style='margin-top: 20px; display: flex; gap: 10px; align-items: center;'>" +
                     "<button id='btnsubmit' type='submit' class='btn btn-primary' onclick='submitPackage()' style='display:none; width:auto;'>SUBMIT</button>" +
-                    "<button id='btnback' class='btn btn-secondary' onclick='showTable()'  style='display:none;'>BACK</button>" +
+                    "<button id='btnback' class='btn btn-secondary' onclick='location.reload()'  style='display:none;'>BACK</button>" +
                     "<button class='btn btn-danger' onclick='window.parent.closePopup()' style='margin-left:auto;'>CANCEL</button>" +
                     "</div>" +
                     "</div>" +
@@ -191,8 +191,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 });
 
                 html += "</tbody></table></div></div>";
-
-
 
                 html += "<div class='container mt-3 form-wrapper'>" +
                     "<form id='packageForm'>";
@@ -453,7 +451,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var itemSearch = search.create({
                     type: 'customrecord_insurance_susidy_rate',
                     filters: [['isinactive', 'is', 'F']],
-                    columns: [search.createColumn({ name: 'custrecord_insurance_period', sort: search.Sort.ASC }), 'custrecord_insurance_susidy_amount', 'custrecord_insurance_company', 'custrecord_advs_insurance_com']
+                    columns: [search.createColumn({ name: 'custrecord_insurance_period', sort: search.Sort.ASC }), 'custrecord_insurance_susidy_amount',
+                        'custrecord_insurance_company', 'custrecord_advs_insurance_com', 'custrecord_advs_sales_con_comm_rate', 'custrecord_advs_sales_consultant_com_rn',
+                        'custrecord_advs_incentive', 'custrecord_advs_insurance_rate_nb', 'custrecord_advs_insurance_rate_rn']
                 });
                 itemSearch.run().each(function (result) {
                     insuranceRate.push({
@@ -462,7 +462,12 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         InsuraneAmount: parseFloat(result.getValue('custrecord_insurance_susidy_amount')),
                         InsuraneComAIGText: result.getText('custrecord_advs_insurance_com'),
                         InsuraneComAIGId: result.getValue('custrecord_advs_insurance_com'),
-                        InsuranceCompany: result.getValue('custrecord_insurance_company')
+                        InsuranceCompany: result.getValue('custrecord_insurance_company'),
+                        InsuranceSalesCommisRateNB: result.getValue('custrecord_advs_sales_con_comm_rate'),
+                        InsuranceSalesCommisRateRN: result.getValue('custrecord_advs_sales_consultant_com_rn'),
+                        InsuranceIncentive: result.getValue('custrecord_advs_incentive'),
+                        InsuranceRateNB: result.getValue('custrecord_advs_insurance_rate_nb'),
+                        InsuranceRateRN: result.getValue('custrecord_advs_insurance_rate_rn')
 
                     });
                     return true;
@@ -474,7 +479,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     filters: [['isinactive', 'is', 'F']],
                     columns: ['custrecord_bank_frate', 'custrecord_bank_package_frate', 'custrecord_finance_term',
                         'custrecord_sdate_frate', 'custrecord_edate_frate', 'custrecord_company_frate', 'custrecord_finance_loan_min',
-                        'custrecord_finance_loan_max', 'custrecord_finance_interest_rate', 'custrecord_finance_rebate'
+                        'custrecord_finance_loan_max', 'custrecord_finance_interest_rate', 'custrecord_finance_rebate',
+                        'custrecordadvs_sales_consultant_com_rate', 'custrecord_advs_bank_incentine_value', 'custrecord_advs_finance_comm_rate'
                     ]
                 });
                 itemSearch.run().each(function (result) {
@@ -487,7 +493,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         FinancetermText: result.getText('custrecord_finance_term'),
                         FinanceEnddate: result.getValue('custrecord_edate_frate'),
                         FinanceRebate: result.getValue('custrecord_finance_rebate'),
-                        FinanceIntrate: result.getValue('custrecord_finance_interest_rate')
+                        FinanceIntrate: result.getValue('custrecord_finance_interest_rate'),
+                        FinanceSalesCommis: result.getValue('custrecordadvs_sales_consultant_com_rate'),
+                        FinanceBankInc: result.getValue('custrecord_advs_bank_incentine_value'),
+                        FinanceCommisRate: result.getValue('custrecord_advs_finance_comm_rate')
                     });
                     return true;
                 });
@@ -639,6 +648,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "var parentOverTrade_lim = '';";
                 html += "var SCWD_lim = '';";
                 html += "var total_discountRebate = 0;";
+                html += "var Insurance_commiRateNB = '';";
+                html += "var Insurance_commiRateRN = '';";
+                html += "var Fin_BankIncentive = '';";
+                html += "var Fin_Commi_rate = '';";
 
                 html += "var financerate = " + JSON.stringify(financerate) + ";";
 
@@ -762,7 +775,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "if (!items[i].childIncludePrice && items[i].chlditemType=='1') {";
                 html += "    total_discountRebate = total_discountRebate + parseFloat(items[i].childCost || 0);";
                 html += "}";
-               
+
                 //get Opt-Out Value /Opt-IN Value to show
                 html += "var costValue = 0;";
                 html += "if (String(items[i].chlditemType) === '2') {"; // Can Top Up
@@ -776,7 +789,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 //-----
                 html += "accHtml += '<div class=\"panel\" style=\"display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; margin-top: 12px; border-bottom: 1px solid #ccc; padding-bottom: 8px;\">';";
 
-                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + ' - </span><span style=\"color: green; font-weight: bold;\">$' + costValue + '</span></div>'; ";
+                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + '  </span><span style=\"color: green; font-weight: bold;\">$' + costValue + '</span></div>'; ";
 
                 //---------Adding lock or slider based on checkbox
                 html += "if (items[i].chlditemType=='1') {";
@@ -1060,6 +1073,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    if (match) {";
                 html += "    last_InsuranceAmount= (-1 * match.InsuraneAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });";
                 html += "    document.getElementById('insuranceAmount').innerText = (-1 * match.InsuraneAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });";
+                html += "    Insurance_commiRateNB=match.InsuranceRateNB;";
+                html += "    Insurance_commiRateRN=match.InsuranceRateRN;";
                 html += "    updateTotalAmount();";
                 html += "    }";
                 html += "  }";
@@ -1361,6 +1376,18 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  var SCWDAmountText = document.getElementById('scwdamount')?.innerText || '0';";
                 html += "  var SCWDAmount = parseFloat(SCWDAmountText.replace(/[^0-9.-]/g, '')) || 0;";
 
+                html += "  var tradeinamountText = document.getElementById('tradeinamount')?.innerText || '0';";
+                html += "  var tradeinamount = parseFloat(tradeinamountText.replace(/[^0-9.-]/g, '')) || 0;";
+
+                html += "  var adopteramountText = document.getElementById('adopteramount')?.innerText || '0';";
+                html += "  var adopteramount = parseFloat(adopteramountText.replace(/[^0-9.-]/g, '')) || 0;";
+
+                html += "  var disrebateamountText = document.getElementById('disrebateamount')?.innerText || '0';";
+                html += "  var disrebateamount = parseFloat(disrebateamountText.replace(/[^0-9.-]/g, '')) || 0;";
+
+                html += "  var cashinoptoutText = document.getElementById('cashinoptout')?.innerText || '0';";
+                html += "  var cashinoptout = parseFloat(cashinoptoutText.replace(/[^0-9.-]/g, '')) || 0;";
+
                 html += "  var spcldisamountText = document.getElementById('spcldisamount')?.innerText || '0';";
                 html += "  var spcldisAmount = parseFloat(spcldisamountText.replace(/[^0-9.-]/g, '')) || 0;";
                 //Inside Submit() Get Dropdowns Value
@@ -1397,6 +1424,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      insuranceAmount: insuranceAmount,";
                 html += "      OpcAmount: OpcAmount,";
                 html += "      SCWDAmount: SCWDAmount,";
+                html += "      tradeinamount: tradeinamount,";
+                html += "      adopteramount: adopteramount,";
+                html += "      disrebateamount: disrebateamount,";
+                html += "      cashinoptout: cashinoptout,";
                 html += "      ListPrice: packageAmount,";
                 html += "      SpecialDis: spcldisAmount,";
                 html += "      OBU: obuTouchEnabled,";
@@ -1404,6 +1435,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      SpclDisciunt_level: SpclDisciunt_level,";
                 html += "      Customer: Customer,";
                 html += "      ModelText: ModelText,";
+                html += "      Insurance_commiRateNB: Insurance_commiRateNB,";
+                html += "      Insurance_commiRateRN: Insurance_commiRateRN,";
+                html += "      Fin_Commi_rate: Fin_Commi_rate,";
+                html += "      Fin_BankIncentive: Fin_BankIncentive,";
                 html += "      optionconfigAmount: optionconfigAmount";
                 html += "    })";
                 html += "  })";
@@ -1566,6 +1601,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "                  '<td style=\"padding: 10px; border: 1px solid #ccc;\">' + item.FinanceRebate + '</td>' +";
                 html += "                '</tr>';";
                 html += "        tbody.innerHTML += row;";
+                html += "        Fin_BankIncentive=item.FinanceBankInc;";
+                html += "        Fin_Commi_rate=item.FinanceCommisRate;";
                 html += "      }";
                 html += "    });";
                 html += "  }";
@@ -2034,6 +2071,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var transtype = requestBody.transtype;
                 var OpcDiscount = requestBody.OpcAmount;
                 var SCWdDiscount = requestBody.SCWDAmount;
+                var tradeinamount = requestBody.tradeinamount;
+                var adopteramount = requestBody.adopteramount;
+                var disrebateamount = requestBody.disrebateamount;
+                var cashinoptout = requestBody.cashinoptout;
                 var addtionalAmount = requestBody.addtionalAmount;
                 var colourTopupAmount = requestBody.colourTopupAmount;
                 var optionconfigAmount = requestBody.optionconfigAmount;
@@ -2043,6 +2084,11 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var Obu_loc = requestBody.Obu_loc;
                 var ModelText = requestBody.ModelText;
                 var Customer = requestBody.Customer;
+                var Insurance_commiRateNB = requestBody.Insurance_commiRateNB;
+                var Insurance_commiRateRN = requestBody.Insurance_commiRateRN;
+                var Fin_Commi_rate = requestBody.Fin_Commi_rate;
+                var Fin_BankIncentive = requestBody.Fin_BankIncentive;
+
 
                 var FinanceRebateItemID = 14801; // Finance Rebate Item ID
                 var InsuranceRebateItemID = 14800; // Insurance Rebate Item ID
@@ -2204,6 +2250,16 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 soRec.setValue({ fieldId: 'custbody_special_dis', value: SpecialDis });
                 soRec.setValue({ fieldId: 'custbody_obu_touchscreen', value: OBU });
                 soRec.setValue({ fieldId: 'custbody_obu_install_loc', value: Obu_loc });
+                soRec.setValue({ fieldId: 'custbody_advs_fin_bank_inc', value: Fin_BankIncentive });
+                if (Fin_Commi_rate) {
+                    Fin_Commi_rate = String(Fin_Commi_rate);                // force to string first
+                    if (Fin_Commi_rate.indexOf('%') > -1) {       // check if it has %
+                        Fin_Commi_rate = Fin_Commi_rate.replace('%', '');
+                    }
+                }
+                soRec.setValue({ fieldId: 'custbody_advs_fin_comm_rate', value: Fin_Commi_rate });
+                soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_nb', value: Insurance_commiRateNB });
+                soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_rn', value: Insurance_commiRateRN });
 
                 //Update Rate on
                 soRec.selectLine({ sublistId: 'item', line: LineNum });
@@ -2224,8 +2280,25 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 });
                 soRec.commitLine({ sublistId: 'item' });
 
+                var validAddition_amt = false;
+                var amtNum = Number(addtionalAmount);
+                if (!isNaN(amtNum) && amtNum !== 0) {
+                    validAddition_amt = true;
+                }
+                var validOptOut_amt = false;
+                var optOutCashInLieuNum = Number(cashinoptout);
+                if (!isNaN(optOutCashInLieuNum) && optOutCashInLieuNum !== 0) {
+                    validOptOut_amt = true;
+                }
+                var validDisrebate_amt = false;
+                var discountRebateNum = Number(disrebateamount);
+                if (!isNaN(discountRebateNum) && discountRebateNum !== 0) {
+                    validDisrebate_amt = true;
+                }
+
                 // Add new items
-                if (insuranceAmount < 0 || financeAmount < 0 || OpcDiscount < 0 || SCWdDiscount < 0 || SpecialDis < 0 || addtionalAmount > 0 || colourTopupAmount > 0) {
+                if (insuranceAmount < 0 || financeAmount < 0 || OpcDiscount < 0 || SCWdDiscount < 0 || SpecialDis < 0 || validAddition_amt || validOptOut_amt
+                    || tradeinamount < 0 || adopteramount < 0 || validDisrebate_amt || colourTopupAmount > 0) {
                     var itemUpdateMap = [];
 
                     if (insuranceAmount < 0) {
@@ -2243,15 +2316,32 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     if (SpecialDis < 0) {
                         itemUpdateMap.push({ id: specialDiscountItemID, rate: SpecialDis });
                     }
-                    if (addtionalAmount > 0) {
+                    if (validAddition_amt) {
                         itemUpdateMap.push({ id: addtionalItemID, rate: addtionalAmount });
                     }
                     if (colourTopupAmount > 0) {
                         itemUpdateMap.push({ id: DiffColourItemID, rate: colourTopupAmount });
                     }
+                    if (validOptOut_amt) {
+                        itemUpdateMap.push({ id: OptOutItemID, rate: cashinoptout });
+                    }
+                    if (validDisrebate_amt) {
+                        itemUpdateMap.push({ id: DiscountRebateItemID, rate: disrebateamount });
+                    }
+                    if (SCWdDiscount < 0) {
+                        itemUpdateMap.push({ id: SCWDItemID, rate: SCWdDiscount });
+                    }
+                    if (tradeinamount < 0) {
+                        itemUpdateMap.push({ id: TradeINItemID, rate: tradeinamount });
+                    }
+                    if (adopteramount < 0) {
+                        itemUpdateMap.push({ id: AdopterDisItemID, rate: adopteramount });
+                    }
 
+              
                     // First Remove existing Rebate Discount Lines
-                    var itemIdsToDelete = [FinanceRebateItemID, InsuranceRebateItemID, OpcDiscountItemID, SCWDItemID, specialDiscountItemID, addtionalItemID];
+                    var itemIdsToDelete = [FinanceRebateItemID, InsuranceRebateItemID, OpcDiscountItemID, SCWDItemID, specialDiscountItemID, addtionalItemID,
+                        DiffColourItemID,AdopterDisItemID,TradeINItemID,OptOutItemID,DiscountRebateItemID];
                     var lineCount = soRec.getLineCount({ sublistId: 'item' });
 
                     for (var i = lineCount - 1; i >= 0; i--) {

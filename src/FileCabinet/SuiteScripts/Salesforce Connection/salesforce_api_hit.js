@@ -58,7 +58,12 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					} else if (custscript_record_type == 'customrecord_finance_rate') {
 						push_finance_rate(header, recordId, NewDateString);
 					}
-
+					else if (custscript_record_type == 'salesorder') {
+						push_vsa_vehicle_fin_cleared(header, recordId, NewDateString);
+					}
+					else if (custscript_record_type == 'customerdeposit') {
+						push_deposit_bank_cleared(header, recordId, NewDateString);
+					}
 
 				} else {// means its triggered from Scheduled Script
 
@@ -629,7 +634,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response finance_rate', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance','custrecord_sf_res_fin');
+				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance', 'custrecord_sf_res_fin');
 				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
 
 			} catch (error) {
@@ -840,8 +845,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					headers: head,
 					body: jsonString_model
 				});
-				var responseData = JSON.parse(postResponse.body); 
-				log.debug('POST response push_vsa_pacakge',responseData);
+				var responseData = JSON.parse(postResponse.body);
+				log.debug('POST response push_vsa_pacakge', responseData);
 
 				update_sfid_indms(postResponse.body, 'customrecord_vsa_package', 'custrecord_salesforce_id_package', 'custrecord_sf_res_pckg');
 				if (responseData[0].statusCode === '200' || responseData[0].statusCode === '201') {
@@ -1386,6 +1391,180 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 			}
 		}
+		function push_vsa_vehicle_fin_cleared(head, recordId, modified_date) {
+
+			try {
+				var custom_filter = "";
+				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
+					custom_filter = [
+						["internalid", "anyof", recordId]
+					]
+				}
+				else {
+					var custom_filter = [
+						["isinactive", "is", "F"],
+						"AND",
+						["custbody_advs_salesforceid", "isnotempty", ""],
+						"AND",
+						["lastmodified", "onorafter", modified_date]
+					]
+				}
+				log.debug("salesorder", custom_filter);
+				var searchResults = search.create({
+					type: "salesorder",
+					filters: custom_filter,
+					columns: [
+						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custbody_advs_vehicle_admin_cleared" }),
+						search.createColumn({ name: "custbody_fin_cleared" }),
+						search.createColumn({ name: "custbody_advs_salesforceid" })
+
+					]
+				});
+				const modelList = [];
+				var UniqueModelDesc = {};
+				const pagedData = searchResults.runPaged({ pageSize: 1000 });
+				pagedData.pageRanges.forEach(function (pageRange) {
+					const page = pagedData.fetch({ index: pageRange.index });
+
+					page.data.forEach(function (result) {
+
+						const internalid = result.getValue({ name: "internalid" });
+						const veh_cleared = result.getValue({ name: "custbody_advs_vehicle_admin_cleared" });
+						const fin_cleared = result.getValue({ name: "custbody_fin_cleared" });
+						const sf_id = result.getValue({ name: "custbody_advs_salesforceid" });
+
+
+						if (!UniqueModelDesc[internalid]) {
+							UniqueModelDesc[internalid] = true;
+
+							if (veh_cleared || fin_cleared) {
+								modelList.push({
+									dmsId: internalid,
+									action: 'VA_CLEARED',
+									vehicleAdminCleared: veh_cleared
+								});
+								modelList.push({
+									dmsId: internalid,
+									action: 'FIN_CLEARED',
+									vehicleAdminCleared: fin_cleared
+								});
+
+							}
+
+						}
+					});
+				});
+				var jsonString_model = JSON.stringify(modelList);
+				log.debug('POST jsonString push_vsa_vehicle_fin_cleared', jsonString_model);
+
+				//---hit POST request-----------
+				const postResponse = https.post({
+					url: endPoint_URL + 'updateVSA',
+					headers: head,
+					body: jsonString_model
+				});
+				log.debug('POST response push_vsa_vehicle_fin_cleared', postResponse.body);
+				//update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance','custrecord_sf_res_fin');
+				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+
+			} catch (error) {
+
+				log.error({
+					title: 'Error in push_finance_rate',
+					details: error
+				});
+				email.send({
+					author: author, // or use a specific employee ID
+					recipients: recipients, // replace with actual email
+					subject: 'Salesforce Push finance_rate Error Notification',
+					body: 'An error occurred in the script:\n\n' + error.message + '\n\nStack:\n' + error.stack
+				});
+
+			}
+		}
+		function push_deposit_bank_cleared(head, recordId, modified_date) {
+
+			try {
+				var custom_filter = "";
+				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
+					custom_filter = [
+						["internalid", "anyof", recordId]
+					]
+				}
+				else {
+					var custom_filter = [
+						["isinactive", "is", "F"],
+						"AND",
+						["custbody_advs_salesforceid", "isnotempty", ""],
+						"AND",
+						["lastmodified", "onorafter", modified_date]
+					]
+				}
+				log.debug("customerdeposit", custom_filter);
+				var searchResults = search.create({
+					type: "customerdeposit",
+					filters: custom_filter,
+					columns: [
+						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custbody_bank_cleared" }),
+						search.createColumn({ name: "custbody_advs_salesforceid" })
+
+					]
+				});
+				const modelList = [];
+				var UniqueModelDesc = {};
+				const pagedData = searchResults.runPaged({ pageSize: 1000 });
+				pagedData.pageRanges.forEach(function (pageRange) {
+					const page = pagedData.fetch({ index: pageRange.index });
+
+					page.data.forEach(function (result) {
+
+						const internalid = result.getValue({ name: "internalid" });
+						const bank_cleared = result.getValue({ name: "custbody_bank_cleared" });
+						const sf_id = result.getValue({ name: "custbody_advs_salesforceid" });
+
+						if (!UniqueModelDesc[internalid]) {
+							UniqueModelDesc[internalid] = true;
+
+								modelList.push({
+									dmsId: internalid,
+									financeRemarks: '',
+									bankCleared: bank_cleared
+								});
+						}
+					});
+				});
+				var jsonString_model = JSON.stringify(modelList);
+				log.debug('POST jsonString push_deposit_bank_cleared', jsonString_model);
+
+				//---hit POST request-----------
+				const postResponse = https.post({
+					url: endPoint_URL + 'updateVSADeposit',
+					headers: head,
+					body: jsonString_model
+				});
+				log.debug('POST response push_deposit_bank_cleared', postResponse.body);
+				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+
+			} catch (error) {
+
+				log.error({
+					title: 'Error in push_finance_rate',
+					details: error
+				});
+				email.send({
+					author: author, // or use a specific employee ID
+					recipients: recipients, // replace with actual email
+					subject: 'Salesforce Push finance_rate Error Notification',
+					body: 'An error occurred in the script:\n\n' + error.message + '\n\nStack:\n' + error.stack
+				});
+
+			}
+		}
+
+		
+
 		function convertDateToYMD(inputDateStr) {
 			// Input: "02/06/2025" (DD/MM/YYYY)
 			const parts = inputDateStr.split('/');

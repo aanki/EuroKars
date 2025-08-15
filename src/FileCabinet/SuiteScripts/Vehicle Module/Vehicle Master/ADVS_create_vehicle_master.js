@@ -105,11 +105,12 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_subsidary', value: Subsidiary });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_department', value: department });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_location_code', value: Location });
-                    if (Subsidiary == 19) {
-                        newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 2 }); // Old vehicle // PRE-OWNED PTE. LTD
-                    } else {
-                        newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // New vehicle
-                    }
+                    // if (Subsidiary == 19) {
+                    //     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 2 }); // Old vehicle // PRE-OWNED PTE. LTD
+                    // } else {
+                    //     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // New vehicle
+                    // }
+                    newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // Inventory
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_invoice_date', value: PoDate });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_order', value: PoId });
                     newRec.setValue({ fieldId: 'custrecord_permit_number', value: permitNumber });
