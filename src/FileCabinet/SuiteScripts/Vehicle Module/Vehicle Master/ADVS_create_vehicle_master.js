@@ -88,9 +88,9 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                 }
 
                 var VIN_Master_ID = SearchEquipment(VINNumber);
-                var quniueNoSegmentid = generateVSNumber();
+               // var quniueNoSegmentid = generateVSNumber();
                 if (!VIN_Master_ID) {
-                    log.debug('Processing PO Line', 'PoId: ' + PoId + ', VIN: ' + VINNumber + ', VariantID: ' + VariantID + ', ModelID: ' + ModelID + ', ExteriorCOlor: ' + ExteriorCOlor + ', MakeId: ' + MakeId + ' quniueNoSegmentid: ' + quniueNoSegmentid);
+                    log.debug('Processing PO Line', 'PoId: ' + PoId + ', VIN: ' + VINNumber + ', VariantID: ' + VariantID + ', ModelID: ' + ModelID + ', ExteriorCOlor: ' + ExteriorCOlor + ', MakeId: ' + MakeId);// + ' quniueNoSegmentid: ' + quniueNoSegmentid
                     // Create new custom record
                     var newRec = record.create({ type: 'customrecord_advs_vm', isDynamic: true });
                     newRec.setValue({ fieldId: 'name', value: VINNumber });
@@ -100,21 +100,15 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_customer_number', value: 37 });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_exterior_color', value: ExteriorCOlor });
                     newRec.setValue({ fieldId: 'custrecord_advs_exterior_color_descp', value: ColorDes });
-
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_reservation_status', value: 8 });  // On Hold
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_subsidary', value: Subsidiary });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_department', value: department });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_location_code', value: Location });
-                    // if (Subsidiary == 19) {
-                    //     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 2 }); // Old vehicle // PRE-OWNED PTE. LTD
-                    // } else {
-                    //     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // New vehicle
-                    // }
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // Inventory
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_invoice_date', value: PoDate });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_order', value: PoId });
                     newRec.setValue({ fieldId: 'custrecord_permit_number', value: permitNumber });
-                    newRec.setValue({ fieldId: 'cseg_advs_sto_num', value: quniueNoSegmentid });
+                    //newRec.setValue({ fieldId: 'cseg_advs_sto_num', value: quniueNoSegmentid });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_engine_number', value: engineNumber });
                     newRec.setValue({ fieldId: 'custrecord_advs_prod_month', value: prodMonth });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_model_year', value: prodYear });
@@ -145,13 +139,11 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                             fieldId: 'custcol_advs_st_equipment_link',
                             value: VIN_Master_ID
                         });
-                        poRecObj.setCurrentSublistValue({
-                            sublistId: 'item',
-                            fieldId: 'cseg_advs_sto_num',
-                            value: quniueNoSegmentid
-                        });
-
-                        
+                        // poRecObj.setCurrentSublistValue({
+                        //     sublistId: 'item',
+                        //     fieldId: 'cseg_advs_sto_num',
+                        //     value: quniueNoSegmentid
+                        // });
                         var inventoryDetail = poRecObj.getCurrentSublistSubrecord({
                             sublistId: 'item',
                             fieldId: 'inventorydetail'

@@ -3,9 +3,9 @@
  * @NScriptType ClientScript
  * @NModuleScope SameAccount
  */
-define([],
+define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js'],
 
-    function () {
+    function (advsObj) {
 
         function pageInit(scriptContext) {
 
@@ -13,18 +13,86 @@ define([],
 
                 // Checking Suitlet Open from ROC custom record or from Sales Order
                 var rocId = $('#custpage_roc_id').val();
-
                 if (rocId) {
                     console.log('Parsed:', ROC_custom_record_data);
-                    showSummary(ROC_custom_record_data.ROCchild, ROC_custom_record_data.RevisedNetSellingPriceAmount, ROC_custom_record_data.RevisedcolourName, ROC_custom_record_data.RevisedcolourAmount);
+                    var RevisedBankPckg = ROC_custom_record_data.RevisedbankPackg;
+                    var RevisedBankTerm = ROC_custom_record_data.RevisedBankTerm;
+                    var RevisedBankLoan = ROC_custom_record_data.RevisedBankLoan;
+                    var RevisedInsuCom = ROC_custom_record_data.RevisedInsuCom;
+                    var RevisedInsuPeriod = ROC_custom_record_data.RevisedInsuPeriod;
+                    showSummary(ROC_custom_record_data.ROCchild, ROC_custom_record_data.RevisedNetSellingPriceAmount,
+                        ROC_custom_record_data.RevisedcolourName, ROC_custom_record_data.RevisedcolourAmount, RevisedBankPckg, RevisedBankTerm, RevisedBankLoan,
+                        RevisedInsuCom, RevisedInsuPeriod);
                 } else {
                     showMain_section();
                 }
+
+                $(document).on('change', '#custpage_colour_select', function () {
+                    var price = $(this).find(':selected').data('price') || 0;
+                    $('#custpage_color_amount').val("$" + parseFloat(price).toFixed(2));
+                });
+                // Add Remove item list
+                $(document).on("change", ".rocItemType", function () {
+                    var $row = $(this).closest("tr");
+                    var selectedValue = $(this).val();
+                    var $diffSelect = $row.find(".diffItemsSelect");
+                    var $amountField = $row.find(".itemAmount");
+                    var optionsPkg = '<option value="">Select Item</option>';
+                    $amountField.val("");
+
+                    if (selectedValue === "1") {
+                        if (Array.isArray(all_diff_items)) {
+                            $.each(all_diff_items, function (i, item) {
+                                optionsPkg += `<option value="${item.SelecteditemID}" data-cost="${item.Selectedcost}">${item.SelecteditemName}</option>`;
+                            });
+                        }
+                    } else if (selectedValue === "2") {
+                        // Remove Items → show selected list
+                        if (Array.isArray(selected_items)) {
+                            $.each(selected_items, function (i, item) {
+                                optionsPkg += `<option value="${item.SelecteditemID}" data-cost="${item.Selectedcost}">${item.SelecteditemName}</option>`;
+                            });
+                        }
+                    }
+
+                    $diffSelect.html(optionsPkg);
+
+                });
+                // When user selects an item from diffItemsSelect
+                $(document).on("change", ".diffItemsSelect", function () {
+                    var selectedId = $(this).val(); // internalid now
+                    var $row = $(this).closest("tr");
+                    var $amountField = $row.find(".itemAmount");
+                    var amount = "";
+
+                    // First, search in all_diff_items
+                    if (Array.isArray(all_diff_items)) {
+                        var found = all_diff_items.find(item => item.SelecteditemID == selectedId);
+                        if (found) {
+                            amount = found.Selectedcost;
+                        }
+                    }
+                    // If not found, search in selected_items
+                    if (!amount && Array.isArray(selected_items)) {
+                        var found2 = selected_items.find(item => item.SelecteditemID == selectedId);
+                        if (found2) {
+                            amount = found2.Selectedcost;
+                        }
+                    }
+                    var itemType = $row.find(".rocItemType").val();
+                    if (itemType == '2') {  // Remove items
+                        amount = -Math.abs(amount);
+                    }
+
+                    $amountField.val(amount || "");
+                    updateNetPrice();
+                });
+
             });
 
             $('.cancel-btn').on('click', function () {
                 window.parent.closePopup();
-                
+
             });
             $('.accept-btn').on('click', function () {
                 try {
@@ -114,9 +182,9 @@ define([],
                 }
                 updateNetPrice();
             });
-            $(document).on('input', '.roc-amount-input', function () {
-                updateNetPrice();
-            });
+            // $(document).on('input', '.roc-amount-input', function () {
+            //     updateNetPrice();
+            // });
 
             // Add RoC Line Item functionality
             document.querySelector('.add-item-btn').addEventListener('click', function () {
@@ -125,15 +193,15 @@ define([],
                 const newRow = document.createElement('tr');
                 newRow.innerHTML = `
         <td class="revised-column">
-            <select class="form-input form-select">
+            <select class="form-input form-select rocItemType">
                ${optionsHtmlROC}
             </select>
         </td>
         <td class="revised-column">
-            <input type="text" class="form-input" placeholder="Enter item name">
+           <select class="form-input diffItemsSelect"></select>
         </td>
         <td class="revised-column">
-            <input type="text" class="form-input roc-amount-input" placeholder="$0.00">
+            <input type="text" class="form-input itemAmount" placeholder="$0.00" readonly>
         </td>
         <td class="revised-column" style="text-align: center;">
             <button type="button" class="remove-item-btn" style="background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
@@ -155,7 +223,7 @@ define([],
                 let basePrice = parseFloat(baseAttr?.toString().replace(/[^0-9.-]/g, '')) || 0;
                 let totalAdjustment = 0;
 
-                $('.roc-amount-input').each(function () {
+                $('.itemAmount').each(function () {
                     const value = parseFloat($(this).val().replace(/[^0-9.-]/g, '')) || 0;
                     totalAdjustment += value;
                 });
@@ -242,14 +310,15 @@ define([],
             $('#roc-items-tbody tr').each(function () {
                 var $row = $(this);
                 var selectedItem = $row.find('select').val();
-                var selecteditemName = $row.find('select option:selected').text(); // name (text)
-                var itemName = $row.find('input[placeholder="Enter item name"]').val().trim();
-                var amount = $row.find('input.roc-amount-input').val().trim();
+               // var selecteditemName = $row.find('select option:selected').text(); // name (text)
+                var selecteditemName = $row.find('select.diffItemsSelect option:selected').text() || "";     
+                var amount = $row.find('input.itemAmount').val();
+                var itemTypeText = $row.find('.rocItemType option:selected').text() || "";  
 
                 if (selectedItem || itemName || amount) {
                     items.push({
-                        selectedItem: selectedItem,
-                        itemName: itemName,
+                        selectedItem: itemTypeText,
+                        itemName: selecteditemName,
                         amount: amount,
                         selecteditemName: selecteditemName
                     });
@@ -262,7 +331,6 @@ define([],
                 CurrentVariantID: $('#custpage_current_varian_id').val(),
                 CurrentColourID: $('#custpage_current_colour_id').val(),
                 RevisedColourID: $('#custpage_colour_select').val(),
-                RevisedColourName: $('#custpage_colour_select').text().trim(),
                 RevisedColourAmount: $('#custpage_color_amount').val(),
                 BankPackage: $('#bankPackageSelect').val(),
                 LoanAmount: $('#custpage_loanamnt_selected').val(),
@@ -275,6 +343,35 @@ define([],
                 RevisednetSellingPrice: $('#netSellingPrice').val(),
                 Remarks: $('#remarks').val(),
                 dynamicItems: items
+            };
+            //for Revised Summary 
+
+            var RevisedColourName = '';
+            var RevisedBankPackage = '';
+            var RevisedTerm = '';
+            var RevisedInsuCom = '';
+            var RevisedInsuPeriod = '';
+            if (payload.RevisedColourID) {
+                RevisedColourName = $('#custpage_colour_select option:selected').text().trim();
+            }
+            if (payload.BankPackage) {
+                RevisedBankPackage = $('#bankPackageSelect option:selected').text().trim();
+            }
+            if (payload.TermID) {
+                RevisedTerm = $('#custpage_term_select option:selected').text().trim();
+            }
+            if (payload.InsCompany) {
+                RevisedInsuCom = $('#custpage_insurance_company_selected option:selected').text().trim();
+            }
+            if (payload.InsPeriod) {
+                RevisedInsuPeriod = $('#custpage_insurance_period_selected option:selected').text().trim();
+            }
+            var dataRevised = {
+                RevisedColourName: RevisedColourName,
+                RevisedBankPackage: RevisedBankPackage,
+                RevisedTerm: RevisedTerm,
+                RevisedInsuCom: RevisedInsuCom,
+                RevisedInsuPeriod: RevisedInsuPeriod
             };
 
             $.ajax({
@@ -294,7 +391,9 @@ define([],
                             console.log("Record saved with ID:", ROCsavedId);
                             $('#custpage_roc_id').val(ROCsavedId);
 
-                            showSummary(items, payload.RevisednetSellingPrice, payload.ColourName, payload.ColourAmount);
+                            showSummary(items, payload.RevisednetSellingPrice, dataRevised.RevisedColourName, payload.RevisedColourAmount, dataRevised.RevisedBankPackage,
+                                payload.LoanAmount, dataRevised.RevisedTerm, dataRevised.RevisedInsuCom, dataRevised.RevisedInsuPeriod);
+
                         } else {
                             setTimeout(function () {
                                 $btn.text(originalText).prop('disabled', false);
@@ -315,7 +414,7 @@ define([],
                 }
             });
         }
-        function showSummary(items, netSellingPrice, ColourName, ColourAmount) {
+        function showSummary(items, netSellingPrice, ColourName, ColourAmount, RevisedbankPackg, RevisedBankLoan, RevisedBankTerm, RevisedInsuCom, RevisedInsuPeriod) {
             let rowsHtml = '';
 
             if (ColourName && ColourAmount) {
@@ -326,10 +425,68 @@ define([],
                 <td class="amount">${ColourAmount}</td>
             </tr>`;
             }
+            rowsHtml += `
+            <tr>
+                <td><b>Finance</b></td>
+                <td></td>
+                <td></td>
+            </tr>`;
+            if (RevisedbankPackg) {
+                rowsHtml += `
+            <tr>
+                <td>Change of Bank Package</td>
+                <td>${RevisedbankPackg}</td>
+                <td class="amount"></td>
+            </tr>`;
+            }
+            if (RevisedBankLoan) {
+                rowsHtml += `
+            <tr>
+                <td>Change of Bank Loan</td>
+                <td>${RevisedBankLoan}</td>
+                <td class="amount"></td>
+            </tr>`;
+            }
+            if (RevisedBankTerm) {
+                rowsHtml += `
+            <tr>
+                <td>Change of Bank Term</td>
+                <td>${RevisedBankTerm}</td>
+                <td class="amount"></td>
+            </tr>`;
+            }
+            rowsHtml += `
+            <tr>
+                <td><b>Insurance</b></td>
+                <td></td>
+                <td></td>
+            </tr>`;
+            if (RevisedInsuCom) {
+                rowsHtml += `
+            <tr>
+                <td>Change of Insurance Company</td>
+                <td>${RevisedInsuCom}</td>
+                <td class="amount"></td>
+            </tr>`;
+            }
+            if (RevisedInsuPeriod) {
+                rowsHtml += `
+            <tr>
+                <td>Change of Insurance Period</td>
+                <td>${RevisedInsuPeriod}</td>
+                <td class="amount"></td>
+            </tr>`;
+            }
+            rowsHtml += `
+            <tr>
+                <td><b>Additional items</b></td>
+                <td></td>
+                <td></td>
+            </tr>`;
             items.forEach(item => {
                 rowsHtml += `
             <tr>
-                <td>${item.selecteditemName || ''}</td>
+                <td>${item.selectedItem || ''}</td>
                 <td>${item.itemName || ''}</td>
                 <td class="amount">${item.amount || ''}</td>
             </tr>`;

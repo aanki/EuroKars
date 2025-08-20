@@ -53,25 +53,32 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         sucessMsg = "Vehicle Master created successfully with ID: ";
                     }
 
-
                     // if (entry.chassisno) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "name",
-                            value: entry.chassisno
-                        });
+                    vehicleRecordObj.setValue({
+                        fieldId: "name",
+                        value: entry.chassisno
+                    });
                     // }
-
+                    vehicleRecordObj.setValue({
+                        fieldId: "custrecord_advs_vm_reservation_status",
+                        value: 8 // on Hold
+                    });
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_advs_vm_subsidary",
                         value: 19 // Pre Owned 
                     });
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_advs_vm_vehicle_status",
-                        value: 2 // Old Vehicle
+                        value: 1 // Old Vehicle
                     });
+                    
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_appvantage",
                         value: true
+                    });
+                    vehicleRecordObj.setValue({
+                        fieldId: "custrecord_send_salesforce_vm",
+                        value: false
                     });
 
                     if (entry.vehicle_make) {
@@ -90,25 +97,25 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.vehicle_license_plate) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "custrecord_advs_vm_license_no_compressed",
-                            value: entry.vehicle_license_plate
-                        });
+                    vehicleRecordObj.setValue({
+                        fieldId: "custrecord_advs_vm_license_no_compressed",
+                        value: entry.vehicle_license_plate
+                    });
                     // }
 
 
                     // if (entry.engine_no) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "custrecord_advs_vm_engine_number",
-                            value: entry.engine_no
-                        });
+                    vehicleRecordObj.setValue({
+                        fieldId: "custrecord_advs_vm_engine_number",
+                        value: entry.engine_no
+                    });
                     // }
 
                     // if (entry.mileage) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "custrecord_advs_vm_mileage",
-                            value: entry.mileage
-                        });
+                    vehicleRecordObj.setValue({
+                        fieldId: "custrecord_advs_vm_mileage",
+                        value: entry.mileage
+                    });
                     // }
 
 
@@ -126,28 +133,28 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.appvantage_id) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_id",  // field created other then excel 
-                            value: entry.appvantage_id
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_id",  // field created other then excel 
+                        value: entry.appvantage_id
+                    });
                     // }
 
 
                     // if (entry.transaction_no) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_trans",
-                            value: entry.transaction_no
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_trans",
+                        value: entry.transaction_no
+                    });
                     // }
 
                     // if (entry.transaction_state) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_trans_state",
-                            value: entry.transaction_state
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_trans_state",
+                        value: entry.transaction_state
+                    });
                     // }
 
 
@@ -166,11 +173,11 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
                     // if (entry.created_by) {
 
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_created_by",
-                            value: entry.created_by
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_created_by",
+                        value: entry.created_by
+                    });
 
                     // }
 
@@ -195,27 +202,27 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.internal_remark) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_internal_r",
-                            value: entry.internal_remark
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_internal_r",
+                        value: entry.internal_remark
+                    });
                     // }
                     // if (entry.admin_remark) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_admin_r",
-                            value: entry.admin_remark
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_admin_r",
+                        value: entry.admin_remark
+                    });
                     // }
 
 
                     // if (entry.purchase_transaction_number) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_po_tran_no",
-                            value: entry.purchase_transaction_number
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_po_tran_no",
+                        value: entry.purchase_transaction_number
+                    });
                     // }
 
 
@@ -240,18 +247,18 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.updated_by) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_update_by",
-                            value: entry.updated_by
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_update_by",
+                        value: entry.updated_by
+                    });
                     // }
                     // if (entry.vehicle_to_be_exported) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_veh_exported",
-                            value: entry.vehicle_to_be_exported
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_veh_exported",
+                        value: entry.vehicle_to_be_exported
+                    });
                     // }
 
 
@@ -267,43 +274,43 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
                     // if (entry.primary_color) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_pri_color",
-                            value: entry.primary_color
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_pri_color",
+                        value: entry.primary_color
+                    });
                     // }
 
                     // if (entry.secondary_color) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_sec_color",
-                            value: entry.secondary_color
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_sec_color",
+                        value: entry.secondary_color
+                    });
                     // }
 
                     // if (entry.manufacturing_year) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_manu_year",
-                            value: entry.manufacturing_year
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_manu_year",
+                        value: entry.manufacturing_year
+                    });
                     // }
 
                     // if (entry.max_power_output) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_max_p_output",
-                            value: entry.max_power_output
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_max_p_output",
+                        value: entry.max_power_output
+                    });
                     // }
 
                     // if (entry.open_market_value) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecordadvs_appvantage_open_mkt_v",
-                            value: entry.open_market_value
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecordadvs_appvantage_open_mkt_v",
+                        value: entry.open_market_value
+                    });
                     // }
 
 
@@ -327,19 +334,19 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
                     // if (entry.transfer_count) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvanytage_transfer_c",
-                            value: entry.transfer_count
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvanytage_transfer_c",
+                        value: entry.transfer_count
+                    });
                     // }
 
                     // if (entry.actual_arf_paid) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_arf_paid",
-                            value: entry.actual_arf_paid
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_arf_paid",
+                        value: entry.actual_arf_paid
+                    });
                     // }
 
                     if (entry.opc_cash_rebate_eligibility) {
@@ -365,20 +372,20 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
 
                     // if (entry.opc_cash_rebate_amount) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_opc_rebate_amount",
-                            value: entry.opc_cash_rebate_amount
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_opc_rebate_amount",
+                        value: entry.opc_cash_rebate_amount
+                    });
                     // }
 
 
                     // if (entry.parf_eligibility) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_pafr_eligi",
-                            value: entry.parf_eligibility
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_pafr_eligi",
+                        value: entry.parf_eligibility
+                    });
                     // }
 
 
@@ -393,11 +400,11 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
                     // if (entry.parf_rebate_amount) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_parf_rebate_a",
-                            value: entry.parf_rebate_amount
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_parf_rebate_a",
+                        value: entry.parf_rebate_amount
+                    });
                     // }
 
 
@@ -412,59 +419,59 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.coe_category) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_coe_cate",
-                            value: entry.coe_category
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_coe_cate",
+                        value: entry.coe_category
+                    });
                     // }
 
                     // if (entry.coe_period) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_coe_period",
-                            value: entry.coe_period
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_coe_period",
+                        value: entry.coe_period
+                    });
                     // }
 
                     // if (entry.qp_paid) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_qp_paid",
-                            value: entry.qp_paid
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_qp_paid",
+                        value: entry.qp_paid
+                    });
                     // }
 
                     // if (entry.pqp_paid) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_pqp_paid",
-                            value: entry.pqp_paid
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_pqp_paid",
+                        value: entry.pqp_paid
+                    });
                     // }
 
                     // if (entry.coe_rebate) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_coe_rebate_a",
-                            value: entry.coe_rebate
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_coe_rebate_a",
+                        value: entry.coe_rebate
+                    });
                     // }
 
                     // if (entry.total_rebate_amount) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_t_rebate_a",
-                            value: entry.total_rebate_amount
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_t_rebate_a",
+                        value: entry.total_rebate_amount
+                    });
                     // }
 
                     // if (entry.lta_message) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_lta_message",
-                            value: entry.lta_message
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_lta_message",
+                        value: entry.lta_message
+                    });
                     // }
 
                     if (entry.import_method) {
@@ -476,11 +483,11 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.set_of_key) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_set_of_keys",
-                            value: entry.set_of_key
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_set_of_keys",
+                        value: entry.set_of_key
+                    });
                     // }
                     // else{
                     //      vehicleRecordObj.setCurrentSublistValue({
@@ -509,61 +516,61 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
 
                     // if (entry.dealer_one) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_dealer",
-                            value: entry.dealer_one
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_dealer",
+                        value: entry.dealer_one
+                    });
                     // }
 
                     // if (entry.dealer_one_price) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecordadvs_appvantage_price",
-                            value: entry.dealer_one_price
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecordadvs_appvantage_price",
+                        value: entry.dealer_one_price
+                    });
                     // }
 
                     // if (entry.dealer_two) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_dealer_two",
-                            value: entry.dealer_two
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_dealer_two",
+                        value: entry.dealer_two
+                    });
                     // }
 
 
                     // if (entry.dealer_two_price) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_price_t",
-                            value: entry.dealer_two_price
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_price_t",
+                        value: entry.dealer_two_price
+                    });
                     // }
 
                     // if (entry.dealer_three) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_dealer_three",
-                            value: entry.dealer_three
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_dealer_three",
+                        value: entry.dealer_three
+                    });
                     // }
 
                     // if (entry.dealer_three_price) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_price_three",
-                            value: entry.dealer_three_price
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_price_three",
+                        value: entry.dealer_three_price
+                    });
                     // }
 
 
                     // if (entry.new_car_vsa) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_adva_appvantage_new_car_vsa",
-                            value: entry.new_car_vsa
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_adva_appvantage_new_car_vsa",
+                        value: entry.new_car_vsa
+                    });
                     // }
 
 
@@ -579,19 +586,19 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.assigned_handover_vt) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_ass_ho_vt",
-                            value: entry.assigned_handover_vt
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_ass_ho_vt",
+                        value: entry.assigned_handover_vt
+                    });
                     // }
 
                     // if (entry.handover_location) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_h_loc",
-                            value: entry.handover_location
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_h_loc",
+                        value: entry.handover_location
+                    });
                     // }
 
 
@@ -604,19 +611,19 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
                     // if (entry.handover_remark) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_handover_r",
-                            value: entry.handover_remark
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_handover_r",
+                        value: entry.handover_remark
+                    });
                     // }
 
                     // if (entry.awarded_dealer) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_awarded_deale",
-                            value: entry.awarded_dealer
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_awarded_deale",
+                        value: entry.awarded_dealer
+                    });
                     // }
 
 
@@ -629,11 +636,11 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     }
 
                     // if (entry.bidding_session) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_bidding_sessi",
-                            value: entry.bidding_session
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_bidding_sessi",
+                        value: entry.bidding_session
+                    });
                     // }
 
 
@@ -658,18 +665,18 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
                     // if (entry.bid_notes) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_bid_notes",
-                            value: entry.bid_notes
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_bid_notes",
+                        value: entry.bid_notes
+                    });
                     // }
                     // if (entry.top_bid_number_one) {
-                        vehicleRecordObj.setCurrentSublistValue({
-                            sublistId: AppvantageSublist,
-                            fieldId: "custrecord_advs_appvantage_top_bid_nu_",
-                            value: entry.top_bid_number_one
-                        });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_top_bid_nu_",
+                        value: entry.top_bid_number_one
+                    });
                     // }
 
                     if (entry.transaction_type) {
@@ -679,6 +686,142 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: getIntrrnalIdByText("customrecord_advs_app_trans_type", entry.transaction_type)
                         });
                     }
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_ass_sc",
+                        value: entry.assignedSc
+                    });
+
+                    if (entry.brand) {
+                        vehicleRecordObj.setCurrentSublistValue({
+                            sublistId: AppvantageSublist,
+                            fieldId: "custrecord_advs_appvantage_brand",
+                            value: getIntrrnalIdByText("customrecord_advs_brands", entry.brand)
+                        });
+                    }
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_last_ud_by",
+                        value: entry.last_update_by
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_cancle_r",
+                        value: entry.cancle_remark
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_owner_id",
+                        value: entry.owner_id
+                    });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_owner_type",
+                        value: entry.owner_type
+                    });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appnvantage_owner_name",
+                        value: entry.owner_name
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_model_in",
+                        value: entry.model_interested
+                    });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_v_pur_agree_n",
+                        value: entry.vehicle_pur_agreement
+                    });
+                    if (entry.delivery_period) {
+                        vehicleRecordObj.setCurrentSublistValue({
+                            sublistId: AppvantageSublist,
+                            fieldId: "custrecord_advs_appvanatge_delivery_p",
+                            value: getIntrrnalIdByText("customrecord_advs_delivery_period", entry.delivery_period)
+                        });
+                    }
+
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_valuation",
+                        value: entry.valuation
+                    });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_last_val",
+                        value: entry.latest_valuation
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_valuated_by",
+                        value: entry.valuated_by
+                    });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_1st_val",
+                        value: entry.first_valuation
+                    });
+                    if (entry.valuation_on) {
+                        var valuation_on = parseCustomDate(entry.valuation_on);
+                        vehicleRecordObj.setCurrentSublistValue({
+                            sublistId: AppvantageSublist,
+                            fieldId: "custrecord_advs_appvantage_val_on",
+                            value: valuation_on
+                        });
+                    }
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_val_by_1nd",
+                        value: entry.valuation_by_first
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_conditional_remark",
+                        value: entry.conditional_remark
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_v_dia_comm",
+                        value: entry.vehicle_diagram_comments
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_assigned_pur",
+                        value: entry.assigned_purchaser
+                    });
+
+                    if (entry.purchaser_assigned_on) {
+                        var purchaser_assigned_on = parseCustomDate(entry.purchaser_assigned_on);
+                        vehicleRecordObj.setCurrentSublistValue({
+                            sublistId: AppvantageSublist,
+                            fieldId: "custrecord_advs_appvantage_pur_ass_on",
+                            value: purchaser_assigned_on
+                        });
+                    }
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_t_set_of_key",
+                        value: entry.target_set_of_keys
+                    });
+
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_advs_appvantage_target_handbo",
+                        value: entry.target_handbook
+                    });
 
 
                     vehicleRecordObj.commitLine({

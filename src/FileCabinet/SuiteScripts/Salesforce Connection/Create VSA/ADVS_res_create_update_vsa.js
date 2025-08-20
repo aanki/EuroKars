@@ -979,7 +979,8 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         response.push(res);
                         return;
                     }
-                    var ROC_Id = find_Record_Common('customrecord_roc', entry.sfId, 'custrecord_salesforce_id_roc');
+                var ROC_Id = find_Record_Common('customrecord_roc', entry.sfId, 'custrecord_salesforce_id_roc');
+                  if(entry.colourChanged){
                     var Req_VIN_ID = entry.vehicleStockDmsId;
                     var Assign_VIN_ID = find_Free_VehicleMaster_fromSalesforce(Req_VIN_ID);
                     if (Assign_VIN_ID) {
@@ -1081,10 +1082,12 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                             res.statusCode = 500;
                             res.statusMessage = 'ROC does not exist with given sfid';
                         }
-                    } else {
+                    } 
+                    else {
                         res.statusCode = 500;
                         res.statusMessage = 'VIN stock is not available for allocation with given vehicleStockDmsId';
                     }
+                }
                     response.push(res);
 
                 } catch (e) {
@@ -1422,6 +1425,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         soRec.setValue({ fieldId: 'custbody_obu_install_loc', value: entry.obuInstallationLocation });
         soRec.setValue({ fieldId: 'custbody_opc_checkbox', value: entry.offPeakCar });
         soRec.setValue({ fieldId: 'custbody_advs_quick_vsa', value: entry.quickVSA });
+        soRec.setValue({ fieldId: 'custbody_advs_sf_vsa_number', value: entry.vsaName });
         if (entry.fleetVSA)
             soRec.setValue({ fieldId: 'custbody_advs_fleet_vsa', value: entry.fleetVSA });
 

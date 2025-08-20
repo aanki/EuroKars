@@ -29,7 +29,6 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				const custscript_record_type = script.getParameter({ name: 'custscript_record_type' });
 				log.debug('Script Peramtere', 'recordId ' + recordId + ' recParent ' + recParent + ' custscript_record_type ' + custscript_record_type);
 
-
 				if (recordId && recordId != null) { // means its triggered from Salesforce sync Button
 
 					if (custscript_record_type == 'serializedinventoryitem') {
@@ -83,7 +82,6 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					push_vsa_pacakge_item(header, recordId, NewDateString);
 					push_campaign(header, recordId, NewDateString);
 					push_vehicle_master(header, recordId, NewDateString, '');
-
 
 				}
 			}
@@ -184,9 +182,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response', postResponse.body);
-
+                update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res');
 				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
-
 
 			} catch (error) {
 				log.error({
@@ -297,8 +294,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				});
 				var jsonString_model = JSON.stringify(modelList);
 				log.debug('POST jsonString Model Variant', jsonString_model);
-
-
+				
 
 				//---hit POST request-----------
 				const postResponse = https.post({
@@ -307,6 +303,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response Model Variant', postResponse.body);
+				update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res');
 				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
 
 			} catch (error) {
@@ -507,7 +504,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response Insurance subsidy Rate', postResponse.body);
-
+                update_sfid_indms(postResponse.body, 'customrecord_insurance_susidy_rate', 'custrecord_salesforce_id_insu', 'custrecord_salesforce_res_insu');
 				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
 
 			} catch (error) {
@@ -1397,7 +1394,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["mainline","is","T"]
 					]
 				}
 				else {
@@ -1422,7 +1421,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					]
 				});
 				const modelList = [];
-				var UniqueModelDesc = {};
+				
 				const pagedData = searchResults.runPaged({ pageSize: 1000 });
 				pagedData.pageRanges.forEach(function (pageRange) {
 					const page = pagedData.fetch({ index: pageRange.index });
@@ -1434,25 +1433,16 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const fin_cleared = result.getValue({ name: "custbody_fin_cleared" });
 						const sf_id = result.getValue({ name: "custbody_advs_salesforceid" });
 
-
-						if (!UniqueModelDesc[internalid]) {
-							UniqueModelDesc[internalid] = true;
-
 							if (veh_cleared || fin_cleared) {
 								modelList.push({
 									dmsId: internalid,
-									action: 'VA_CLEARED',
-									vehicleAdminCleared: veh_cleared
+									action: 'UPDATE_CLEARED_INFO',
+									vehicleAdminCleared: veh_cleared,
+									financeCleared:fin_cleared
 								});
-								modelList.push({
-									dmsId: internalid,
-									action: 'FIN_CLEARED',
-									vehicleAdminCleared: fin_cleared
-								});
-
 							}
 
-						}
+						
 					});
 				});
 				var jsonString_model = JSON.stringify(modelList);
@@ -1490,6 +1480,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
 						["internalid", "anyof", recordId]
+						 
 					]
 				}
 				else {

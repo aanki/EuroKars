@@ -15,6 +15,11 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
             var ROC_Record_data = {
                 RevisedcolourName: '',
                 RevisedcolourAmount: '',
+                RevisedbankPackg: '',
+                RevisedBankTerm: '',
+                RevisedBankLoan: '',
+                RevisedInsuCom: '',
+                RevisedInsuPeriod: '',
                 RevisedNetSellingPriceAmount: '',
                 ROCchild: []
             };
@@ -86,9 +91,14 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                             search.createColumn({ name: "custrecord_original_loan" }),
                             search.createColumn({ name: "custrecord_original_term" }),
                             search.createColumn({ name: "custrecord_original_bank_pckg" }),
+                            search.createColumn({ name: "custrecord_revised_bank_pckg" }),
+                            search.createColumn({ name: "custrecord_revised_term" }),
+                            search.createColumn({ name: "custrecord_revised_loan" }),
                             search.createColumn({ name: "custrecord_original_interest_rate" }),
                             search.createColumn({ name: "custrecord_original_insurance_period" }),
+                            search.createColumn({ name: "custrecord_revised_insurance_period" }),
                             search.createColumn({ name: "custrecord_orignal_insurance_company" }),
+                            search.createColumn({ name: "custrecord_revised_insurance_company" }),
                             search.createColumn({ name: "custrecord_original_obu_touch" }),
                             search.createColumn({ name: "custrecord_original_proces_unit_loc" }),
                             search.createColumn({ name: "tranid", join: "CUSTRECORD_VSA_ROC" }),
@@ -127,6 +137,11 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
 
                         ROC_Record_data.RevisedcolourName = result.getText({ name: 'custrecord_colour_revised' });
                         ROC_Record_data.RevisedcolourAmount = result.getValue({ name: 'custrecord_roc_color_amount' });
+                        ROC_Record_data.RevisedbankPackg = result.getText({ name: 'custrecord_revised_bank_pckg' });
+                        ROC_Record_data.RevisedBankTerm = result.getText({ name: 'custrecord_revised_term' });
+                        ROC_Record_data.RevisedBankLoan = result.getValue({ name: 'custrecord_revised_loan' });
+                        ROC_Record_data.RevisedInsuCom = result.getText({ name: 'custrecord_revised_insurance_company' });
+                        ROC_Record_data.RevisedInsuPeriod = result.getText({ name: 'custrecord_revised_insurance_period' });
                         var NetAmountRevised = result.getValue({ name: 'custrecord_revised_net_price' });
                         var formattedPrice = Number(NetAmountRevised).toLocaleString('en-US', {
                             style: 'currency',
@@ -302,11 +317,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 var Search = search.create({
                     type: 'customrecord_advs_st_model_option',
                     filters: [['isinactive', 'is', 'F'], 'AND', ['custrecord_st_m_o_head_link', 'anyof', details.variantID]],
-                    columns: ['name', 'internalid']
+                    columns: ['name', 'internalid', 'custrecord_advs_m_o_o_price']
                 });
                 Search.run().each(function (result) {
-
-                    optionsHtmlColor += '<option value="' + result.getValue('internalid') + '">' + result.getValue('name') + '</option>';
+                    var price = result.getValue('custrecord_advs_m_o_o_price') || 0;
+                    optionsHtmlColor += '<option value="' + result.getValue('internalid') + '" data-price="' + price + '">' +
+                        result.getValue('name') +
+                        '</option>';
 
                     return true;
                 });
@@ -365,18 +382,34 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                     return true;
                 });
 
-                // Get ROC Item Type
+                // // Get ROC Item Type
                 var optionsHtmlROC = '<option value="">Select Item Type</option>';
-                var Search = search.create({
-                    type: 'customlist_roc_item_type',
-                    filters: [['isinactive', 'is', 'F']],
-                    columns: ['name', 'internalid']
-                });
-                Search.run().each(function (result) {
-                    optionsHtmlROC += '<option value="' + result.getValue('internalid') + '">' + result.getValue('name') + '</option>';
+                optionsHtmlROC += '<option value="1">Add Items</option>';
+                optionsHtmlROC += '<option value="2">Remove Items</option>';
+                var results = get_Selected_package(transactionId);
+                log.debug("Selected Package", JSON.stringify(results) + '  result.packageHead ' + results.packageHead);
 
-                    return true;
-                });
+                // Get Which item selected
+                var selected_item = [];
+                if (results.packageHead) {
+                    selected_item = get_selected_Pack_item(results.packageHead);
+                    log.debug("Selected select_item", JSON.stringify(selected_item));
+                }
+                if (results.vsaPackage) {
+                    var all_item = get_all_packg_item(results.vsaPackage);
+
+                }
+                var diff_items = [];
+                if (all_item) {
+                    diff_items = all_item.filter(function (all) {
+                        return !selected_item.some(function (sel) {
+                            return all.SelecteditemName === sel.SelecteditemName;
+                        });
+                    });
+                    log.debug("diff_items", JSON.stringify(diff_items));
+
+                }
+
             }
             // Set Value in Hidden Fields
             curr_model_id.defaultValue = details.modelID;
@@ -400,6 +433,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
   <link href="https://9908878-sb1.app.netsuite.com/core/media/media.nl?id=13204&c=9908878_SB1&h=7oIh1LSSA9HktmshXzzU7ih3ahPxXiM5HwMckPZHF-S3rWie&_xt=.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
    
     </head>
 <body>
@@ -490,10 +525,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                             <select class="form-input form-select" id="custpage_colour_select">
                                 ${optionsHtmlColor}
                             </select>
-                            
                         </td>
                         <td class="revised-column">
-                            <input type="text" class="form-input roc-amount-input" id="custpage_color_amount" placeholder="$0.00">
+                            <input type="text" class="form-input roc-amount-input" id="custpage_color_amount" placeholder="$0.00" readonly>
                         </td>
                     </tr>
                 </tbody>
@@ -619,28 +653,27 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 <button type="button" class="add-item-btn">Add RoC Line Item</button>
             </div>
             
-            <table class="amendment-table">
+            <table class="amendment-table" style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr>
-                        <th>RoC Item Type</th>
-                        <th>Item Name</th>
-                        <th>Item Amount</th>
-                        <th>Actions</th>
+                        <th style="width:15%;">RoC Item Type</th>
+                        <th style="width:45%;">Item Name</th>
+                        <th style="width:20%;">Item Amount</th>
+                        <th style="width:10%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="roc-items-tbody">
                     <tr>
                         <td class="revised-column">
-                            <select class="form-input form-select">
+                            <select class="form-input form-select rocItemType">
                                 ${optionsHtmlROC}
-                            </select>
-                             
+                            </select> 
+                        </td>
+                       <td class="revised-column">
+                         <select class="form-input diffItemsSelect"></select>
                         </td>
                         <td class="revised-column">
-                            <input type="text" class="form-input" placeholder="Enter item name">
-                        </td>
-                        <td class="revised-column">
-                            <input type="text" class="form-input roc-amount-input" placeholder="$0.00">
+                            <input type="text" class="form-input itemAmount" placeholder="$0.00" readonly>
                         </td>
                         <td class="revised-column" style="text-align: center;">
                             <button type="button" class="remove-item-btn" style="background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
@@ -663,9 +696,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
 
 
             
-
            <div id="roc-signature-section" style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;display: none;">
-            <h3 class="section-title">RoC - Revised Details</h3>
+            <h3 class="section-title">RoC - Revised Summary</h3>
             <div id="roc-tabel">
 
             </div>
@@ -718,6 +750,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
     
     <script>
      var optionsHtmlROC = \`${optionsHtmlROC}\`;
+    var selected_items = ${JSON.stringify(selected_item)}; 
+    var all_diff_items = ${JSON.stringify(diff_items)}; 
      var ROC_custom_record_data = ${JSON.stringify(ROC_Record_data)};
     </script>
 </body>
@@ -970,6 +1004,118 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
 
             return details;
         }
+        function get_Selected_package(soId) {
+            var soRec = record.load({
+                type: record.Type.SALES_ORDER,
+                id: soId,
+                isDynamic: false
+            });
+
+            var lineCount = soRec.getLineCount({ sublistId: 'item' });
+            var selectedPkg = null;
+
+            for (var i = 0; i < lineCount; i++) {
+                var inventoryType = soRec.getSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'custcol_advs_selected_inventory_type',
+                    line: i
+                });
+
+                if (inventoryType == '1') {
+                    var packageHead = soRec.getSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'custcol_package_head',
+                        line: i
+                    });
+
+                    var vsaPackage = soRec.getSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'custcol_ps_vsa_package',
+                        line: i
+                    });
+
+                    selectedPkg = {
+                        line: i,
+                        packageHead: packageHead,
+                        vsaPackage: vsaPackage
+                    };
+
+                    break;
+                }
+            }
+
+            return selectedPkg;
+        }
+        function get_selected_Pack_item(selectedPckgId) {
+            var results = [];
+            var customrecord_save_vsa_package_itemSearchObj = search.create({
+                type: "customrecord_save_vsa_package_item",
+                filters:
+                    [
+                        ["custrecord_parent_package_head", "anyof", selectedPckgId]
+                    ],
+                columns:
+                    [
+                        search.createColumn({ name: "name", label: "Name" }),
+                        search.createColumn({ name: "internalid"}),
+                        search.createColumn({ name: "custrecord_save_item_cost_group", label: "Cost Group" }),
+                        search.createColumn({ name: "custrecord_parent_package_head" }),
+                        search.createColumn({ name: "custrecord_save_item_cost" }),
+                        search.createColumn({ name: "custrecord_package_item_isselected" })
+                    ]
+            });
+            var searchResultCount = customrecord_save_vsa_package_itemSearchObj.runPaged().count;
+            log.debug("customrecord_save_vsa_package_itemSearchObj result count", searchResultCount);
+            customrecord_save_vsa_package_itemSearchObj.run().each(function (result) {
+
+                results.push({
+                    SelecteditemName: result.getValue('name'),
+                    SelecteditemID: result.getValue('internalid'),
+                    SelectedpackageHead: result.getValue('custrecord_parent_package_head'),
+                    Selectedcost: result.getValue('custrecord_save_item_cost')
+                });
+
+                return true;
+            });
+
+            return results;
+
+        }
+        function get_all_packg_item(PckgId) {
+            var results = [];
+            var customrecord_save_vsa_package_itemSearchObj = search.create({
+                type: "customrecord_vsa_package_item",
+                filters:
+                    [
+                        ["custrecord_master_packg", "anyof", PckgId]
+                    ],
+                columns:
+                    [
+                        search.createColumn({ name: "name", label: "Name" }),
+                        search.createColumn({ name: "internalid"}),
+                        search.createColumn({ name: "custrecord_master_packg" }),
+                        search.createColumn({ name: "custrecord_pckg_item_cost" })
+
+                    ]
+            });
+            var searchResultCount = customrecord_save_vsa_package_itemSearchObj.runPaged().count;
+            log.debug("customrecord_vsa_package_item result count", searchResultCount);
+            customrecord_save_vsa_package_itemSearchObj.run().each(function (result) {
+
+                results.push({
+                    SelecteditemName: result.getValue('name'),
+                    SelecteditemID: result.getValue('internalid'),
+                    SelectedpackageHead: result.getValue('custrecord_master_packg'),
+                    Selectedcost: result.getValue('custrecord_pckg_item_cost')
+                });
+
+                return true;
+            });
+
+            return results;
+
+        }
+
 
     };
 

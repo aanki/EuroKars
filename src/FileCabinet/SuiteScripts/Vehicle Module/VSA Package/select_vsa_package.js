@@ -501,11 +501,11 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     return true;
                 });
 
-
                 //Load already created/Selected Package -------------------
                 var totalAddtion_amntObject = {};
                 var childItemsPrefill = {};
                 var child_Pckg_config_Prefill = {};
+                SelectedPckgHeadID='';
                 if (SelectedPckgHeadID) {
 
                     var lookupResult = search.lookupFields({
@@ -573,7 +573,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     var itemSearch = search.create({
                         type: 'customrecord_save_vsa_package_item',
                         filters: [['custrecord_parent_package_head', 'is', SelectedPckgHeadID]],
-                        columns: ['name', 'custrecord_save_item_cost_group', 'custrecord_save_item_cost', 'custrecord_package_item_isselected']
+                        columns: ['name', 'custrecord_save_item_cost_group', 'custrecord_save_item_cost', 'custrecord_package_item_isselected','custrecord_selected_pkgitem_pkgtype',
+                            'custrecord_selected_pkgitem_optin','custrecord_selected_pkgitem_optout','custrecord_selected_pckgitem_includepric'
+                        ]
                     });
                     itemSearch.run().each(function (result) {
 
@@ -584,8 +586,12 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             }
                             childItemsPrefill[selectdPckgID].push({
                                 item_name: result.getValue('name'),
-                                costgroup: parseFloat(result.getValue('custrecord_save_item_cost_group')),
+                                costgroup: result.getValue('custrecord_save_item_cost_group'),
                                 cost: parseFloat(result.getValue('custrecord_save_item_cost')),
+                                OptinValue: parseFloat(result.getValue('custrecord_selected_pkgitem_optin')),
+                                OptoutValue: parseFloat(result.getValue('custrecord_selected_pkgitem_optout')),
+                                includePrice: result.getValue('custrecord_selected_pckgitem_includepric'),
+                                childItemType: result.getValue('custrecord_selected_pkgitem_pkgtype'),
                                 is_selected: result.getValue('custrecord_package_item_isselected')
                             });
 
@@ -826,6 +832,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      item_name: savedItem.item_name,";
                 html += "      item_cost: savedItem.cost,";
                 html += "      item_costGroup: savedItem.costgroup,";
+                html += "      OptinValue: savedItem.OptinValue,";
+                html += "      OptoutValue: savedItem.OptoutValue,";
+                html += "      includePrice: savedItem.includePrice,";
+                html += "      childItemType: savedItem.childItemType,";
                 html += "      is_selected: 'true'";
                 html += "    });";
 
@@ -953,19 +963,24 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "function handleCheckboxChange(checkbox, childName,childCost,ChildCostGroup,childItemType,OptinValue,OptoutValue,includePrice) {" +
                     "var final_Cost = 0;" +
                     "var optInCell;" +
+                    "var type = '';"+
                     "var include = (includePrice === true || includePrice === 'true');" +
                     // Determine target cell and cost
                     "if (childItemType == '2' && !include) {" +   // Can Top Up
                     "final_Cost = parseFloat(OptinValue) || 0;" +
                     "optInCell = document.getElementById('addtionalAmount');" +
+                    "type = 'Additional';"+
 
                     "} else if (childItemType == '3' && include) {" +  // Can Opt Out
                     "final_Cost = parseFloat(OptoutValue) || 0;" +
                     "optInCell = document.getElementById('cashinoptout');" +
+                    "type = 'Cash in Lieu';"+
 
                     "} else {" +
                     "final_Cost = parseFloat(childCost) || 0;" +
-                    "optInCell = document.getElementById('addtionalAmount');" + // fallback
+                    "optInCell = document.getElementById('addtionalAmount');" +
+                    "type = 'Additional';"+
+
                     "}" +
 
                     // Read current value
@@ -986,7 +1001,12 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    itemDataNew.push({";
                 html += "      item_name: childName,";
                 html += "      item_cost: childCost,";
+                html += "      OptinValue: OptinValue,";
+                html += "      OptoutValue: OptoutValue,";
+                html += "      includePrice: includePrice,";
+                html += "      childItemType: childItemType,";
                 html += "      item_costGroup: ChildCostGroup,";
+                html += "      type: type,";
                 html += "      is_selected: 'true'";
                 html += "    });";
                 html += "  }";
@@ -2154,7 +2174,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 rec.setValue({ fieldId: 'custrecord_save_addtional_amount', value: addtionalAmount });
                 rec.setValue({ fieldId: 'custrecord_diff_colour_topup', value: colourTopupAmount });
                 rec.setValue({ fieldId: 'custrecord_selected_special_discount', value: SpecialDis });
-
+ 
                 // Package Item Line
                 if (itemsArr) {
                     itemsArr.forEach(function (item) {
@@ -2175,6 +2195,21 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         });
                         rec.setCurrentSublistValue({
                             sublistId: child_table,
+                            fieldId: "custrecord_selected_pkgitem_optin",
+                            value: item.OptinValue
+                        });
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_selected_pkgitem_optout",
+                            value: item.OptoutValue
+                        });
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_selected_pkgitem_pkgtype",
+                            value: item.childItemType
+                        });
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
                             fieldId: "custrecord_package_item_isselected",
                             value: isSelected
                         });
@@ -2182,6 +2217,17 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             sublistId: child_table,
                             fieldId: "custrecord_save_item_cost_group",
                             value: item.item_costGroup
+                        });
+                        var includePriceFlag = (item.includePrice === "true");
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_selected_pckgitem_includepric",
+                            value: includePriceFlag
+                        });
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_type_item_selected",
+                            value: item.type
                         });
                         rec.commitLine({ sublistId: child_table });
 
