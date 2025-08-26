@@ -172,6 +172,8 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                 });
                 log.debug('PO saved', POUpdated);
 
+                
+
             } catch (e) {
                 log.error('Record Creation Failed', e.message);
             }

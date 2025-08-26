@@ -16,7 +16,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
         var response = [];
         var child_table = 'recmachcustrecord_parent';
 
-        var recParentBuffer = null;
+       
         var sucessMsg = '';
 
         items.forEach(function (entry) {
@@ -87,7 +87,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: getIntrrnalIdByText("customrecord_advs_brands", entry.vehicle_make)
                         });
                     }
-
 
                     if (entry.vehicle_model) {
                         vehicleRecordObj.setValue({
@@ -848,29 +847,27 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                 res.statusCode = 500;
                 res.statusMessage = 'Action does not match !';
                 response.push(res);
-
                 return;
             }
 
             // to store Req in Buffer Table
-            recParentBuffer = record.create({ type: 'customrecord_buffer_table', isDynamic: true });
-            recParentBuffer.setValue({ fieldId: 'custrecord_buffer_record_type', value: 5 }); // Appvantage Integration
-
-            recParentBuffer.selectNewLine({ sublistId: child_table });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_request", value: JSON.stringify(entry) });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_record_type_", value: 5 });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_error", value: res.statusMessage });
-            if (res.statusCode == 500) {
-                recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 4 }); // Error
-            } else {
-                recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 2 }); // Success
-            }
-            recParentBuffer.commitLine({ sublistId: child_table });
+            try {
+				var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
+				recParentBuffer.setValue({ fieldId: 'custrecord_record_type_', value: 5 }); // Appvantage Integration
+				recParentBuffer.setValue({ fieldId: 'custrecord_request', value: JSON.stringify(entry) });
+				recParentBuffer.setValue({ fieldId: 'custrecord_error', value: res.statusMessage });
+				if (res.statusCode != 200 && res.statusCode != 201) {
+					recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 4 }); // Error
+				} else {
+					recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 2 });  // Success
+				}
+				recParentBuffer.save();
+			} catch (e) {
+				log.debug('Error updating Buffer Table: ', e.message);
+			}
 
         });
-        if (recParentBuffer)
-            recParentBuffer.save();
-
+       
         return response;
     }
 

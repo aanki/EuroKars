@@ -2,7 +2,7 @@
  * @NApiVersion 2.x
  * @NScriptType Restlet
  */
-define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
+define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, log, file) {
 
     // Some Hardoced ids
     var SalesOrder_CustomFrom = 356; //ADVS Vechile SO
@@ -495,7 +495,7 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         if (entry.vsaStatus) {
                             stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.vsaStatus);
                         }
-                        
+
                         var PDI_Id = find_Record_Common('customrecord_pdi_section', entry.sfId, 'custrecord_salesforce_id_pdi');
 
                         var rec = PDI_Id
@@ -520,34 +520,13 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         rec.setValue({ fieldId: 'custrecord_start_pdi_approval_process', value: entry.startPDIApprovalProcess });
                         rec.setValue({ fieldId: 'custrecord_salesforce_id_pdi', value: entry.sfId });
                         rec.setValue({ fieldId: 'custrecord_advs_pdi_status', value: stausID });
-                        var PDIRec=rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
-                        //PDI line
-                        // soRec.selectNewLine({ sublistId: child_PDI_table });
-
-                        // if (entry.registrationDate) {
-                        //     var registrationDate = parseDateFromDDMMYYYY(entry.registrationDate);
-                        //     soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_registration_date', value: registrationDate });
-                        // }
-
-                        // if (entry.estimatedDeliveryDatePDI) {
-                        //     var estimatedDeliveryDatePDI = parseDateFromDDMMYYYY(entry.estimatedDeliveryDatePDI);
-                        //     soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: 'custrecord_estmt_delivery_date_pdi', value: estimatedDeliveryDatePDI });
-                        // }
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_ref_no", value: entry.pdiReferenceNo });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_remarks", value: entry.pdiRemarks });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_pdi_notification", value: entry.pdiNotificationSent });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_sm_allows_pdi_notification", value: entry.allowsPDINotification });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_pdi_sold_chit_sent", value: entry.pdiSoldChitSent });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_start_pdi_approval_process", value: entry.startPDIApprovalProcess });
-                        // soRec.setCurrentSublistValue({ sublistId: child_PDI_table, fieldId: "custrecord_advs_pdi_status", value: stausID });
-                        // soRec.commitLine({ sublistId: child_PDI_table });
+                        var PDIRec = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
 
                         var soRec = record.load({ type: record.Type.SALES_ORDER, id: SoId, isDynamic: true });
                         soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_assigned', value: true }); // Stock Assigned
                         var veh_assigned = soRec.getValue({ fieldId: 'custbody_advs_vehicle_stock_assigned' });
                         soRec.setValue({ fieldId: 'custbody_advs_pdi_process_status', value: stausID });
                         soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
-
 
                         record.submitFields({
                             type: 'customrecord_advs_vm',
@@ -576,6 +555,80 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                     response.push(res);
                 }
                 log.debug('POST response KICKSTART_PDI', res);
+            }
+            else if (entry.action == 'TRIGGER_HLF') {
+                try {
+                    var res = {
+                        sfId: entry.sfId || null,
+                        dmsId: null,
+                        statusCode: '',
+                        statusMessage: ''
+                    };
+                    log.debug('POST request TRIGGER_HLF', entry);
+
+                    // Mandatory key
+                    if (!entry.sfId) {
+                        res.statusCode = 500;
+                        res.statusMessage = 'Required: sfId ';
+                        response.push(res);
+                        return;
+                    }
+                    var SoId = findSalesOrder(entry.sfId);
+                    if (SoId) {
+                        var stausID = '';
+                        if (entry.vsaStatus) {
+                            stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.vsaStatus);
+                        }
+
+                        var HLF_Id = find_Record_Common('customrecord_hlf', SoId, 'custrecord_vsa_hlf');
+
+                        var rec = HLF_Id
+                            ? record.load({ type: 'customrecord_hlf', id: HLF_Id, isDynamic: true })
+                            : record.create({ type: 'customrecord_hlf', isDynamic: true });
+
+                        rec.setValue({ fieldId: 'custrecord_vsa_hlf', value: SoId });
+
+                        rec.setValue({ fieldId: 'custrecord_hlf_ref', value: entry.hlfReference });
+                        rec.setValue({ fieldId: 'custrecord_hlf_ref_super', value: entry.hlfReferenceSuperseded });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_amt_aprvd', value: entry.hlfLoanAmountApproved });
+                        rec.setValue({ fieldId: 'custrecord_hlf_credit_proposal', value: entry.hlfCreditProposalReference });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_status', value: entry.hlfLoanStatus });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_code', value: entry.hlfLoanStatusCode });
+                        rec.setValue({ fieldId: 'custrecord_hlf_status_time', value: entry.hlfStatusTime });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_status_des', value: entry.hlfLoanStatusDescription });
+                        if (entry.hlfVSADate) {
+                            var hlfVSADate = parseDateFromDDMMYYYY(entry.hlfVSADate);
+                            rec.setValue({ fieldId: 'custrecord_hlf_vsa_date', value: hlfVSADate });
+                        }
+
+                        rec.setValue({ fieldId: 'custrecord_hlf_pur_price', value: entry.hlfPurchasePrice });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_amnt', value: entry.hlfLoanAmount });
+                        rec.setValue({ fieldId: 'custrecord_hlf_loan_tenure', value: entry.hlfLoanTenure });
+                        rec.setValue({ fieldId: 'custrecord_hlf_interest_rate', value: entry.hlfInterestRate });
+                        rec.setValue({ fieldId: 'custrecord_can_call_hlf_api', value: entry.canCallHLFAPI });
+                        rec.setValue({ fieldId: 'custrecord_call_amndmnt_api', value: entry.callAmenmentAPI });
+                        rec.setValue({ fieldId: 'custrecord_hlf_api_triggered', value: entry.hlfAPITriggered });
+                        var HLFRec = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+
+
+                        res.dmsId = SoId;
+                        res.HLFdmsId = HLFRec;
+                        res.statusCode = 200;
+                        res.statusMessage = 'HLF has been updated sucessfully';
+
+                    } else {
+                        res.statusCode = 500;
+                        res.statusMessage = 'VSA does not exist with given sfid';
+                    }
+                    response.push(res);
+
+                } catch (e) {
+                    log.error('Error processing entry', e);
+                    res.statusCode = 500;
+                    res.statusMessage = e.message;
+                    response.push(res);
+                }
+                log.debug('POST response TRIGGER_HLF', res);
             }
             else if (entry.action == 'VSA_ITEM') {
                 try {
@@ -979,32 +1032,25 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                         response.push(res);
                         return;
                     }
-                var ROC_Id = find_Record_Common('customrecord_roc', entry.sfId, 'custrecord_salesforce_id_roc');
-                  if(entry.colourChanged){
-                    var Req_VIN_ID = entry.vehicleStockDmsId;
-                    var Assign_VIN_ID = find_Free_VehicleMaster_fromSalesforce(Req_VIN_ID);
-                    if (Assign_VIN_ID) {
-                        if (ROC_Id) {
+                    var ROC_Id = find_Record_Common('customrecord_roc', entry.sfId, 'custrecord_salesforce_id_roc');
+                    if (!ROC_Id) {
+                        res.statusCode = 400;
+                        res.statusMessage = 'ROC does not exist with given sfid';
+                        response.push(res);
+                        return;
+                    }
+
+                    if (entry.colourChanged) {
+                        var Req_VIN_ID = entry.vehicleStockDmsId;
+                        var Assign_VIN_ID = find_Free_VehicleMaster_fromSalesforce(Req_VIN_ID);
+                        if (Assign_VIN_ID) {
+
                             var salesOrderId = findSalesOrder(entry.vsaSfId);
                             if (salesOrderId) {
                                 var stausID = '';
                                 if (entry.rocStatus) {
                                     stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.rocStatus);
                                 }
-                                record.submitFields({
-                                    type: 'customrecord_roc',
-                                    id: ROC_Id,
-                                    values: {
-                                        custrecord_roc_status: stausID,
-                                        custrecord_cust_sign: entry.customerSigned,
-                                        custrecord_sm_sign: entry.salesManagerSigned,
-                                        custrecord_revised_net_price: entry.vsaNewNettSellingPrice
-                                    },
-                                    options: {
-                                        enableSourcing: true,
-                                        ignoreMandatoryFields: true
-                                    }
-                                });
 
                                 var soRec = record.load({ type: record.Type.SALES_ORDER, id: salesOrderId, isDynamic: true });
                                 var CusutomerID = soRec.getValue({ fieldId: 'entity' });
@@ -1038,7 +1084,6 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                             });
                                         }
 
-
                                         soRec.setCurrentSublistValue({
                                             sublistId: 'item',
                                             fieldId: 'custcol_advs_st_equip_sales',
@@ -1065,29 +1110,60 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                                         custrecord_advs_vm_customer_number: CusutomerID
                                     }
                                 });
-                                log.error('Updated Vehicle Master ', 'Yes');
 
-
+                                record.submitFields({
+                                    type: 'customrecord_roc',
+                                    id: ROC_Id,
+                                    values: {
+                                        custrecord_roc_status: stausID,
+                                        custrecord_cust_sign: entry.customerSigned,
+                                        custrecord_sm_sign: entry.salesManagerSigned,
+                                        custrecord_revised_net_price: entry.vsaNewNettSellingPrice
+                                    },
+                                    options: {
+                                        enableSourcing: true,
+                                        ignoreMandatoryFields: true
+                                    }
+                                });
 
                                 res.dmsId = ROC_Id;
                                 res.statusCode = 200;
-                                res.statusMessage = 'ROC and Vechile Stock has been updated sucessfully';
+                                res.statusMessage = 'ROC and stock has been updated sucessfully';
+
+
+                                log.error('Updated Vehicle Master ', 'Yes');
 
                             } else {
                                 res.statusCode = 500;
                                 res.statusMessage = 'VSA does not exist with given vsaSfId';
                             }
-
-                        } else {
-                            res.statusCode = 500;
-                            res.statusMessage = 'ROC does not exist with given sfid';
                         }
-                    } 
-                    else {
-                        res.statusCode = 500;
-                        res.statusMessage = 'VIN stock is not available for allocation with given vehicleStockDmsId';
+                        else {
+                            res.statusCode = 500;
+                            res.statusMessage = 'VIN stock is not available for allocation with given vehicleStockDmsId';
+                        }
+                    } else {
+
+                        record.submitFields({
+                            type: 'customrecord_roc',
+                            id: ROC_Id,
+                            values: {
+                                custrecord_roc_status: stausID,
+                                custrecord_cust_sign: entry.customerSigned,
+                                custrecord_sm_sign: entry.salesManagerSigned,
+                                custrecord_revised_net_price: entry.vsaNewNettSellingPrice
+                            },
+                            options: {
+                                enableSourcing: true,
+                                ignoreMandatoryFields: true
+                            }
+                        });
+
+                        res.dmsId = ROC_Id;
+                        res.statusCode = 200;
+                        res.statusMessage = 'ROC has been updated sucessfully';
                     }
-                }
+
                     response.push(res);
 
                 } catch (e) {
@@ -1274,25 +1350,139 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                 }
                 log.debug('POST response ROC_ITEM', res);
             }
+            else if (entry.action == 'ATTACHMENT') {
+                try {
+                    var res = {
+                        sfId: entry.sfId || null,
+                        recordType: entry.recordType || null,
+                        dmsFileId: null,
+                        statusCode: '',
+                        statusMessage: ''
+                    };
+                    log.debug('POST request Attachment', entry);
+
+                    // Mandatory key
+                    if (!entry.sfId || !entry.recordType || !entry.parentDmsId) {
+                        res.statusCode = 500;
+                        res.statusMessage = 'Required: sfId, recordType, parentDmsId';
+                        response.push(res);
+                        return;
+                    }
+                    var parentDmsId = entry.parentDmsId;
+                    var recordID = '';
+                    var record_type = '';
+                    if (entry.recordType == 'VSA') {
+                      //  recordID = findSalesOrder_withID(parentDmsId);
+                        record_type = 'salesorder';
+                    }
+                    else if (entry.recordType == 'VSADeposit') {
+                       // recordID = findDeposit_withID(parentDmsId);
+                        record_type = 'customerdeposit';
+                    }
+                    else if (entry.recordType == 'ROC') {
+                       // recordID = find_Record_Common('customrecord_roc', parentDmsId, 'internalid');
+                        record_type = 'customrecord_roc';
+                    }
+                    else if (entry.recordType == 'PDI') {
+
+                        recordID = find_PDI_by_VSA('customrecord_pdi_section', parentDmsId, 'custrecord_advs_transaction');
+                        parentDmsId=recordID;
+                        record_type = 'customrecord_pdi_section';
+                    }
+
+                    if (parentDmsId) {
+
+                        var base64File = entry.attachmentContent;
+                        var fileName = entry.attachmentName || "Attachment.pdf";
+
+                        var extension = fileName.split('.').pop().toLowerCase();
+                        var fileType;
+
+                        switch (extension) {
+                            case 'pdf':
+                                fileType = file.Type.PDF;
+                                break;
+                            case 'jpg':
+                            case 'jpeg':
+                                fileType = file.Type.JPGIMAGE;
+                                break;
+                            case 'png':
+                                fileType = file.Type.PNGIMAGE;
+                                break;
+                            case 'doc':
+                                fileType = file.Type.DOC;
+                                break;
+                            case 'txt':
+                                fileType = file.Type.PLAINTEXT;
+                                break;
+                            default:
+                                throw new Error('Unsupported file type: ' + extension);
+                        }
+
+                        var finalFileName = parentDmsId + "_" + fileName;
+
+                        var newFile = file.create({
+                            name: finalFileName,
+                            fileType: fileType,
+                            contents: base64File,
+                            encoding: file.Encoding.BASE_64,
+                            folder: 3604 //
+                        });
+                        var fileId = newFile.save();
+                        log.debug("File Saved", fileId);
+                        
+
+                        record.attach({
+                            record: {
+                                type: 'file',
+                                id: fileId
+                            },
+                            to: {
+                                type: record_type,
+                                id: parentDmsId
+                            }
+                        });
+
+                        res.dmsFileId = fileId;
+                        res.statusCode = 200;
+                        res.statusMessage = 'File has been created sucessfully';
+
+                    } else {
+                        res.statusCode = 500;
+                        res.statusMessage = entry.recordType + ' does not exist with given parentDmsId';
+                    }
+                    response.push(res);
+
+                } catch (e) {
+                    log.error('Error processing entry', e);
+                    res.statusCode = 500;
+                    res.statusMessage = e.message;
+                    response.push(res);
+                }
+                log.debug('POST response Attachment', res);
+            }
 
             // to store Req in Buffer Table
-            recParentBuffer = record.create({ type: 'customrecord_buffer_table', isDynamic: true });
-            recParentBuffer.setValue({ fieldId: 'custrecord_buffer_record_type', value: 3 }); // craete VSa
-
-            recParentBuffer.selectNewLine({ sublistId: child_table });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_request", value: JSON.stringify(entry) });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_record_type_", value: 3 });
-            recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_error", value: res.statusMessage });
-            if (res.statusCode == 500) {
-                recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 4 }); // Error
-            } else {
-                recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 2 }); // Success
+            try {
+                log.debug('res.statusCode: ', res.statusCode);
+                var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
+                recParentBuffer.setValue({ fieldId: 'custrecord_record_type_', value: 3 }); // craete VSa
+                if (entry.action != 'ATTACHMENT') {
+                    recParentBuffer.setValue({ fieldId: 'custrecord_request', value: JSON.stringify(entry) });
+                }
+                recParentBuffer.setValue({ fieldId: 'custrecord_error', value: res.statusMessage });
+                if (res.statusCode != 200 && res.statusCode != 201) {
+                    recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 4 }); // Error
+                } else {
+                    recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 2 });  // Success
+                }
+                recParentBuffer.save();
+            } catch (e) {
+                log.debug('Error updating Buffer Table: ', e.message);
             }
-            recParentBuffer.commitLine({ sublistId: child_table });
 
         });
-        if (recParentBuffer)
-            recParentBuffer.save();
+
 
         return response;
     }
@@ -1815,6 +2005,22 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
         }).run().getRange({ start: 0, end: 1 });
         return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
     }
+    function findSalesOrder_withID(internalid) {
+        var existingSO = search.create({
+            type: record.Type.SALES_ORDER,
+            filters: [["internalid", "is", internalid]],
+            columns: ['internalid']
+        }).run().getRange({ start: 0, end: 1 });
+        return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
+    }
+    function findDeposit_withID(internalid) {
+        var existingSO = search.create({
+            type: 'customerdeposit',
+            filters: [["internalid", "is", internalid]],
+            columns: ['internalid']
+        }).run().getRange({ start: 0, end: 1 });
+        return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
+    }
     function findSelected_PackageRecord(SalesOrderID) {
         var childSearch = search.create({
             type: 'customrecord_save_vsa_package',
@@ -1841,6 +2047,19 @@ define(['N/record', 'N/search', 'N/log'], function (record, search, log) {
                 ['isinactive', 'is', 'F'],
                 'AND',
                 [filter_field, 'is', sfid]
+            ],
+            columns: ['internalid']
+        }).run().getRange({ start: 0, end: 1 });
+
+        return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
+    }
+      function find_PDI_by_VSA(recordType, sfid, filter_field) {
+        var existingSO = search.create({
+            type: recordType,
+            filters: [
+                ['isinactive', 'is', 'F'],
+                'AND',
+                [filter_field, 'anyof', sfid]
             ],
             columns: ['internalid']
         }).run().getRange({ start: 0, end: 1 });

@@ -63,14 +63,30 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					else if (custscript_record_type == 'customerdeposit') {
 						push_deposit_bank_cleared(header, recordId, NewDateString);
 					}
+					else if (custscript_record_type == 'customer') {
+						push_customer_particular_owner(header, recordId, NewDateString);
+					}
+					else if (custscript_record_type == 'customrecord_advs_ownership') {
+						push_vehicle_ownership(header, recordId, NewDateString);
+					}
 
 				} else {// means its triggered from Scheduled Script
 
+					// var DateObj = new Date();
+					// var NewDateObj = new Date(DateObj); // clone current date
+					// NewDateObj.setHours(NewDateObj.getHours() - 1); // subtract 1 hour
+					// log.debug("NewDateObj", NewDateObj);
+					// var NewDateString = format.format({
+					// 	value: NewDateObj,
+					// 	type: format.Type.DATETIMETZ // use DATETIMETZ for datetime fields
+					// });
+					// log.debug("NewDateString", NewDateString);
 					var DateObj = new Date();
 					var NewDateObj = new Date(DateObj.getFullYear(), DateObj.getMonth(), (DateObj.getDate() - 2));
 					log.debug("NewDateObj", NewDateObj);
 					var NewDateString = format.format({ value: NewDateObj, type: format.Type.DATE });
 					log.debug("NewDateString", NewDateString);
+
 
 					// Hit API's to push Data into Salesforce
 					push_model_data(header, recordId, NewDateString);
@@ -82,6 +98,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					push_vsa_pacakge_item(header, recordId, NewDateString);
 					push_campaign(header, recordId, NewDateString);
 					push_vehicle_master(header, recordId, NewDateString, '');
+					push_coe_bid(header, recordId, NewDateString, '');
+					push_customer_particular_owner(header, recordId, NewDateString, '');
 
 				}
 			}
@@ -182,8 +200,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response', postResponse.body);
-                update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res', 'custitem_sf_sync_time_model');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 				log.error({
@@ -294,7 +312,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				});
 				var jsonString_model = JSON.stringify(modelList);
 				log.debug('POST jsonString Model Variant', jsonString_model);
-				
+
 
 				//---hit POST request-----------
 				const postResponse = https.post({
@@ -303,8 +321,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response Model Variant', postResponse.body);
-				update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'serializedinventoryitem', 'custitem_advs_sf_id', 'custitem_advs_sf_res', 'custitem_sf_sync_time_model');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 				log.error({
@@ -413,7 +431,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response Variant Colour', postResponse.body);
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'customrecord_advs_st_model_option', 'custrecord_salesforce_id_colour', 'custrecord_salesforce_res_colour', 'custrecord_sf_sync_time_colour');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -504,8 +523,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response Insurance subsidy Rate', postResponse.body);
-                update_sfid_indms(postResponse.body, 'customrecord_insurance_susidy_rate', 'custrecord_salesforce_id_insu', 'custrecord_salesforce_res_insu');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'customrecord_insurance_susidy_rate', 'custrecord_salesforce_id_insu', 'custrecord_salesforce_res_insu', 'custrecord_sf_sync_time_ins');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -631,8 +650,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response finance_rate', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance', 'custrecord_sf_res_fin');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance', 'custrecord_sf_res_fin', 'custrecord_sf_sync_time_fin');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -845,13 +864,13 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var responseData = JSON.parse(postResponse.body);
 				log.debug('POST response push_vsa_pacakge', responseData);
 
-				update_sfid_indms(postResponse.body, 'customrecord_vsa_package', 'custrecord_salesforce_id_package', 'custrecord_sf_res_pckg');
+				update_sfid_indms(postResponse.body, 'customrecord_vsa_package', 'custrecord_salesforce_id_package', 'custrecord_sf_res_pckg', 'custrecord_sf_sync_time_packg');
 				if (responseData[0].statusCode === '200' || responseData[0].statusCode === '201') {
 					if (recParent == 'allitems') {
 						push_vsa_pacakge_item_with_Master(head, recordId);
 					}
 				}
-				store_BufferTale(jsonString_model, postResponse.body, responseData[0].statusCode);
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -957,8 +976,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response push_vsa_pacakge_item_with_Master', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_vsa_package_item', 'custrecord_salesforce_id_pckg_item', 'custrecord_sf_res_pckg_item');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'customrecord_vsa_package_item', 'custrecord_salesforce_id_pckg_item', 'custrecord_sf_res_pckg_item', 'custrecord_sf_sync_time_pckitem');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -1071,8 +1090,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response vsa_package_item', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_vsa_package_item', 'custrecord_salesforce_id_pckg_item', 'custrecord_sf_res_pckg_item');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				update_sfid_indms(postResponse.body, 'customrecord_vsa_package_item', 'custrecord_salesforce_id_pckg_item', 'custrecord_sf_res_pckg_item', 'custrecord_sf_sync_time_pckitem');
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -1202,7 +1221,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response campaign', postResponse.body);
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -1219,6 +1238,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 			}
 		}
+
+
+
 
 		function push_vehicle_master(head, recordId, modified_date) {
 
@@ -1237,7 +1259,11 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						"AND",
 						["custrecord_advs_vm_vehicle_brand", "anyof", "1"], // Only Mazda
 						"AND",
-						["custrecord_send_salesforce_vm", "is", "T"]
+						["custrecord_send_salesforce_vm", "is", "T"],
+						"AND",
+						["custrecord_advs_vm_subsidary", "noneof", "19"], // Not EPOPL
+						"AND",
+						["custrecord_appvantage", "is", "F"]
 					]
 				}
 				log.debug("customrecord_advs_vm", custom_filter);
@@ -1269,6 +1295,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_advs_vm_model_year" }),
 						search.createColumn({ name: "custrecord_advs_prod_month" }),
 						search.createColumn({ name: "custrecord_advs_eta" }),
+						search.createColumn({ name: "custrecord_approx_omv" }),
 						search.createColumn({ name: "email", join: "custrecord_created_by_vm", label: "Email" }),
 						search.createColumn({ name: "isinactive" })
 					]
@@ -1306,6 +1333,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const prodYear = result.getText({ name: "custrecord_advs_vm_model_year" }) || "";
 						const prodMonth = result.getText({ name: "custrecord_advs_prod_month" }) || "";
 						var eta = result.getValue({ name: "custrecord_advs_eta" }) || null;
+						var omv = result.getValue({ name: "custrecord_approx_omv" }) || null;
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by_vm", label: "Email" }) || "";
 
@@ -1353,7 +1381,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 								productionMonth: prodMonth,
 								productionYear: prodYear,
 								etaDate: eta,
-								baseCarCostApproximateOMV: null,
+								baseCarCostApproximateOMV: omv,
 								dutyPaidOMV: null,
 								Active: (isinactive == "T" || isinactive == true) ? false : true,
 								recordOwnerEmail: created_email
@@ -1371,8 +1399,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response vehicle_master', postResponse.body);
-				update_sfid_indms(postResponse.body, 'customrecord_advs_vm', 'custrecord_salesforce_id_stock', 'custrecord_sf_res_stock');
-
+				update_sfid_indms(postResponse.body, 'customrecord_advs_vm', 'custrecord_salesforce_id_stock', 'custrecord_sf_res_stock', 'custrecord_sf_sync_time_vechile');
+				store_BufferTale(postResponse.body, jsonString_model);
 			} catch (error) {
 
 				log.error({
@@ -1396,7 +1424,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					custom_filter = [
 						["internalid", "anyof", recordId],
 						"AND",
-						["mainline","is","T"]
+						["mainline", "is", "T"]
 					]
 				}
 				else {
@@ -1421,7 +1449,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					]
 				});
 				const modelList = [];
-				
+
 				const pagedData = searchResults.runPaged({ pageSize: 1000 });
 				pagedData.pageRanges.forEach(function (pageRange) {
 					const page = pagedData.fetch({ index: pageRange.index });
@@ -1433,16 +1461,16 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const fin_cleared = result.getValue({ name: "custbody_fin_cleared" });
 						const sf_id = result.getValue({ name: "custbody_advs_salesforceid" });
 
-							if (veh_cleared || fin_cleared) {
-								modelList.push({
-									dmsId: internalid,
-									action: 'UPDATE_CLEARED_INFO',
-									vehicleAdminCleared: veh_cleared,
-									financeCleared:fin_cleared
-								});
-							}
+						if (veh_cleared || fin_cleared) {
+							modelList.push({
+								dmsId: internalid,
+								action: 'UPDATE_CLEARED_INFO',
+								vehicleAdminCleared: veh_cleared,
+								financeCleared: fin_cleared
+							});
+						}
 
-						
+
 					});
 				});
 				var jsonString_model = JSON.stringify(modelList);
@@ -1456,7 +1484,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				});
 				log.debug('POST response push_vsa_vehicle_fin_cleared', postResponse.body);
 				//update_sfid_indms(postResponse.body, 'customrecord_finance_rate', 'custrecord_salesforce_id_finance','custrecord_sf_res_fin');
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -1480,7 +1508,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
 						["internalid", "anyof", recordId]
-						 
+
 					]
 				}
 				else {
@@ -1518,11 +1546,11 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						if (!UniqueModelDesc[internalid]) {
 							UniqueModelDesc[internalid] = true;
 
-								modelList.push({
-									dmsId: internalid,
-									financeRemarks: '',
-									bankCleared: bank_cleared
-								});
+							modelList.push({
+								dmsId: internalid,
+								financeRemarks: '',
+								bankCleared: bank_cleared
+							});
 						}
 					});
 				});
@@ -1536,7 +1564,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					body: jsonString_model
 				});
 				log.debug('POST response push_deposit_bank_cleared', postResponse.body);
-				store_BufferTale(jsonString_model, postResponse.body, postResponse.body[0].statusCode);
+				store_BufferTale(postResponse.body, jsonString_model);
 
 			} catch (error) {
 
@@ -1553,8 +1581,344 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 			}
 		}
+		function push_coe_bid(head, recordId, modified_date) {
 
-		
+			try {
+				var custom_filter = "";
+				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
+					custom_filter = [
+						["internalid", "anyof", recordId]
+					]
+				}
+				else {
+					var custom_filter = [
+						["isinactive", "is", "F"],
+						"AND",
+						["custrecord_coe_bid_vsa.custbody_advs_salesforceid", "isnotempty", ""],
+						"AND",
+						["lastmodified", "onorafter", modified_date]
+					]
+				}
+				log.debug("customrecord_advs_coe_bid", custom_filter);
+				var searchResults = search.create({
+					type: "customrecord_advs_coe_bid",
+					filters: custom_filter,
+					columns: [
+						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custrecord_coe_bid_vsa" }),
+						search.createColumn({ name: "custrecord_coe_bid_status" }),
+						search.createColumn({ name: "custrecord_coe_bid_submission_date" }),
+						search.createColumn({ name: "custrecord_coe_bid_amount" }),
+						search.createColumn({ name: "custrecord_coe_bid_category" }),
+						search.createColumn({ name: "custrecord_coe_bid_premium_paid" }),
+						search.createColumn({ name: "custrecord_coe_bid_expiry_date" })
+
+					]
+				});
+				const modelList = [];
+				var UniqueModelDesc = {};
+				const pagedData = searchResults.runPaged({ pageSize: 1000 });
+				pagedData.pageRanges.forEach(function (pageRange) {
+					const page = pagedData.fetch({ index: pageRange.index });
+
+					page.data.forEach(function (result) {
+
+						const internalid = result.getValue({ name: "internalid" });
+						const vsaID = result.getValue({ name: "custrecord_coe_bid_vsa" });
+						const bid_satus = result.getText({ name: "custrecord_coe_bid_status" });
+						var bid_date = result.getValue({ name: "custrecord_coe_bid_submission_date" });
+						const bid_amount = result.getValue({ name: "custrecord_coe_bid_amount" });
+						var vehcate = result.getText({ name: "custrecord_coe_bid_category" });
+						const secureAmnt = result.getValue({ name: "custrecord_coe_bid_premium_paid" }) || null;
+						var secureDate = result.getValue({ name: "custrecord_coe_bid_expiry_date" }) || null;
+
+						if (bid_date) {
+							bid_date = convertDateToYMD(bid_date);
+						}
+						if (secureDate) {
+							secureDate = convertDateToYMD(secureDate);
+						}
+						if (vehcate) {
+							vehcate = 'Category ' + vehcate;
+						}
+
+						if (!UniqueModelDesc[internalid]) {
+							UniqueModelDesc[internalid] = true;
+
+							modelList.push({
+								dmsId: internalid,
+								dmsVSAId: vsaID,
+								coeBidStatus: bid_satus,
+								coeBidDate: bid_date,
+								coeBidAmount: bid_amount,
+								coeBidVehicleCategory: vehcate,
+								coeSecuredDate: secureDate,
+								coeSecuredAmount: secureAmnt
+							});
+						}
+					});
+				});
+				var jsonString_model = JSON.stringify(modelList);
+				log.debug('POST jsonString customrecord_advs_coe_bid', jsonString_model);
+
+				//---hit POST request-----------
+				const postResponse = https.post({
+					url: endPoint_URL + 'upsertVSACOEBidding',
+					headers: head,
+					body: jsonString_model
+				});
+				log.debug('POST response customrecord_advs_coe_bid', postResponse.body);
+				update_sfid_indms(postResponse.body, 'customrecord_advs_coe_bid', 'custrecord_salesforce_id_coe', 'custrecord_sf_res_coe', 'custrecord_sf_sync_time_coe');
+				store_BufferTale(postResponse.body, jsonString_model);
+
+			} catch (error) {
+
+				log.error({
+					title: 'Error in customrecord_advs_coe_bid',
+					details: error
+				});
+				email.send({
+					author: author, // or use a specific employee ID
+					recipients: recipients, // replace with actual email
+					subject: 'Salesforce Push finance_rate Error Notification',
+					body: 'An error occurred in the script:\n\n' + error.message + '\n\nStack:\n' + error.stack
+				});
+
+			}
+		}
+
+		function push_customer_particular_owner(head, recordId, modified_date) {
+
+			try {
+				var custom_filter = "";
+				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
+					custom_filter = [
+						["internalid", "anyof", recordId]
+					]
+				}
+				else {
+					var custom_filter = [
+						["isinactive", "is", "F"],
+						"AND",
+						["custentity_salesforce_id", "isnotempty", ""],
+						"AND",
+						["lastmodifieddate", "onorafter", modified_date]
+					]
+				}
+				log.debug("customer", custom_filter);
+				var searchResults = search.create({
+					type: "customer",
+					filters: custom_filter,
+					columns: [
+						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "isperson" }),
+						search.createColumn({ name: "salutation" }),
+						search.createColumn({ name: "firstname" }),
+						search.createColumn({ name: "lastname" }),
+						search.createColumn({ name: "companyname" }),
+						search.createColumn({ name: "mobilephone" }),
+						search.createColumn({ name: "email" }),
+						search.createColumn({ name: "country" }),
+						search.createColumn({ name: "zipcode" }),
+						search.createColumn({ name: "address" })
+					]
+				});
+				const modelList = [];
+				var UniqueModelDesc = {};
+				const pagedData = searchResults.runPaged({ pageSize: 1000 });
+				pagedData.pageRanges.forEach(function (pageRange) {
+					const page = pagedData.fetch({ index: pageRange.index });
+
+					page.data.forEach(function (result) {
+
+						const internalid = result.getValue({ name: "internalid" });
+						var isperson = result.getValue({ name: "isperson" });
+						var salutation = result.getValue({ name: "salutation" });
+						var firstname = result.getValue({ name: "firstname" });
+						var lastname = result.getValue({ name: "lastname" });
+						var companyname = result.getValue({ name: "companyname" });
+						var mobilephone = result.getValue({ name: "mobilephone" }) || null;
+						var email = result.getValue({ name: "email" }) || '';
+						var country = result.getValue({ name: "country" }) || '';
+						var zipcode = result.getValue({ name: "zipcode" }) || '';
+						var address = result.getValue({ name: "address" }) || '';
+
+						var customerType = (isperson === "T") ? "Individual" : "Company";
+
+
+						if (!UniqueModelDesc[internalid]) {
+							UniqueModelDesc[internalid] = true;
+
+							modelList.push({
+								dmsId: internalid,
+								customerType: customerType,
+								customerSalutation: salutation,
+								customerFirstName: firstname,
+								customerLastName: lastname,
+								customerCompanyName: companyname,
+								customerPhone: mobilephone,
+								customerEmail: email,
+								street: '',
+								country: country,
+								postalCode: zipcode,
+								address: address
+							});
+						}
+					});
+				});
+				var jsonString_model = JSON.stringify(modelList);
+				log.debug('POST jsonString push_customer_particular_owner', jsonString_model);
+
+				//---hit POST request-----------
+				const postResponse = https.post({
+					url: endPoint_URL + 'updateOwnerParticular',
+					headers: head,
+					body: jsonString_model
+				});
+				log.debug('POST response push_customer_particular_owner', postResponse.body);
+				//update_sfid_indms(postResponse.body, 'customrecord_advs_coe_bid', 'custrecord_salesforce_id_coe', 'custrecord_sf_res_coe', 'custrecord_sf_sync_time_coe');
+				store_BufferTale(postResponse.body, jsonString_model);
+
+			} catch (error) {
+
+				log.error({
+					title: 'Error in customrecord_advs_coe_bid',
+					details: error
+				});
+				email.send({
+					author: author, // or use a specific employee ID
+					recipients: recipients, // replace with actual email
+					subject: 'Salesforce Push finance_rate Error Notification',
+					body: 'An error occurred in the script:\n\n' + error.message + '\n\nStack:\n' + error.stack
+				});
+
+			}
+		}
+		function push_vehicle_ownership(head, recordId, modified_date) {
+
+			try {
+				var custom_filter = "";
+				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
+					custom_filter = [
+						["internalid", "anyof", recordId]
+					]
+				}
+				else {
+					var custom_filter = [
+						["isinactive", "is", "F"],
+						"AND",
+						["custrecord_advs_vehicle_link.custrecord_salesforce_id_stock", "isnotempty", ""],
+						"AND",
+						["lastmodified", "onorafter", modified_date]
+					]
+				}
+				log.debug("customrecord_advs_ownership", custom_filter);
+				var searchResults = search.create({
+					type: "customrecord_advs_ownership",
+					filters: custom_filter,
+					columns: [
+						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custrecord_advs_strt_date" }),
+						search.createColumn({ name: "custrecord_adsv_end_date" }),
+						search.createColumn({ name: "custrecord_advs_vehicle_link" }),
+						search.createColumn({ name: "custrecord_advs_cus_name" }),
+						search.createColumn({ name: "custentity_salesforce_id",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "isperson",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "salutation",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({name: "firstname",join: "CUSTRECORD_ADVS_CUS_NAME"}),
+						search.createColumn({ name: "lastname" ,join: "CUSTRECORD_ADVS_CUS_NAME"}),
+						search.createColumn({ name: "companyname",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "mobilephone",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "email",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "country",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "zipcode",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "address",join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						
+					]
+				});
+				const modelList = [];
+				var UniqueModelDesc = {};
+				const pagedData = searchResults.runPaged({ pageSize: 1000 });
+				pagedData.pageRanges.forEach(function (pageRange) {
+					const page = pagedData.fetch({ index: pageRange.index });
+
+					page.data.forEach(function (result) {
+
+						const internalid = result.getValue({ name: "internalid" });
+						var sDate = result.getValue({ name: "custrecord_advs_strt_date" }) || null;
+						var enddate = result.getValue({ name: "custrecord_adsv_end_date" }) || null;
+						var veh_ID = result.getValue({ name: "custrecord_advs_vehicle_link" });
+						var custDMSid = result.getValue({ name: "custrecord_advs_cus_name" });
+						var cust_sfID = result.getValue({ name: "custentity_salesforce_id",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var isperson = result.getValue({ name: "isperson",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var salutation = result.getValue({ name: "salutation",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var firstname = result.getValue({ name: "firstname",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var lastname = result.getValue({ name: "lastname",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var companyname = result.getValue({ name: "companyname",join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var mobilephone = result.getValue({ name: "mobilephone",join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
+						var email = result.getValue({ name: "email",join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
+
+						var customerType = (isperson === "T") ? "Individual" : "Company";
+
+						if (sDate) {
+							sDate = convertDateToYMD(sDate);
+						}
+						if (enddate) {
+							enddate = convertDateToYMD(enddate);
+						}
+
+
+						if (!UniqueModelDesc[internalid]) {
+							UniqueModelDesc[internalid] = true;
+
+							modelList.push({
+								dmsId: internalid,
+								vehicleStockDmsId: veh_ID,
+								customerDmsId: custDMSid,
+								customerSfId: cust_sfID,
+								customerType: customerType,
+								customerSalutation: salutation,
+								customerFirstName: firstname,
+								customerLastName: lastname,
+								customerCompanyName: companyname,
+								customerPhone: mobilephone,
+								customerEmail: email,
+								startDate: sDate,
+								endDate: enddate
+								 
+							});
+						}
+					});
+				});
+				var jsonString_model = JSON.stringify(modelList);
+				log.debug('POST jsonString push_customer_particular_owner', jsonString_model);
+
+				//---hit POST request-----------
+				const postResponse = https.post({
+					url: endPoint_URL + 'updateOwnerParticular',
+					headers: head,
+					body: jsonString_model
+				});
+				log.debug('POST response push_customer_particular_owner', postResponse.body);
+				update_sfid_indms(postResponse.body, 'customrecord_advs_ownership', 'custrecord_salesforce_id_car', 'custrecord_sf_res_car', 'custrecord_sf_sync_time_car');
+				store_BufferTale(postResponse.body, jsonString_model);
+
+			} catch (error) {
+
+				log.error({
+					title: 'Error in customrecord_advs_ownership',
+					details: error
+				});
+				email.send({
+					author: author, // or use a specific employee ID
+					recipients: recipients, // replace with actual email
+					subject: 'Salesforce Push finance_rate Error Notification',
+					body: 'An error occurred in the script:\n\n' + error.message + '\n\nStack:\n' + error.stack
+				});
+
+			}
+		}
+
 
 		function convertDateToYMD(inputDateStr) {
 			// Input: "02/06/2025" (DD/MM/YYYY)
@@ -1565,7 +1929,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 			// Reformat to "YYYY-MM-DD"
 			return `${yyyy}-${mm}-${dd}`;
 		}
-		function update_sfid_indms(SfResponse, record_type, sf_field, sf_res_field) {
+		function update_sfid_indms(SfResponse, record_type, sf_field, sf_res_field, sf_time_field) {
+
+			var now = new Date();
 
 			var responseArray = JSON.parse(SfResponse);
 			responseArray.forEach(function (recordData) {
@@ -1580,7 +1946,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						id: dmsId,
 						values: {
 							[sf_field]: sfId,
-							[sf_res_field]: statusMessage
+							[sf_res_field]: statusMessage,
+							[sf_time_field]: now
 						}
 					});
 
@@ -1592,25 +1959,25 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 			});
 		}
-		function store_BufferTale(Req, response, statusCode) {
-			var child_table = 'recmachcustrecord_parent';
-			var recParentBuffer = null;
-
-			recParentBuffer = record.create({ type: 'customrecord_buffer_table', isDynamic: true });
-			recParentBuffer.setValue({ fieldId: 'custrecord_buffer_record_type', value: 6 }); // craete VSa
-
-			recParentBuffer.selectNewLine({ sublistId: child_table });
-			recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_request", value: JSON.stringify(Req) });
-			recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_record_type_", value: 6 });
-			recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_error", value: response });
-			if (statusCode != 200 || statusCode != 201) {
-				recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 4 }); // Error
-			} else {
-				recParentBuffer.setCurrentSublistValue({ sublistId: child_table, fieldId: "custrecord_status_cust_buffer", value: 2 }); // Success
+		function store_BufferTale(SfResponse, dmsReq) {
+			try {
+				var responseArray = JSON.parse(SfResponse);
+				responseArray.forEach(function (recordData) {
+					log.debug('res.statusCode: ', recordData.statusCode);
+					var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
+					recParentBuffer.setValue({ fieldId: 'custrecord_record_type_', value: 6 }); // craete VSa
+					recParentBuffer.setValue({ fieldId: 'custrecord_request', value: dmsReq });
+					recParentBuffer.setValue({ fieldId: 'custrecord_error', value: recordData.statusMessage });
+					if (recordData.statusCode != 200 && recordData.statusCode != 201) {
+						recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 4 }); // Error
+					} else {
+						recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 2 });  // Success
+					}
+					recParentBuffer.save();
+				});
+			} catch (e) {
+				log.debug('Error updating Buffer Table: ', e.message);
 			}
-			recParentBuffer.commitLine({ sublistId: child_table });
-			if (recParentBuffer)
-				recParentBuffer.save();
 
 		}
 
