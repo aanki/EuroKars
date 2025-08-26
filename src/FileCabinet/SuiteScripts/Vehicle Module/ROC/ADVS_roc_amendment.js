@@ -1057,10 +1057,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 columns:
                     [
                         search.createColumn({ name: "name", label: "Name" }),
-                        search.createColumn({ name: "internalid"}),
+                        search.createColumn({ name: "internalid" }),
                         search.createColumn({ name: "custrecord_save_item_cost_group", label: "Cost Group" }),
                         search.createColumn({ name: "custrecord_parent_package_head" }),
                         search.createColumn({ name: "custrecord_save_item_cost" }),
+                        search.createColumn({ name: "custrecord_type_item_selected" }),
+                        search.createColumn({ name: "custrecord_selected_pkgitem_optin" }),
+                        search.createColumn({ name: "custrecord_selected_pkgitem_optout" }),
                         search.createColumn({ name: "custrecord_package_item_isselected" })
                     ]
             });
@@ -1068,11 +1071,23 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
             log.debug("customrecord_save_vsa_package_itemSearchObj result count", searchResultCount);
             customrecord_save_vsa_package_itemSearchObj.run().each(function (result) {
 
+                var final_cost = 0;
+                var cost_OptIN = result.getValue('custrecord_selected_pkgitem_optin');
+                var cost_OptOut = result.getValue('custrecord_selected_pkgitem_optout');
+                var cost = result.getValue('custrecord_save_item_cost');
+                if (cost_OptIN) {
+                    final_cost = cost_OptIN;
+                } else if (cost_OptIN) {
+                    final_cost = cost_OptOut;
+                } else {
+                    final_cost = cost;
+                }
+
                 results.push({
                     SelecteditemName: result.getValue('name'),
                     SelecteditemID: result.getValue('internalid'),
                     SelectedpackageHead: result.getValue('custrecord_parent_package_head'),
-                    Selectedcost: result.getValue('custrecord_save_item_cost')
+                    Selectedcost: final_cost
                 });
 
                 return true;
@@ -1092,8 +1107,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 columns:
                     [
                         search.createColumn({ name: "name", label: "Name" }),
-                        search.createColumn({ name: "internalid"}),
+                        search.createColumn({ name: "internalid" }),
                         search.createColumn({ name: "custrecord_master_packg" }),
+                        search.createColumn({ name: "custrecord_pckgitem_optin" }),
+                        search.createColumn({ name: "custrecord_pckgitem_optout" }),
                         search.createColumn({ name: "custrecord_pckg_item_cost" })
 
                     ]
@@ -1102,11 +1119,23 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
             log.debug("customrecord_vsa_package_item result count", searchResultCount);
             customrecord_save_vsa_package_itemSearchObj.run().each(function (result) {
 
+                 var final_cost = 0;
+                var cost_OptIN = result.getValue('custrecord_pckgitem_optin');
+                var cost_OptOut = result.getValue('custrecord_pckgitem_optout');
+                var cost = result.getValue('custrecord_save_item_cost');
+                if (cost_OptIN) {
+                    final_cost = cost_OptIN;
+                } else if (cost_OptIN) {
+                    final_cost = cost_OptOut;
+                } else {
+                    final_cost = cost;
+                }
+
                 results.push({
                     SelecteditemName: result.getValue('name'),
                     SelecteditemID: result.getValue('internalid'),
                     SelectedpackageHead: result.getValue('custrecord_master_packg'),
-                    Selectedcost: result.getValue('custrecord_pckg_item_cost')
+                    Selectedcost: final_cost
                 });
 
                 return true;

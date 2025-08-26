@@ -40,13 +40,13 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
                     var optionsPkg = '<option value="">Select Item</option>';
                     $amountField.val("");
 
-                    if (selectedValue === "1") {
+                    if (selectedValue === "1") {     // Add Items
                         if (Array.isArray(all_diff_items)) {
                             $.each(all_diff_items, function (i, item) {
                                 optionsPkg += `<option value="${item.SelecteditemID}" data-cost="${item.Selectedcost}">${item.SelecteditemName}</option>`;
                             });
                         }
-                    } else if (selectedValue === "2") {
+                    } else if (selectedValue === "2") {  // Removes Items
                         // Remove Items → show selected list
                         if (Array.isArray(selected_items)) {
                             $.each(selected_items, function (i, item) {
@@ -81,7 +81,8 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
                     }
                     var itemType = $row.find(".rocItemType").val();
                     if (itemType == '2') {  // Remove items
-                        amount = -Math.abs(amount);
+                        //amount = -Math.abs(amount);
+                        amount =-parseFloat(amount);
                     }
 
                     $amountField.val(amount || "");
