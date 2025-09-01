@@ -248,7 +248,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
 
                                 var VIN_ID = vinParts.length > 0 ? vinParts[0] : '';
                                 var VIN_Name = vinParts.length > 1 ? vinParts[1] : '';
-                                log.debug('VIN_ID STOCK_ALLOCATION 1', VIN_ID);
+                                log.debug('VIN_ID_detail', VIN_ID_detail + ' VIN_ID ' + VIN_ID + ' VIN_Name ' + VIN_Name);
 
                                 if (VIN_ID) {
 

@@ -14,7 +14,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 		const execute = (scriptContext) => {
 
 			// Get Access Token
-			var barer_token = JWTtoken.getSalesforceAccessToken();
+			var barer_token = JWTtoken.getAccessToken_cache();
 			if (barer_token && barer_token != null) {
 				//header
 				const header = {
@@ -40,7 +40,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 							push_model_data(header, recordId);
 						}
 					} else if (custscript_record_type == 'customrecord_advs_vm') {
-						push_vehicle_master(header, recordId, NewDateString, '');
+						push_vehicle_master(header, recordId);
 
 					} else if (custscript_record_type == 'customrecord_vsa_package') {
 						push_pacakge(header, recordId, NewDateString, recParent);
@@ -72,15 +72,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 				} else {// means its triggered from Scheduled Script
 
-					// var DateObj = new Date();
-					// var NewDateObj = new Date(DateObj); // clone current date
-					// NewDateObj.setHours(NewDateObj.getHours() - 1); // subtract 1 hour
-					// log.debug("NewDateObj", NewDateObj);
-					// var NewDateString = format.format({
-					// 	value: NewDateObj,
-					// 	type: format.Type.DATETIMETZ // use DATETIMETZ for datetime fields
-					// });
-					// log.debug("NewDateString", NewDateString);
+					
 					var DateObj = new Date();
 					var NewDateObj = new Date(DateObj.getFullYear(), DateObj.getMonth(), (DateObj.getDate() - 2));
 					log.debug("NewDateObj", NewDateObj);
@@ -112,7 +104,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {// Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custitem_sync_salesforce", "is", "T"]
 					]
 				}
 				else {
@@ -225,7 +219,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custitem_sync_salesforce", "is", "T"]
 					]
 				}
 				else {
@@ -345,7 +341,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_sync_salesforce_color", "is", "T"]
 					]
 				}
 				else {
@@ -457,7 +455,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_sync_salesforce_subsidy", "is", "T"]
 					]
 				}
 				else {
@@ -548,7 +548,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_sync_salesforce_finance", "is", "T"]
 					]
 				}
 				else {
@@ -675,7 +677,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_sync_salesforce_package", "is", "T"]
 					]
 				}
 				else {
@@ -890,11 +894,11 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 		function push_vsa_pacakge_item_with_Master(head, MasterrecordId) {
 
 			try {
-				var custom_filter = "";
+				
 				var custom_filter = [
 					["isinactive", "is", "F"],
-					// "AND",
-					// ["custrecord_sync_salesforce_pckg_item", "is", "T"],
+					"AND",
+					["custrecord_sync_salesforce_pckg_item", "is", "T"],
 					"AND",
 					["custrecord_master_packg.custrecord_manufacture_vsa_pckg", "anyof", "1"], // Only Mazda
 					"AND",
@@ -1001,7 +1005,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_sync_salesforce_pckg_item", "is", "T"]
 					]
 				}
 				else {
@@ -1115,7 +1121,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custevent_send_salesforce_cam", "is", "T"]
 					]
 				}
 				else {
@@ -1248,7 +1256,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_send_salesforce_vm", "is", "T"]
 					]
 				}
 				else {
@@ -1424,7 +1434,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					custom_filter = [
 						["internalid", "anyof", recordId],
 						"AND",
-						["mainline", "is", "T"]
+						["mainline", "is", "T"],
+						"AND",
+						["custbody_advs_salesforceid", "isnotempty", ""]
 					]
 				}
 				else {
@@ -1507,7 +1519,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custbody_advs_salesforceid", "isnotempty", ""]
 
 					]
 				}
@@ -1587,7 +1601,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_coe_bid_vsa.custbody_advs_salesforceid", "isnotempty", ""]
 					]
 				}
 				else {
@@ -1693,7 +1709,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custentity_salesforce_id", "isnotempty", ""]
 					]
 				}
 				else {
@@ -1800,7 +1818,9 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 				var custom_filter = "";
 				if (recordId && recordId != null) {         // Measns its triggered from Salesforce Button
 					custom_filter = [
-						["internalid", "anyof", recordId]
+						["internalid", "anyof", recordId],
+						"AND",
+						["custrecord_advs_vehicle_link.custrecord_salesforce_id_stock", "isnotempty", ""]
 					]
 				}
 				else {
