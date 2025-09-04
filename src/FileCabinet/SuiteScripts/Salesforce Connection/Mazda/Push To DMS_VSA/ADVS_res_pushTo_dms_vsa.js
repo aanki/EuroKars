@@ -233,17 +233,43 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                 sublistId: 'item',
                                 fieldId: 'item'
                             });
+                            var Ext_Colour = soRec.getCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol_advs_st_exterior_color'
+                            });
                             var vin = soRec.getCurrentSublistValue({
                                 sublistId: 'item',
                                 fieldId: 'custcol_advs_st_equip_sales'
                             });
-                            log.debug('vin ', vin);
+                            var vsa_pckg = soRec.getCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol_ps_vsa_package'
+                            });
+                            
+                            if (inventoryType == 1 ) {
 
-                            if (inventoryType == 1 && !vin) {
+                                if(vin){
+                                    res.statusCode = 200;
+                                    res.vehicleStockDmsId=vin;
+                                    res.dmsId = salesOrderId;
+                                    res.statusMessage = 'Stock is already assigned for this model';
+                                    response.push(res);
+                                    return;
+                                }
+
+                                var isChecked_spcf_pckg = false;
+                                if (vsa_pckg) {
+                                    var values = search.lookupFields({
+                                        type: 'customrecord_vsa_package',
+                                        id: vsa_pckg,
+                                        columns: ['custrecord_specif_pckg']
+                                    });
+                                    isChecked_spcf_pckg = values.custrecord_specif_pckg;
+                                }
                                 var CusutomerID = soRec.getValue({ fieldId: 'entity' });
                                 var sodate = soRec.getValue({ fieldId: 'trandate' });
                                 // Set the VIN to default value
-                                var VIN_ID_detail = find_VehicleMaster_toadd_online(subsidiary, itemID) || '';
+                                var VIN_ID_detail = find_VehicleMaster_toadd_online(subsidiary, itemID, Ext_Colour, isChecked_spcf_pckg, vsa_pckg) || '';
                                 var vinParts = VIN_ID_detail.split('$');
 
                                 var VIN_ID = vinParts.length > 0 ? vinParts[0] : '';
@@ -313,6 +339,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                     return;
                                 }
                             }
+                            
 
                             // else {
                             //     res.statusCode = 500;
@@ -600,7 +627,6 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                             var hlfVSADate = parseDateFromDDMMYYYY(entry.hlfVSADate);
                             rec.setValue({ fieldId: 'custrecord_hlf_vsa_date', value: hlfVSADate });
                         }
-
                         rec.setValue({ fieldId: 'custrecord_hlf_pur_price', value: entry.hlfPurchasePrice });
                         rec.setValue({ fieldId: 'custrecord_hlf_loan_amnt', value: entry.hlfLoanAmount });
                         rec.setValue({ fieldId: 'custrecord_hlf_loan_tenure', value: entry.hlfLoanTenure });
@@ -916,6 +942,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                         }
 
                         var rec = record.create({ type: 'customrecord_roc', isDynamic: true });
+                        rec.setValue({ fieldId: 'name', value: entry.rocName });
                         rec.setValue({ fieldId: 'custrecord_vsa_roc', value: SoId });
                         rec.setValue({ fieldId: 'custrecord_roc_status', value: stausID });
                         if (entry.dateRequested) {
@@ -1039,22 +1066,22 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                         response.push(res);
                         return;
                     }
-
+                    var stausID = '';
+                    if (entry.rocStatus) {
+                        stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.rocStatus);
+                    }
                     if (entry.colourChanged) {
                         var Req_VIN_ID = entry.vehicleStockDmsId;
-                        var Assign_VIN_ID = find_Free_VehicleMaster_fromSalesforce(Req_VIN_ID);
-                        if (Assign_VIN_ID) {
+
+                        if (Req_VIN_ID) {
 
                             var salesOrderId = findSalesOrder(entry.vsaSfId);
                             if (salesOrderId) {
-                                var stausID = '';
-                                if (entry.rocStatus) {
-                                    stausID = getIntrrnalIdByText('customlist_advs_pdi_process_status_lis', entry.rocStatus);
-                                }
 
                                 var soRec = record.load({ type: record.Type.SALES_ORDER, id: salesOrderId, isDynamic: true });
                                 var CusutomerID = soRec.getValue({ fieldId: 'entity' });
                                 var sodate = soRec.getValue({ fieldId: 'trandate' });
+                                var subsidiary = soRec.getValue({ fieldId: 'subsidiary' });
                                 var lineCount = soRec.getLineCount({ sublistId: 'item' });
 
                                 for (var i = 0; i < lineCount; i++) {
@@ -1064,14 +1091,30 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                         sublistId: 'item',
                                         fieldId: 'custcol_advs_selected_inventory_type'
                                     });
-
+                                    var itemID = soRec.getCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'item'
+                                    });
                                     var lineVINId = soRec.getCurrentSublistValue({
                                         sublistId: 'item',
                                         fieldId: 'custcol_advs_st_equip_sales'
                                     });
+                                    var vsa_pckg = soRec.getCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'custcol_ps_vsa_package'
+                                    });
+
+                                    if (!lineVINId) {
+                                        res.dmsId = ROC_Id;
+                                        res.statusCode = 200;
+                                        res.statusMessage = 'No Stock is attached on line, So no changes done';
+                                        response.push(res);
+                                        return;
+                                    }
                                     // Free to already Allocate VIN on line 
                                     if (inventoryType == '1') {
-                                        if (lineVINId) {
+
+                                        if (lineVINId == Req_VIN_ID) {
                                             record.submitFields({
                                                 type: 'customrecord_advs_vm',
                                                 id: lineVINId,
@@ -1082,7 +1125,36 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                                     custrecord_advs_vm_customer_number: 37 // Internal Customer
                                                 }
                                             });
+
+                                        } else {
+                                            res.dmsId = ROC_Id;
+                                            res.statusCode = 400;
+                                            res.statusMessage = 'Attached Stock ' + lineVINId + ' does not match with requested Stock ' + Req_VIN_ID + ' , So no changes done';
+                                            response.push(res);
+                                            return;
+
                                         }
+                                        var isChecked_spcf_pckg = false;
+                                        if (vsa_pckg) {
+                                            var values = search.lookupFields({
+                                                type: 'customrecord_vsa_package',
+                                                id: vsa_pckg,
+                                                columns: ['custrecord_specif_pckg']
+                                            });
+                                            isChecked_spcf_pckg = values.custrecord_specif_pckg;
+                                        }
+                                        var VIN_ID_detail = find_VehicleMaster_toadd_online(subsidiary, itemID, entry.variantColourDmsId, isChecked_spcf_pckg, vsa_pckg) || '';
+                                        if (!VIN_ID_detail) {
+                                            res.dmsId = ROC_Id;
+                                            res.statusCode = 400;
+                                            res.statusMessage = 'No Stock is available for this Model,Variant and Colour combination';
+                                            response.push(res);
+                                            return;
+                                        }
+                                        var vinParts = VIN_ID_detail.split('$');
+                                        var VIN_ID = vinParts.length > 0 ? vinParts[0] : '';
+                                        var VIN_Name = vinParts.length > 1 ? vinParts[1] : '';
+                                        log.debug('VIN_ID_detail', VIN_ID_detail + ' VIN_ID ' + VIN_ID + ' VIN_Name ' + VIN_Name);
 
                                         soRec.setCurrentSublistValue({
                                             sublistId: 'item',
@@ -1090,8 +1162,6 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                             value: Assign_VIN_ID
                                         });
                                         soRec.setValue({ fieldId: 'custbody_advs_vehicle_stock_assigned', value: true }); // Stock Assigned
-                                        // soRec.setValue({ fieldId: 'custbody_advs_customer_signed', value: entry.customerSigned });
-                                        // soRec.setValue({ fieldId: 'custbody_advs_sales_cons_signed', value: entry.scSigned });
                                         soRec.commitLine({ sublistId: 'item' });
                                         updated = true;
                                         break;
@@ -1134,12 +1204,12 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                 log.error('Updated Vehicle Master ', 'Yes');
 
                             } else {
-                                res.statusCode = 500;
+                                res.statusCode = 400;
                                 res.statusMessage = 'VSA does not exist with given vsaSfId';
                             }
                         }
                         else {
-                            res.statusCode = 500;
+                            res.statusCode = 400;
                             res.statusMessage = 'VIN stock is not available for allocation with given vehicleStockDmsId';
                         }
                     } else {
@@ -1265,12 +1335,12 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                         custrecord_advs_vm_customer_number: 37 // Internal Customer
                                     }
                                 });
-                                res.dmsId = salesOrderId;
+                                res.dmsId = ROC_Id;
                                 res.statusCode = 200;
                                 res.statusMessage = 'ROC and VSA has been canceled sucessfully';
 
                             } else {
-                                res.dmsId = salesOrderId;
+                                res.dmsId = ROC_Id;
                                 res.statusCode = 500;
                                 res.statusMessage = 'vehicleStockDmsId not found on VSA';
                             }
@@ -1372,21 +1442,21 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                     var recordID = '';
                     var record_type = '';
                     if (entry.recordType == 'VSA') {
-                      //  recordID = findSalesOrder_withID(parentDmsId);
+                        //  recordID = findSalesOrder_withID(parentDmsId);
                         record_type = 'salesorder';
                     }
                     else if (entry.recordType == 'VSADeposit') {
-                       // recordID = findDeposit_withID(parentDmsId);
+                        // recordID = findDeposit_withID(parentDmsId);
                         record_type = 'customerdeposit';
                     }
                     else if (entry.recordType == 'ROC') {
-                       // recordID = find_Record_Common('customrecord_roc', parentDmsId, 'internalid');
+                        // recordID = find_Record_Common('customrecord_roc', parentDmsId, 'internalid');
                         record_type = 'customrecord_roc';
                     }
                     else if (entry.recordType == 'PDI') {
 
-                        recordID = find_PDI_by_VSA('customrecord_pdi_section', parentDmsId, 'custrecord_advs_transaction');
-                        parentDmsId=recordID;
+                        // recordID = find_PDI_by_VSA('customrecord_pdi_section', parentDmsId, 'custrecord_advs_transaction');
+                        //parentDmsId = recordID;
                         record_type = 'customrecord_pdi_section';
                     }
 
@@ -1430,7 +1500,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                         });
                         var fileId = newFile.save();
                         log.debug("File Saved", fileId);
-                        
+
 
                         record.attach({
                             record: {
@@ -2053,7 +2123,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
 
         return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
     }
-      function find_PDI_by_VSA(recordType, sfid, filter_field) {
+    function find_PDI_by_VSA(recordType, sfid, filter_field) {
         var existingSO = search.create({
             type: recordType,
             filters: [
@@ -2067,25 +2137,39 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
         return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
     }
 
-    function find_VehicleMaster_toadd_online(subsidiary, itemId) {
+    function find_VehicleMaster_toadd_online(subsidiary, itemId, Ext_Colour, specif_pck_checked, vsa_pckg) {
         var vinRecordId = '';
         var VIN_Name = '';
+        var filters = [
+            ['custrecord_st_v_m_model_variant', 'anyof', itemId],
+            'AND',
+            ['custrecord_advs_vm_reservation_status', 'anyof', '3'], // Stock
+            'AND',
+            ['custrecord_advs_vm_subsidary', 'anyof', subsidiary],
+            'AND',
+            ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
+            'AND',
+            ["custrecord_advs_st_sales_ord_link", "anyof", "@NONE@"],
+            'AND',
+            ["custrecord_advs_vm_vehicle_status", "anyof", "1"] // New Vehicle
+        ];
+        if (specif_pck_checked) {
+            log.debug("specif_pck_checked", specif_pck_checked);
+            filters.push('AND');
+            filters.push([
+                ['custrecord_advs_spec_package', 'anyof', vsa_pckg]
+                // 'OR',
+                // ['custrecord_advs_spec_package', 'anyof', '@NONE@']
+            ]);
+        }
+        if (Ext_Colour) {
+            filters.push('AND');
+            filters.push(['custrecord_advs_vm_exterior_color', 'anyof', Ext_Colour]);
+        }
+
         var vinSearch = search.create({
             type: 'customrecord_advs_vm',
-            filters: [
-                ['custrecord_st_v_m_model_variant', 'anyof', itemId],
-                'AND',
-                ['custrecord_advs_vm_reservation_status', 'anyof', '3'], // Stock
-                'AND',
-                ['custrecord_advs_vm_subsidary', 'anyof', subsidiary],
-                'AND',
-                ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
-                'AND',
-                ["custrecord_advs_st_sales_ord_link", "anyof", "@NONE@"],
-                'AND',
-                ["custrecord_advs_vm_vehicle_status", "anyof", "1"] // New Vehicle
-            ],
-
+            filters: filters,
             columns: [
                 search.createColumn({ name: 'name' }),
                 search.createColumn({ name: 'internalid' }),
@@ -2101,14 +2185,17 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
             vinRecordId = resultSet[0].getValue('internalid');
             VIN_Name = resultSet[0].getValue('name');
         }
+        if (!vinRecordId) {
+            return "";
+        }
         return vinRecordId + "$" + VIN_Name;
     }
-    function find_Free_VehicleMaster_fromSalesforce(dmsID) {
+    function find_Free_VehicleMaster_fromSalesforce(colourID) {
         var vinRecordId = '';
         var vinSearch = search.create({
             type: 'customrecord_advs_vm',
             filters: [
-                ['internalid', 'anyof', dmsID],
+                ['custrecord_advs_vm_exterior_color', 'anyof', colourID],
                 'AND',
                 ['custrecord_advs_vm_reservation_status', 'anyof', '3'], // Stock
                 'AND',

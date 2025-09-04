@@ -10,11 +10,12 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 		var recipients = ['ankit.t@advectus.net'];
 		var modelIds = [];
 		var variantIds = [];
+		var brandIds = ['1'];
 
 		const execute = (scriptContext) => {
 
 			// Get Access Token
-			var barer_token = JWTtoken.getAccessToken_cache();
+			var barer_token = JWTtoken.getSalesforceAccessToken();
 			if (barer_token && barer_token != null) {
 				//header
 				const header = {
@@ -69,16 +70,18 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					else if (custscript_record_type == 'customrecord_advs_ownership') {
 						push_vehicle_ownership(header, recordId, NewDateString);
 					}
+					else if (custscript_record_type == 'customrecord_advs_coe_bid') {
+						push_coe_bid(header, recordId, NewDateString, '');
+					}
 
 				} else {// means its triggered from Scheduled Script
 
-					
+
 					var DateObj = new Date();
 					var NewDateObj = new Date(DateObj.getFullYear(), DateObj.getMonth(), (DateObj.getDate() - 2));
 					log.debug("NewDateObj", NewDateObj);
 					var NewDateString = format.format({ value: NewDateObj, type: format.Type.DATE });
 					log.debug("NewDateString", NewDateString);
-
 
 					// Hit API's to push Data into Salesforce
 					push_model_data(header, recordId, NewDateString);
@@ -145,6 +148,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custitem_advs_st_vehicle_make" }),
 						search.createColumn({ name: "purchasedescription" }),
 						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custitem_advs_sf_id" }),
 						search.createColumn({ name: "email", join: "CUSTITEM_CREATED_BY", label: "Email" })
 
 					]
@@ -166,6 +170,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const internalid = result.getValue({ name: "internalid" }) || "";
 						const brnad = result.getText({ name: "custitem_advs_st_vehicle_make" }) || "";
 						const pur_des = result.getValue({ name: "purchasedescription" }) || "";
+						const sfid = result.getValue({ name: "custitem_advs_sf_id" }) || "";
 						const created_email = result.getValue({ name: "email", join: "CUSTITEM_CREATED_BY", label: "Email" }) || "";
 
 
@@ -174,6 +179,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sfid,
 								Manufacturer: brnad,
 								ModelName: model_name,
 								ModelDescription: pur_des,
@@ -262,6 +268,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "internalid" }),
 						search.createColumn({ name: "parent" }),
 						search.createColumn({ name: "custitem_advs_item_category" }),
+						search.createColumn({ name: "custitem_advs_sf_id" }),
 						search.createColumn({ name: "email", join: "CUSTITEM_CREATED_BY", label: "Email" })
 					]
 				});
@@ -284,6 +291,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const pur_des = result.getValue({ name: "purchasedescription" }) || "";
 						const parent = result.getValue({ name: "parent" }) || "";
 						const veh_cat = result.getText({ name: "custitem_advs_item_category" }) || "";
+						const sfid = result.getValue({ name: "custitem_advs_sf_id" }) || "";
 						const created_email = result.getValue({ name: "email", join: "CUSTITEM_CREATED_BY", label: "Email" }) || "";
 
 						const VariCode = model_name.split(':')[1]?.trim() || "";
@@ -293,6 +301,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfID: sfid,
 								Manufacturer: brnad,
 								modelDmsId: parent,
 								variantCode: VariCode,
@@ -378,6 +387,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "isinactive" }),
 						search.createColumn({ name: "name" }),
 						search.createColumn({ name: "custrecord_advs_m_o_o_price" }),
+						search.createColumn({ name: "custrecord_salesforce_id_colour" }),
 						search.createColumn({ name: "custrecord_st_m_o_code" })
 					]
 				});
@@ -398,6 +408,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const colourName = result.getValue({ name: "name" }) || "";
 						const colourDes = result.getValue({ name: "custrecord_st_m_o_description" }) || "";
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sfid = result.getValue({ name: "custrecord_salesforce_id_colour" }) || "";
 						const topUpAmount = result.getValue({ name: "custrecord_advs_m_o_o_price" }) || 0;
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by_colour_", label: "Email" }) || "";
 
@@ -406,6 +417,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sfid,
 								Manufacturer: brnad,
 								modelDmsId: parentID,
 								variantDmsId: verDMSID,
@@ -480,6 +492,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_insurance_period" }),
 						search.createColumn({ name: "custrecord_insurance_susidy_amount" }),
 						search.createColumn({ name: "custrecord_insurance_company" }),
+						search.createColumn({ name: "custrecord_salesforce_id_insu" }),
 						search.createColumn({ name: "email", join: "custrecord_created_by", label: "Email" }),
 						search.createColumn({ name: "isinactive" })
 					]
@@ -497,6 +510,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const InsuPrd = result.getValue({ name: "custrecord_insurance_period" }) || "";
 						const InsAmnt = result.getValue({ name: "custrecord_insurance_susidy_amount" }) || 0;
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sfid = result.getValue({ name: "custrecord_salesforce_id_insu" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by", label: "Email" }) || "";
 
 						if (!UniqueModelDesc[internalid]) {
@@ -504,6 +518,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sfid,
 								insurancePeriod: InsuPrd,
 								insuranceSubsidyAmount: InsAmnt,
 								company: company,
@@ -559,7 +574,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						"AND",
 						["custrecord_sync_salesforce_finance", "is", "T"],
 						"AND",
-						["custrecord_company_frate", "anyof", "1"], // Only Mazda
+						["custrecord_company_frate", "anyof", brandIds], // Only Mazda
 						"AND",
 						["lastmodified", "onorafter", modified_date]
 					]
@@ -582,6 +597,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_finance_rebate" }),
 						search.createColumn({ name: "custrecord_finance_interest_pkg_code" }),
 						search.createColumn({ name: "custrecord_company_frate" }),
+						search.createColumn({ name: "custrecord_salesforce_id_finance" }),
 						search.createColumn({ name: "email", join: "custrecord_finance_createdby", label: "Email" }),
 						search.createColumn({ name: "isinactive" })
 					]
@@ -608,6 +624,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const inrst_pkg_code = result.getValue({ name: "custrecord_finance_interest_pkg_code" }) || "";
 						const company = (result.getText({ name: "custrecord_company_frate" }) || "").split(',').join(';');
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sfid = result.getValue({ name: "custrecord_salesforce_id_finance" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_finance_createdby", label: "Email" }) || "";
 
 						var startDate, endDate;
@@ -624,6 +641,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sfid,
 								bank: bank,
 								bankPackage: bank_pkg,
 								term: term,
@@ -700,6 +718,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					columns: [
 						search.createColumn({ name: "internalid" }),
 						search.createColumn({ name: "name" }),
+						search.createColumn({ name: "custrecord_salesforce_id_package" }),
 						search.createColumn({ name: "custrecord_manufacture_vsa_pckg" }),
 						search.createColumn({ name: "custrecord_model_vsa_pckg" }),
 						search.createColumn({ name: "custrecord_variant_vsa_pckg" }),
@@ -753,6 +772,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 						const internalid = result.getValue({ name: "internalid" }) || "";
 						const pckg_name = result.getValue({ name: "name" }) || "";
+						const sf_id = result.getValue({ name: "custrecord_salesforce_id_package" }) || "";
 						const manufacturee = result.getText({ name: "custrecord_manufacture_vsa_pckg" }) || "";
 						const modelid = result.getValue({ name: "custrecord_model_vsa_pckg" }) || "";
 						const variantID = result.getValue({ name: "custrecord_variant_vsa_pckg" }) || "";
@@ -809,6 +829,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sf_id,
 								packageName: pckg_name,
 								manufacturer: manufacturee,
 								modelDmsId: modelid,
@@ -894,7 +915,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 		function push_vsa_pacakge_item_with_Master(head, MasterrecordId) {
 
 			try {
-				
+
 				var custom_filter = [
 					["isinactive", "is", "F"],
 					"AND",
@@ -921,6 +942,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_pckgitem_optout" }),
 						search.createColumn({ name: "custrecord_pckgitem_optin" }),
 						search.createColumn({ name: "custrecord_pckg_item_cost" }),
+						search.createColumn({ name: "custrecord_salesforce_id_pckg_item" }),
 						search.createColumn({ name: "email", join: "custrecord_created_by_vsapacakgeitem", label: "Email" }),
 						search.createColumn({ name: "isinactive" })
 					]
@@ -945,8 +967,8 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const opt_in = result.getValue({ name: "custrecord_pckgitem_optin" }) || null;
 						const cost = result.getValue({ name: "custrecord_pckg_item_cost" }) || 0;
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sf_id = result.getValue({ name: "custrecord_salesforce_id_pckg_item" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by_vsapacakgeitem", label: "Email" }) || "";
-
 
 
 						if (!UniqueModelDesc[internalid]) {
@@ -954,6 +976,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sf_id,
 								packageDmsId: PckgID,
 								packageItemName: pckg_item_name,
 								costGroup: cost_group,
@@ -1037,6 +1060,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_pckgitem_optout" }),
 						search.createColumn({ name: "custrecord_pckgitem_optin" }),
 						search.createColumn({ name: "custrecord_pckg_item_cost" }),
+						search.createColumn({ name: "custrecord_salesforce_id_pckg_item" }),
 						search.createColumn({ name: "email", join: "custrecord_created_by_vsapacakgeitem", label: "Email" }),
 						search.createColumn({ name: "isinactive" })
 					]
@@ -1061,6 +1085,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const opt_in = result.getValue({ name: "custrecord_pckgitem_optin" }) || null;
 						const cost = result.getValue({ name: "custrecord_pckg_item_cost" }) || 0;
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sf_id = result.getValue({ name: "custrecord_salesforce_id_pckg_item" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by_vsapacakgeitem", label: "Email" }) || "";
 
 
@@ -1070,6 +1095,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sf_id,
 								packageDmsId: PckgID,
 								packageItemName: pckg_item_name,
 								costGroup: cost_group,
@@ -1144,6 +1170,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					columns: [
 						search.createColumn({ name: "internalid" }),
 						search.createColumn({ name: "title" }),
+
 						search.createColumn({ name: "custevent_parent_campaign" }),
 						search.createColumn({ name: "category" }),
 						search.createColumn({ name: "message" }),
@@ -1283,6 +1310,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					columns: [
 						search.createColumn({ name: "internalid" }),
 						search.createColumn({ name: "name" }),
+						search.createColumn({ name: "custrecord_salesforce_id_stock" }),
 						search.createColumn({ name: "custrecord_advs_vm_vehicle_brand" }),
 						search.createColumn({ name: "custrecord_advs_vm_model" }),
 						search.createColumn({ name: "custrecord_st_v_m_model_variant" }),
@@ -1345,6 +1373,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						var eta = result.getValue({ name: "custrecord_advs_eta" }) || null;
 						var omv = result.getValue({ name: "custrecord_approx_omv" }) || null;
 						const isinactive = result.getValue({ name: "isinactive" }) || "";
+						const sf_id = result.getValue({ name: "custrecord_salesforce_id_stock" }) || "";
 						const created_email = result.getValue({ name: "email", join: "custrecord_created_by_vm", label: "Email" }) || "";
 
 						var VSADateN = null, RegisendDateN = null;
@@ -1365,6 +1394,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 							modelList.push({
 								action: 'UPSERT_UNSOLD_VEHICLE_STOCK',
 								dmsId: internalid,
+								sfId: sf_id,
 								manufacturer: manufacturer,
 								modelDmsId: modelDmsId,
 								variantDmsId: variantDmsId,
@@ -1621,6 +1651,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					filters: custom_filter,
 					columns: [
 						search.createColumn({ name: "internalid" }),
+						search.createColumn({ name: "custrecord_salesforce_id_coe" }),
 						search.createColumn({ name: "custrecord_coe_bid_vsa" }),
 						search.createColumn({ name: "custrecord_coe_bid_status" }),
 						search.createColumn({ name: "custrecord_coe_bid_submission_date" }),
@@ -1646,6 +1677,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						const bid_amount = result.getValue({ name: "custrecord_coe_bid_amount" });
 						var vehcate = result.getText({ name: "custrecord_coe_bid_category" });
 						const secureAmnt = result.getValue({ name: "custrecord_coe_bid_premium_paid" }) || null;
+						const sf_id = result.getValue({ name: "custrecord_salesforce_id_coe" });
 						var secureDate = result.getValue({ name: "custrecord_coe_bid_expiry_date" }) || null;
 
 						if (bid_date) {
@@ -1663,6 +1695,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 							modelList.push({
 								dmsId: internalid,
+								sfId: sf_id,
 								dmsVSAId: vsaID,
 								coeBidStatus: bid_satus,
 								coeBidDate: bid_date,
@@ -1750,7 +1783,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 					page.data.forEach(function (result) {
 
 						const internalid = result.getValue({ name: "internalid" });
-						var isperson = result.getValue({ name: "isperson" });
+						var isperson = result.getValue({ name: "isperson" }) || false;
 						var salutation = result.getValue({ name: "salutation" });
 						var firstname = result.getValue({ name: "firstname" });
 						var lastname = result.getValue({ name: "lastname" });
@@ -1761,7 +1794,11 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						var zipcode = result.getValue({ name: "zipcode" }) || '';
 						var address = result.getValue({ name: "address" }) || '';
 
-						var customerType = (isperson === "T") ? "Individual" : "Company";
+						log.debug('isperson', isperson);
+						var customerType = (String(isperson) === "T" || isperson === true)
+							? "Individual"
+							: "Company";
+
 
 
 						if (!UniqueModelDesc[internalid]) {
@@ -1842,18 +1879,18 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						search.createColumn({ name: "custrecord_adsv_end_date" }),
 						search.createColumn({ name: "custrecord_advs_vehicle_link" }),
 						search.createColumn({ name: "custrecord_advs_cus_name" }),
-						search.createColumn({ name: "custentity_salesforce_id",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "isperson",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "salutation",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({name: "firstname",join: "CUSTRECORD_ADVS_CUS_NAME"}),
-						search.createColumn({ name: "lastname" ,join: "CUSTRECORD_ADVS_CUS_NAME"}),
-						search.createColumn({ name: "companyname",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "mobilephone",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "email",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "country",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "zipcode",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						search.createColumn({ name: "address",join: "CUSTRECORD_ADVS_CUS_NAME" }),
-						
+						search.createColumn({ name: "custentity_salesforce_id", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "isperson", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "salutation", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "firstname", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "lastname", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "companyname", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "mobilephone", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "email", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "country", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "zipcode", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+						search.createColumn({ name: "address", join: "CUSTRECORD_ADVS_CUS_NAME" }),
+
 					]
 				});
 				const modelList = [];
@@ -1869,16 +1906,18 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 						var enddate = result.getValue({ name: "custrecord_adsv_end_date" }) || null;
 						var veh_ID = result.getValue({ name: "custrecord_advs_vehicle_link" });
 						var custDMSid = result.getValue({ name: "custrecord_advs_cus_name" });
-						var cust_sfID = result.getValue({ name: "custentity_salesforce_id",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var isperson = result.getValue({ name: "isperson",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var salutation = result.getValue({ name: "salutation",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var firstname = result.getValue({ name: "firstname",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var lastname = result.getValue({ name: "lastname",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var companyname = result.getValue({ name: "companyname",join: "CUSTRECORD_ADVS_CUS_NAME" });
-						var mobilephone = result.getValue({ name: "mobilephone",join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
-						var email = result.getValue({ name: "email",join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
+						var cust_sfID = result.getValue({ name: "custentity_salesforce_id", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var isperson = result.getValue({ name: "isperson", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var salutation = result.getValue({ name: "salutation", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var firstname = result.getValue({ name: "firstname", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var lastname = result.getValue({ name: "lastname", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var companyname = result.getValue({ name: "companyname", join: "CUSTRECORD_ADVS_CUS_NAME" });
+						var mobilephone = result.getValue({ name: "mobilephone", join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
+						var email = result.getValue({ name: "email", join: "CUSTRECORD_ADVS_CUS_NAME" }) || '';
 
-						var customerType = (isperson === "T") ? "Individual" : "Company";
+						var customerType = (String(isperson) === "T" || isperson === true)
+							? "Individual"
+							: "Company";
 
 						if (sDate) {
 							sDate = convertDateToYMD(sDate);
@@ -1905,7 +1944,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 								customerEmail: email,
 								startDate: sDate,
 								endDate: enddate
-								 
+
 							});
 						}
 					});
@@ -1915,7 +1954,7 @@ define(['N/https', 'N/log', 'N/runtime', '/SuiteScripts/Salesforce Connection/JW
 
 				//---hit POST request-----------
 				const postResponse = https.post({
-					url: endPoint_URL + 'updateOwnerParticular',
+					url: endPoint_URL + 'upsertVehicleOwnership',
 					headers: head,
 					body: jsonString_model
 				});
