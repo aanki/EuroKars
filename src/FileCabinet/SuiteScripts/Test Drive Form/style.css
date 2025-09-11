@@ -548,20 +548,22 @@ input:checked+.slider:before {
 }
 
 .price-label {
-    padding: 7px;
-    border-top: 1px solid #ddd;
-    font-size: 14px; /* smaller font */
-    color: #1a202c;
-  }
+  padding: 7px;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  /* smaller font */
+  color: #1a202c;
+}
 
-  .price-value {
-    padding: 7px;
-    border-top: 1px solid #ddd;
-    text-align: right;
-    font-size: 14px; /* smaller font */
-    color: #1a202c;
-    font-weight: bold;
-  }
+.price-value {
+  padding: 7px;
+  border-top: 1px solid #ddd;
+  text-align: right;
+  font-size: 14px;
+  /* smaller font */
+  color: #1a202c;
+  font-weight: bold;
+}
 
 .summary-title {
   font-size: 20px;
@@ -658,43 +660,60 @@ input:checked+.slider:before {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
-  /* Comparison Chart */
-        .comparison-bars {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
 
-        .comparison-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+/* Comparison Chart */
+.comparison-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-        .comparison-label {
-            width: 100px;
-            font-size: 0.9rem;
-            color: #64748b;
-        }
+.comparison-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
-        .comparison-bar {
-            flex: 1;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
+.comparison-label {
+  width: 100px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
 
-        .comparison-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
+.comparison-bar {
+  flex: 1;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
 
-        .comparison-value {
-            font-weight: 600;
-            color: #1e293b;
-            min-width: 80px;
-            text-align: right;
-        }
+.comparison-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.comparison-value {
+  font-weight: 600;
+  color: #1e293b;
+  min-width: 80px;
+  text-align: right;
+}
+
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #6366f1;
+  /* Indigo */
+  border-right: 8px solid #10b981;
+  /* Green */
+  border-bottom: 8px solid #f59e0b;
+  /* Amber */
+  border-left: 8px solid #ef4444;
+  /* Red */
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}

@@ -68,7 +68,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 // Means suitlet opened from ROC Record
                 var Unique = [];
                 var UniqueChild = [];
-                // Get Data fromm ROC Record
+                // Get Data from ROC Record
                 var customrecord_rocSearchObj = search.create({
                     type: "customrecord_roc",
                     filters:
@@ -212,6 +212,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
             }
 
             if (transactionId) {  // Measn suitlet Opened from VSA
+                var subsidiaryId = '';
+                var specifc_pckg;
+                var line_packge = '';
+
                 var Transactionield = form.addField({
                     id: 'custpage_transaction_id',
                     type: serverWidget.FieldType.TEXT,
@@ -241,6 +245,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                         search.createColumn({ name: "item" }),
                         search.createColumn({ name: "parent", join: "item" }),
                         search.createColumn({ name: "custcol_advs_st_exterior_color" }),
+                        search.createColumn({ name: "custcol_ps_vsa_package" }),
                         search.createColumn({ name: "total", label: "Amount (Transaction Total)" }),
                         search.createColumn({ name: "custbody_advs_loan_amt" }),
                         search.createColumn({ name: "custbody_advs_loan_terms" }),
@@ -250,15 +255,16 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                         search.createColumn({ name: "custbodyadvs_ins_per" }),
                         search.createColumn({ name: "custbody_obu_touchscreen" }),
                         search.createColumn({ name: "custbody_obu_install_loc" }),
+                        search.createColumn({ name: "custrecord_specif_pckg", join: "CUSTCOL_PS_VSA_PACKAGE", }),
                         search.createColumn({ name: "custbody_insurance_com" })
                     ]
                 });
-
 
                 var resultSet = transactionSearch.run();
                 resultSet.each(function (result) {
 
                     var VSA = result.getValue({ name: 'tranid' });
+                    subsidiaryId = result.getValue({ name: 'subsidiary' });
                     var customer = result.getText({ name: 'entity' });
                     var model = result.getText({ name: 'parent', join: 'item' });
                     var modelID = result.getValue({ name: 'parent', join: 'item' });
@@ -266,6 +272,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                     var variantID = result.getValue({ name: 'item' });
                     var colour = result.getText({ name: 'custcol_advs_st_exterior_color' }) || '';
                     var colourID = result.getValue({ name: 'custcol_advs_st_exterior_color' }) || '';
+                    line_packge = result.getValue({ name: 'custcol_ps_vsa_package' }) || '';
+                    specifc_pckg = result.getValue({ name: "custrecord_specif_pckg", join: "CUSTCOL_PS_VSA_PACKAGE", }) || false;
                     var priceFormat = result.getValue({ name: 'total' });
                     var formattedPrice = Number(priceFormat).toLocaleString('en-US', {
                         style: 'currency',
@@ -306,27 +314,79 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                         loanTerm, montlyInstal, bankPckg, IntrestRate, InsurancePeriod, InsuranceCom, obuTouch, obuTouch_Opposit, obu_loc, obu_loc_Opp);
 
                     return false;
-
                 });
-
 
                 log.debug("details", details);
                 // Get Colour Option
-
+                var colorMap = {};
+                var filters =
+                    [
+                        ["custrecord_st_v_m_model_variant", "anyof", details.variantID],
+                        "AND",
+                        ["custrecord_advs_vm_reservation_status", "anyof", "3"], // Stock
+                        "AND",
+                        ["custrecord_advs_vm_vehicle_status", "anyof", "1"],
+                        'AND',
+                        ['custrecord_advs_vm_subsidary', 'anyof', subsidiaryId],
+                        "AND",
+                        ['isinactive', 'is', 'F'],
+                        'AND',
+                        ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
+                        "AND",
+                        ["custrecord_advs_st_sales_ord_link", "anyof", "@NONE@"]
+                    ];
+                if (specifc_pckg) {
+                    filters.push('AND');
+                    filters.push([
+                        ['custrecord_advs_spec_package', 'anyof', line_packge]
+                    ]);
+                }
                 var optionsHtmlColor = '<option value="">Select colour</option>';
-                var Search = search.create({
-                    type: 'customrecord_advs_st_model_option',
-                    filters: [['isinactive', 'is', 'F'], 'AND', ['custrecord_st_m_o_head_link', 'anyof', details.variantID]],
-                    columns: ['name', 'internalid', 'custrecord_advs_m_o_o_price']
+                var seenColors = {};
+                var customrecord_advs_vmSearchObj = search.create({
+                    type: "customrecord_advs_vm",
+                    filters: filters,
+                    columns:
+                        [
+                            search.createColumn({ name: "name", label: "Name" }),
+                            search.createColumn({ name: "custrecord_advs_vm_exterior_color", label: "Exterior Color" }),
+                            search.createColumn({ name: "custrecord_advs_m_o_o_price", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR", label: "Top Amount" }),
+                            search.createColumn({ name: "internalid", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR" }),
+                            search.createColumn({ name: "name", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR" })
+                        ]
                 });
-                Search.run().each(function (result) {
-                    var price = result.getValue('custrecord_advs_m_o_o_price') || 0;
-                    optionsHtmlColor += '<option value="' + result.getValue('internalid') + '" data-price="' + price + '">' +
-                        result.getValue('name') +
-                        '</option>';
+                var searchResultCount = customrecord_advs_vmSearchObj.runPaged().count;
+                log.debug("customrecord_advs_vmSearchObj result count", searchResultCount);
+                customrecord_advs_vmSearchObj.run().each(function (result) {
 
+                    var color = result.getText({ name: "custrecord_advs_vm_exterior_color" }) || '';
+                    var colorId = result.getValue({ name: "custrecord_advs_vm_exterior_color" }) || '';
+                    var topAmount = result.getValue({ name: "custrecord_advs_m_o_o_price", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR" }) || 0;
+                    var colourinternalid = result.getValue({ name: "internalid", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR" });
+                    var colourname = result.getValue({ name: "name", join: "CUSTRECORD_ADVS_VM_EXTERIOR_COLOR" });
+                    var price = result.getValue('custrecord_advs_m_o_o_price') || 0;
+                    if (details.colourID != colourinternalid) {
+                        if (!seenColors[colourinternalid]) {
+                            optionsHtmlColor += '<option value="' + colourinternalid + '" data-price="' + topAmount + '">' + colourname + '</option>';
+                            seenColors[colourinternalid] = true;
+                        }
+                    }
                     return true;
                 });
+                // var optionsHtmlColor = '<option value="">Select colour</option>';
+                // var Search = search.create({
+                //     type: 'customrecord_advs_st_model_option',
+                //     filters: [['isinactive', 'is', 'F'], 'AND', ['custrecord_st_m_o_head_link', 'anyof', details.variantID]],
+                //     columns: ['name', 'internalid', 'custrecord_advs_m_o_o_price']
+                // });
+                // Search.run().each(function (result) {
+                //     var price = result.getValue('custrecord_advs_m_o_o_price') || 0;
+                //     optionsHtmlColor += '<option value="' + result.getValue('internalid') + '" data-price="' + price + '">' +
+                //         result.getValue('name') +
+                //         '</option>';
+
+                //     return true;
+                // });
 
                 // Get BankPackage
                 var bankPackageArr = [];
@@ -675,6 +735,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                         <td class="revised-column">
                             <input type="text" class="form-input itemAmount" placeholder="$0.00" readonly>
                         </td>
+                        
+                          <input type="hidden" class="form-input impactLine">
+                         
+
                         <td class="revised-column" style="text-align: center;">
                             <button type="button" class="remove-item-btn" style="background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
                         </td>
@@ -719,7 +783,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
 
         <!-- Sales Signature -->
         <div class="signature-box">
-            <h5 style="font-size: 15px;">Sales's Signature <span style="color:red">*</span></h5>
+            <h5 style="font-size: 15px;">Sales Manager Signature <span style="color:red">*</span></h5>
             <canvas id="signature-pad1" width="400" height="200" style="border:1px solid #ccc; background:#f9f9f9;"></canvas>
             <br/>
             <button type="button" class="btn btn-sm btn-secondary mt-2"  onclick="clearSignature('signature-pad1', 'signature-data1')">Clear</button>
@@ -912,49 +976,54 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                             fieldId: "custrecord_roc_item_amount",
                             value: itemAmnt
                         });
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_impact_line",
+                            value: item.impactLine
+                        });
 
                         rec.commitLine({ sublistId: child_table });
                     });
 
-                    if (VSA_Id) {
-                        // Load Sales Order
-                        var soRec = record.load({
-                            type: record.Type.SALES_ORDER,
-                            id: VSA_Id,
-                            isDynamic: true
-                        });
+                    // if (VSA_Id) {
+                    //     // Load Sales Order
+                    //     var soRec = record.load({
+                    //         type: record.Type.SALES_ORDER,
+                    //         id: VSA_Id,
+                    //         isDynamic: true
+                    //     });
 
-                        var lineCount = soRec.getLineCount({ sublistId: 'item' });
+                    //     var lineCount = soRec.getLineCount({ sublistId: 'item' });
 
-                        for (var i = 0; i < lineCount; i++) {
-                            var itemId = soRec.getSublistValue({
-                                sublistId: 'item',
-                                fieldId: 'item',
-                                line: i
-                            });
+                    //     for (var i = 0; i < lineCount; i++) {
+                    //         var itemId = soRec.getSublistValue({
+                    //             sublistId: 'item',
+                    //             fieldId: 'item',
+                    //             line: i
+                    //         });
 
-                            if (parseInt(itemId) === 14818) { // Addtional Line
+                    //         if (parseInt(itemId) === 14818) { // Addtional Line
 
-                                soRec.selectLine({ sublistId: 'item', line: i });
-                                var addtional_amount = soRec.getCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'rate',
-                                });
-                                Revisedtotal_Addd_Amount += addtional_amount;
-                                soRec.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'rate',
-                                    value: Revisedtotal_Addd_Amount
-                                });
+                    //             soRec.selectLine({ sublistId: 'item', line: i });
+                    //             var addtional_amount = soRec.getCurrentSublistValue({
+                    //                 sublistId: 'item',
+                    //                 fieldId: 'rate',
+                    //             });
+                    //             Revisedtotal_Addd_Amount += addtional_amount;
+                    //             soRec.setCurrentSublistValue({
+                    //                 sublistId: 'item',
+                    //                 fieldId: 'rate',
+                    //                 value: Revisedtotal_Addd_Amount
+                    //             });
 
-                                soRec.commitLine({ sublistId: 'item' });
-                                break;
-                            }
-                        }
+                    //             soRec.commitLine({ sublistId: 'item' });
+                    //             break;
+                    //         }
+                    //     }
 
-                        var SOSavedId = soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
-                        log.debug('Sales Order Updated', SOSavedId);
-                    }
+                    //     var SOSavedId = soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+                    //     log.debug('Sales Order Updated', SOSavedId);
+                    // }
 
                     var ROC_saved_Id = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
                     log.debug('ROC Saved', ROC_saved_Id);
@@ -1077,16 +1146,18 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                 var cost = result.getValue('custrecord_save_item_cost');
                 if (cost_OptIN) {
                     final_cost = cost_OptIN;
-                } else if (cost_OptIN) {
+                } else if (cost_OptOut) {
                     final_cost = cost_OptOut;
                 } else {
                     final_cost = cost;
                 }
 
+                
                 results.push({
                     SelecteditemName: result.getValue('name'),
                     SelecteditemID: result.getValue('internalid'),
                     SelectedpackageHead: result.getValue('custrecord_parent_package_head'),
+                    SelectedpackageImpactLine: result.getValue('custrecord_type_item_selected'),
                     Selectedcost: final_cost
                 });
 
@@ -1111,6 +1182,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
                         search.createColumn({ name: "custrecord_master_packg" }),
                         search.createColumn({ name: "custrecord_pckgitem_optin" }),
                         search.createColumn({ name: "custrecord_pckgitem_optout" }),
+                        search.createColumn({ name: "custrecord_include_price_list" }),
+                        search.createColumn({ name: "custrecord_pckg_item_type" }),
                         search.createColumn({ name: "custrecord_pckg_item_cost" })
 
                     ]
@@ -1119,22 +1192,33 @@ define(['N/ui/serverWidget', 'N/search', 'N/log', 'N/record', 'N/format', 'N/fil
             log.debug("customrecord_vsa_package_item result count", searchResultCount);
             customrecord_save_vsa_package_itemSearchObj.run().each(function (result) {
 
-                 var final_cost = 0;
+                var final_cost = 0;
                 var cost_OptIN = result.getValue('custrecord_pckgitem_optin');
                 var cost_OptOut = result.getValue('custrecord_pckgitem_optout');
-                var cost = result.getValue('custrecord_save_item_cost');
+                var cost = result.getValue('custrecord_pckg_item_cost');
                 if (cost_OptIN) {
                     final_cost = cost_OptIN;
-                } else if (cost_OptIN) {
+                } else if (cost_OptOut) {
                     final_cost = cost_OptOut;
                 } else {
                     final_cost = cost;
                 }
+                var include = result.getValue('custrecord_include_price_list');
+                var childItemType = result.getValue('custrecord_pckg_item_type');
 
+                var impact_line = '';
+                if (childItemType == '3' && include) { // Can Opt Out
+                    impact_line = 'CashinLieu'
+                } else if (childItemType == '2' && !include) { // Can Top Up
+                    impact_line = 'Additional'
+                } else {
+                    impact_line = 'Additional'
+                }
                 results.push({
                     SelecteditemName: result.getValue('name'),
                     SelecteditemID: result.getValue('internalid'),
                     SelectedpackageHead: result.getValue('custrecord_master_packg'),
+                    SelectedpackageImpactLine: impact_line,
                     Selectedcost: final_cost
                 });
 

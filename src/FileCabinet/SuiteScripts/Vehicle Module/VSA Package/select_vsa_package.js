@@ -17,6 +17,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var html = "";
 
                 var ModelId = '';
+                var subsidiaryId = '';
                 var ModelText = '';
                 var lineNum = '';
                 var SelectedPckgHeadID = '';
@@ -44,6 +45,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     columns:
                         [
                             search.createColumn({ name: "entity" }),
+                            search.createColumn({ name: "subsidiary" }),
                             search.createColumn({ name: "item", label: "Item" }),
                             search.createColumn({ name: "custcol_advs_selected_inventory_type", label: "Selected Inventory Type" }),
                             search.createColumn({ name: "line", label: "Line ID" }),
@@ -57,6 +59,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                         ModelId = result.getValue({ name: "item" });
                         ModelText = result.getText({ name: "item" });
+                        subsidiaryId = result.getValue({ name: "subsidiary" });
                         var LineNum = result.getValue({ name: "line" });
                         lineNum = parseInt(LineNum) - 1;
                         SelectedPckgHeadID = result.getValue({ name: "custcol_package_head" });
@@ -79,11 +82,15 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         [
                             ["custrecord_st_v_m_model_variant", "anyof", ModelId],
                             "AND",
-                            ["custrecord_advs_vm_reservation_status", "anyof", "3"],
+                            ["custrecord_advs_vm_reservation_status", "anyof", "3"], // Stock
                             "AND",
                             ["custrecord_advs_vm_vehicle_status", "anyof", "1"],
+                            'AND',
+                            ['custrecord_advs_vm_subsidary', 'anyof', subsidiaryId],
                             "AND",
                             ['isinactive', 'is', 'F'],
+                            'AND',
+                            ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
                             "AND",
                             ["custrecord_advs_st_sales_ord_link", "anyof", "@NONE@"]
                         ],
@@ -142,16 +149,14 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
                     "<title>Select Package For Model " + ModelText + "</title>" +
                     //"<link href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' rel='stylesheet'>" +
-                    "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>" +
+                    //"<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>" +
                     "<link href='https://9908878-sb1.app.netsuite.com/core/media/media.nl?id=8163&c=9908878_SB1&h=1WdD_mbxCcHQ0mS1FAwr1wn4ZxxzKzYZtGePCeWiVWMotoyF&_xt=.css' rel='stylesheet'>" +
                     "<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css' rel='stylesheet'>" +
                     "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>" +
                     "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>" +
                     "<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script>" +
-
                     "</head>" +
                     "<body>";
-
 
                 html += "<div class='container mt-5'>" +
                     "<div class='header fade-in'>" +
@@ -165,6 +170,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     "</div>" +
                     "</div>" +
                     "</div>";
+                html += '<div id="pckg-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">' +
+                    '<div class="loader-spinner"></div></div>';
 
                 //Table for Avail Colour
                 html += "<div id='availColourTable' class='container mt-5'style='display:none;'>" +
@@ -372,10 +379,15 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     if (parentArray.indexOf(parentId) == -1) {
                         parentArray.push(parentId);
 
+                        parentListPrice = parseFloat(parentListPrice.toString().replace(/,/g, ''));
+
+                        var formattedPrice = formatNumberWithCommas(parentListPrice);
+
+                        var rowId = 'parentListPriceCell_' + result.id;
                         html +=
                             "<tr>" +
                             "<td>" + pckName + "</td>" +
-                            "<td class='option-price' id='parentListPriceCell'>" + parentListPrice + "</td>" +
+                            "<td class='option-price' id='" + rowId + "'>" + formattedPrice + "</td>" +
                             "<td><button class='btn btn-select' type='button' onclick='showDetails(\"" + pckName + "\", \"" + parentId + "\", \"" + parentListPrice + "\", \"" + parentNonGurnteDisL + "\", \"" +
                             parentFinanceRebate + "\", \"" + parentSpecialdisSM + "\", \"" + parentSpecialdisGM + "\", \"" + parentSpecialdisMD + "\", \"" + parentOPC + "\", \"" + parentOverTrade + "\", \"" + parentAdopter + "\", \"" + parentSCWD_limit + "\")'>Select</button></td>" +
                             "</tr>";
@@ -505,16 +517,17 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var totalAddtion_amntObject = {};
                 var childItemsPrefill = {};
                 var child_Pckg_config_Prefill = {};
-                SelectedPckgHeadID='';
+
                 if (SelectedPckgHeadID) {
 
                     var lookupResult = search.lookupFields({
                         type: 'customrecord_save_vsa_package',
                         id: SelectedPckgHeadID, // record ID
-                        columns: ['custrecord_selected_total_amount', 'custrecord_select_package', 'custrecord_save_addtional_amount',
+                        columns: ['custrecord_selected_total_amount', 'custrecord_select_package', 'custrecord_save_addtional_amount', 'custrecord_cash_in_lieu',
                             'custrecord_selected_finance_rebate', 'custrecord_selected_loan_term', 'custrecord_selected_bank_packg',
                             'custrecord_selected_loan_amount', 'custrecord_selected_insurance_rebate', 'custrecord_selected_insurance_period',
-                            'custrecord_selected_scwd', 'custrecord_selected_opc_dis', 'custrecord_selected_config_amount']
+                            'custrecord_selected_scwd', 'custrecord_selected_opc_dis', 'custrecord_selected_config_amount',
+                            'custrecord_tradein_dis', 'custrecord_adopter_dis']
                     });
                     log.emergency("lookupResult", JSON.stringify(lookupResult));
                     var totalAmountprefill = lookupResult.custrecord_selected_total_amount;
@@ -523,6 +536,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         : '';
 
                     var selectedAddtional = lookupResult.custrecord_save_addtional_amount;
+                    var selectedCashInLiue = lookupResult.custrecord_cash_in_lieu;
                     var preFinance_rebate = lookupResult.custrecord_selected_finance_rebate;
 
                     var preFinance_loanTerm = (
@@ -546,6 +560,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     var preFinance_SCWD = lookupResult.custrecord_selected_scwd;
                     var preFinance_OPC = lookupResult.custrecord_selected_opc_dis;
                     var preFinance_ConfigAmount = lookupResult.custrecord_selected_config_amount;
+                    var pre_TradeIN = lookupResult.custrecord_tradein_dis;
+                    var preAdopter = lookupResult.custrecord_adopter_dis;
 
                     if (selectdPckgID) {
 
@@ -555,6 +571,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         totalAddtion_amntObject[selectdPckgID].push({
                             totalAmountprefill: totalAmountprefill,
                             selectedAddtionalprefill: selectedAddtional,
+                            selectedCashInLiueprefill: selectedCashInLiue,
                             preFinance_rebate: preFinance_rebate,
                             preFinance_loanTerm: preFinance_loanTerm,
                             preFinance_bankpackg: preFinance_bankpackg,
@@ -562,9 +579,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             preInsurance_Rebate: preInsurance_Rebate,
                             preInsurance_Period: preInsurance_Period,
                             preFinance_SCWD: preFinance_SCWD,
+                            pre_TradeIN: pre_TradeIN,
+                            preAdopter: preAdopter,
                             preFinance_OPC: preFinance_OPC,
                             preFinance_ConfigAmount: preFinance_ConfigAmount
-
                         });
                         log.debug("totalAddtion_amntObject_Prefill", JSON.stringify(totalAddtion_amntObject));
                     }
@@ -573,8 +591,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     var itemSearch = search.create({
                         type: 'customrecord_save_vsa_package_item',
                         filters: [['custrecord_parent_package_head', 'is', SelectedPckgHeadID]],
-                        columns: ['name', 'custrecord_save_item_cost_group', 'custrecord_save_item_cost', 'custrecord_package_item_isselected','custrecord_selected_pkgitem_pkgtype',
-                            'custrecord_selected_pkgitem_optin','custrecord_selected_pkgitem_optout','custrecord_selected_pckgitem_includepric'
+                        columns: ['name', 'custrecord_save_item_cost_group', 'custrecord_save_item_cost', 'custrecord_package_item_isselected', 'custrecord_selected_pkgitem_pkgtype',
+                            'custrecord_selected_pkgitem_optin', 'custrecord_selected_pkgitem_optout', 'custrecord_selected_pckgitem_includepric'
                         ]
                     });
                     itemSearch.run().each(function (result) {
@@ -728,6 +746,36 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    selectedAddtionalprefill = Number(data.selectedAddtionalprefill);";
                 html += "    totalAmount.innerText = prefillAddtinalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
                 html += "    addtionalAmount.innerText = selectedAddtionalprefill.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
+
+              // Adopter prefill
+               html += "       var adopterrow = document.getElementById('row_adopterrow');";
+               html += "        var radio = document.getElementById('adopterdis');";
+               html += "        if (data.preAdopter < 0) {"; 
+               html += "            radio.checked = true;";
+               html += "            const adopterAmount = document.getElementById('adopteramount');";
+               html += "            adopterrow.style.display = '';";
+               html += "        adopterAmount.innerText = Number(data.preAdopter).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
+               html += "        }";
+              
+               // TradeIN prefill
+               html += "    var tradeInAmount_field = document.getElementById('tradeInAmount_field');";
+               html += "    if (tradeInAmount_field && data.pre_TradeIN <0) {";
+               html += "    var tradeRow = document.getElementById('row_tradeinrow');";
+               html += "        tradeInAmount_field.value = parseFloat(data.pre_TradeIN || 0).toFixed(2);";
+               html += "        var radio = document.getElementById('tradeIN');";
+               html += "        if (tradeInAmount_field && tradeInAmount_field.value) {"; // FIXED variable
+               html += "            radio.checked = true;";
+               html += "            document.getElementById('tradeInAmountWrapper').style.display = 'block';";
+               html += "            tradeRow.style.display = '';";
+               html += "        }";
+               html += "        updateTradeINAmount(tradeInAmount_field);";
+               html += "    }";
+               // CashInLuie prefill
+                html += "    var cashinoptout = document.getElementById('cashinoptout');";
+                html += "    if (cashinoptout && data.selectedCashInLiueprefill) {";
+                html += "      cashinoptout.innerText = Number(data.selectedCashInLiueprefill).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
+                html += "      updateTotalAmount();";
+                html += "    }";
                 // SCWD prefill
                 html += "    var scwdInput = document.getElementById('scwdtext');";
                 html += "    if (scwdInput && data.preFinance_SCWD !== undefined) {";
@@ -771,6 +819,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "if (!packgItem_data) {container.innerHTML = '<p style=\"color: red;\">No Item found for Package: ' + escapeHtml(pckgName) + '</p>'; return; }";
                 html += "var allAccHtml = '';";
 
+
                 html += "for (var costGroup in packgItem_data) {";
                 html += "var items = packgItem_data[costGroup];";
                 html += "var accHtml = '<button type=\"button\" class=\"accordion\" aria-expanded=\"false\" aria-controls=\"panel-' + escapeHtml(costGroup) + '\"><span class=\"arrow\">▶</span> ' + escapeHtml(costGroup) + '</button>';";
@@ -785,17 +834,19 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 //get Opt-Out Value /Opt-IN Value to show
                 html += "var costValue = 0;";
                 html += "if (String(items[i].chlditemType) === '2') {"; // Can Top Up
-                html += "    costValue = items[i].childOptIN;";
+                html += "    costValue ='$'+ items[i].childOptIN;";
                 html += "} else if (String(items[i].chlditemType) === '3') {"; // Can Opt Out
-                html += "    costValue = items[i].childOptOUt;";
+                html += "    costValue = '$'+items[i].childOptOUt;";
                 html += "} else {"; // Default
-                html += "    costValue = items[i].childCost;";
+                //html += "    costValue = items[i].childCost;";
+                html += "    costValue = '';";
+
                 html += "}";
 
                 //-----
                 html += "accHtml += '<div class=\"panel\" style=\"display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; margin-top: 12px; border-bottom: 1px solid #ccc; padding-bottom: 8px;\">';";
 
-                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + '  </span><span style=\"color: green; font-weight: bold;\">$' + costValue + '</span></div>'; ";
+                html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + '  </span><span style=\"color: green; font-weight: bold;\">' + costValue + '</span></div>'; ";
 
                 //---------Adding lock or slider based on checkbox
                 html += "if (items[i].chlditemType=='1') {";
@@ -963,23 +1014,23 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "function handleCheckboxChange(checkbox, childName,childCost,ChildCostGroup,childItemType,OptinValue,OptoutValue,includePrice) {" +
                     "var final_Cost = 0;" +
                     "var optInCell;" +
-                    "var type = '';"+
+                    "var type = '';" +
                     "var include = (includePrice === true || includePrice === 'true');" +
                     // Determine target cell and cost
                     "if (childItemType == '2' && !include) {" +   // Can Top Up
                     "final_Cost = parseFloat(OptinValue) || 0;" +
                     "optInCell = document.getElementById('addtionalAmount');" +
-                    "type = 'Additional';"+
+                    "type = 'Additional';" +
 
                     "} else if (childItemType == '3' && include) {" +  // Can Opt Out
                     "final_Cost = parseFloat(OptoutValue) || 0;" +
                     "optInCell = document.getElementById('cashinoptout');" +
-                    "type = 'Cash in Lieu';"+
+                    "type = 'CashinLieu';" +
 
                     "} else {" +
                     "final_Cost = parseFloat(childCost) || 0;" +
                     "optInCell = document.getElementById('addtionalAmount');" +
-                    "type = 'Additional';"+
+                    "type = 'Additional';" +
 
                     "}" +
 
@@ -1108,6 +1159,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  toggle.addEventListener('change', updatedisableRadio);";
                 html += "  var toggleAd = document.getElementById('adopterSwitch');";
                 html += "  toggleAd.addEventListener('change', updatedisableRadio);";
+                html += "  var loader = document.getElementById('pckg-loader');";
+                html += "  if(loader) loader.style.display = 'none';";
                 html += "  updatedisableRadio();";
 
                 // html += "  var loanInput = document.getElementById('loanamount');";
@@ -1179,7 +1232,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  var value = input.value.replace(/[^0-9.]/g, '');";
                 html += "  var num = parseFloat(value) || 0;";
                 html += "  if (num > SCWD_lim) {";
-                html += "    alert('Trade-in amount cannot exceed -' + SCWD_lim.toLocaleString('en-US', {minimumFractionDigits: 2}) + '.');";
+                html += "    alert('SCWD amount cannot exceed -' + SCWD_lim.toLocaleString('en-US', {minimumFractionDigits: 2}) + '.');";
                 html += "    num = SCWD_lim;";
                 html += "    input.value = SCWD_lim;";
                 html += "  } else {";
@@ -1323,7 +1376,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    adopterdis.checked = false;";
                 html += "    tradeIN.disabled = true;";
                 html += "    adopterdis.disabled = true;";
-                html += "adopterRow.style.display = 'none';";
+                html += "    adopterRow.style.display = 'none';";
                 html += "tradeRow.style.display = 'none';";
                 html += "tradeAmount.innerText =0;";
                 html += "adopterAmount.innerText =0;";
@@ -1484,9 +1537,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 html += "}";
 
-                html += "  var cell = document.getElementById('parentListPriceCell');";
-                html += "  var value = parseFloat(cell.innerText) || 0;";
-                html += "  cell.innerText = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
+                // html += "  var cell = document.getElementById('parentListPriceCell');";
+                // html += "  var value = parseFloat(cell.innerText) || 0;";
+                // html += "  cell.innerText = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
 
                 // Child Configurations tab Data-----------------------------------
                 html += "var child_config = " + JSON.stringify(child_config) + ";";
@@ -1884,7 +1937,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    <input type='radio' id='tradeIN' name='tradeAdapDis' value='tradeIN'>";
                 html += "    <label for='tradeIN'>Trade-in Discount</label>";
                 html += "  </div>";
-                html += "  <div id='tradeInAmountWrapper' style=' display:none; margin-top:8px; margin-bottom:8px;'>";
+                html += "  <div id='tradeInAmountWrapper' style='display:none; margin-top:8px; margin-bottom:8px;'>";
                 html += "    <input type='number' id='tradeInAmount_field' oninput='updateTradeINAmount(this)' placeholder='Enter trade-in amount' style='width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;'>";
                 html += "  </div>";
                 html += "  <div>";
@@ -2170,11 +2223,14 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 rec.setValue({ fieldId: 'custrecord_selected_insurance_company', value: insuranceCompany });
                 rec.setValue({ fieldId: 'custrecord_selected_scwd', value: SCWdDiscount });
                 rec.setValue({ fieldId: 'custrecord_selected_opc_dis', value: OpcDiscount });
+                rec.setValue({ fieldId: 'custrecord_tradein_dis', value: tradeinamount });
+                rec.setValue({ fieldId: 'custrecord_adopter_dis', value: adopteramount });
                 rec.setValue({ fieldId: 'custrecord_selected_config_amount', value: optionconfigAmount });
                 rec.setValue({ fieldId: 'custrecord_save_addtional_amount', value: addtionalAmount });
+                rec.setValue({ fieldId: 'custrecord_cash_in_lieu', value: cashinoptout });
                 rec.setValue({ fieldId: 'custrecord_diff_colour_topup', value: colourTopupAmount });
                 rec.setValue({ fieldId: 'custrecord_selected_special_discount', value: SpecialDis });
- 
+
                 // Package Item Line
                 if (itemsArr) {
                     itemsArr.forEach(function (item) {
@@ -2298,14 +2354,27 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 soRec.setValue({ fieldId: 'custbody_obu_install_loc', value: Obu_loc });
                 soRec.setValue({ fieldId: 'custbody_advs_fin_bank_inc', value: Fin_BankIncentive });
                 if (Fin_Commi_rate) {
-                    Fin_Commi_rate = String(Fin_Commi_rate);                // force to string first
-                    if (Fin_Commi_rate.indexOf('%') > -1) {       // check if it has %
+                    Fin_Commi_rate = String(Fin_Commi_rate);
+                    if (Fin_Commi_rate.indexOf('%') > -1) {
                         Fin_Commi_rate = Fin_Commi_rate.replace('%', '');
                     }
+                    soRec.setValue({ fieldId: 'custbody_advs_fin_comm_rate', value: Fin_Commi_rate });
                 }
-                soRec.setValue({ fieldId: 'custbody_advs_fin_comm_rate', value: Fin_Commi_rate });
-                soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_nb', value: Insurance_commiRateNB });
-                soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_rn', value: Insurance_commiRateRN });
+                if (Insurance_commiRateNB) {
+                    Insurance_commiRateNB = String(Insurance_commiRateNB);
+                    if (Insurance_commiRateNB.indexOf('%') > -1) {
+                        Insurance_commiRateNB = Insurance_commiRateNB.replace('%', '');
+                    }
+                    soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_nb', value: Insurance_commiRateNB });
+                }
+                if (Insurance_commiRateRN) {
+                    Insurance_commiRateRN = String(Insurance_commiRateRN);
+                    if (Insurance_commiRateRN.indexOf('%') > -1) {
+                        Insurance_commiRateRN = Insurance_commiRateRN.replace('%', '');
+                    }
+                    soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_rn', value: Insurance_commiRateRN });
+                }
+
 
                 //Update Rate on
                 soRec.selectLine({ sublistId: 'item', line: LineNum });
@@ -2374,9 +2443,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     if (validDisrebate_amt) {
                         itemUpdateMap.push({ id: DiscountRebateItemID, rate: disrebateamount });
                     }
-                    if (SCWdDiscount < 0) {
-                        itemUpdateMap.push({ id: SCWDItemID, rate: SCWdDiscount });
-                    }
                     if (tradeinamount < 0) {
                         itemUpdateMap.push({ id: TradeINItemID, rate: tradeinamount });
                     }
@@ -2384,10 +2450,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         itemUpdateMap.push({ id: AdopterDisItemID, rate: adopteramount });
                     }
 
-              
+
                     // First Remove existing Rebate Discount Lines
                     var itemIdsToDelete = [FinanceRebateItemID, InsuranceRebateItemID, OpcDiscountItemID, SCWDItemID, specialDiscountItemID, addtionalItemID,
-                        DiffColourItemID,AdopterDisItemID,TradeINItemID,OptOutItemID,DiscountRebateItemID];
+                        DiffColourItemID, AdopterDisItemID, TradeINItemID, OptOutItemID, DiscountRebateItemID];
                     var lineCount = soRec.getLineCount({ sublistId: 'item' });
 
                     for (var i = lineCount - 1; i >= 0; i--) {
@@ -2585,6 +2651,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
             return setupData;
         };
+
+        function formatNumberWithCommas(x) {
+            x = parseFloat(x) || 0;
+            var parts = x.toFixed(2).split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join('.');
+        }
 
         return {
             onRequest: onRequest

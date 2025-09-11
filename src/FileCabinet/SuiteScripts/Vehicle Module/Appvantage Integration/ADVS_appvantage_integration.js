@@ -16,7 +16,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
         var response = [];
         var child_table = 'recmachcustrecord_parent';
 
-       
+
         var sucessMsg = '';
 
         items.forEach(function (entry) {
@@ -53,57 +53,30 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         sucessMsg = "Vehicle Master created successfully with ID: ";
                     }
 
-                    // if (entry.chassisno) {
-                    vehicleRecordObj.setValue({
-                        fieldId: "name",
-                        value: entry.chassisno
-                    });
-                    // }
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_advs_vm_reservation_status",
-                        value: 8 // on Hold
-                    });
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_advs_vm_subsidary",
-                        value: 19 // Pre Owned 
-                    });
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_advs_vm_vehicle_status",
-                        value: 1 // Old Vehicle
-                    });
-                    
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_appvantage",
-                        value: true
-                    });
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_send_salesforce_vm",
-                        value: false
-                    });
+                 
+                    vehicleRecordObj.setValue({fieldId: "name",value: entry.chassisno});
+                    vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_reservation_status",value: 8 }); // on Hold
+                    vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_subsidary", value: 19  }); // Pre Owned 
+                    vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_vehicle_status",value: 1  }); // Old Vehicle
+                    vehicleRecordObj.setValue({fieldId: "custrecord_appvantage",value: true});
+                    vehicleRecordObj.setValue({fieldId: "custrecord_send_salesforce_vm",value: false});
 
-                    if (entry.vehicle_make) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "custrecord_advs_vm_vehicle_brand",
-                            value: getIntrrnalIdByText("customrecord_advs_brands", entry.vehicle_make)
-                        });
+                    var dms_brandID = '';
+                    if (entry.brand) {
+                        dms_brandID = getIntrrnalIdByText("customrecord_advs_brands", entry.brand);
+                        if (dms_brandID) {
+                            vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_vehicle_brand",value: dms_brandID });
+                        }
                     }
 
+                    var model_id = get_id_model(entry.vehicle_model, dms_brandID);
                     if (entry.vehicle_model) {
-                        vehicleRecordObj.setValue({
-                            fieldId: "custrecord_advs_vm_model",
-                            value: getIntrrnalIdByText("item", entry.vehicle_model)
-                        });
+                        log.error('entry.vehicle_model', entry.vehicle_model);
+                        if (model_id) {
+                            vehicleRecordObj.setValue({ fieldId: "custrecord_st_v_m_model_variant", value: model_id });
+                        }
                     }
-
-                    // if (entry.vehicle_license_plate) {
-                    vehicleRecordObj.setValue({
-                        fieldId: "custrecord_advs_vm_license_no_compressed",
-                        value: entry.vehicle_license_plate
-                    });
-                    // }
-
-
-                    // if (entry.engine_no) {
+                    vehicleRecordObj.setValue({ fieldId: "custrecord_advs_vm_license_no_compressed", value: entry.vehicle_license_plate });
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_advs_vm_engine_number",
                         value: entry.engine_no
@@ -115,6 +88,12 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         fieldId: "custrecord_advs_vm_mileage",
                         value: entry.mileage
                     });
+                    if (model_id) {
+                        vehicleRecordObj.setValue({
+                            fieldId: "custrecord_advs_vm_model",
+                            value: model_id
+                        });
+                    }
                     // }
 
 
@@ -572,9 +551,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
-
-
                     if (entry.target_handover_date) {
                         var target_handover_date = parseCustomDate(entry.target_handover_date);
                         vehicleRecordObj.setCurrentSublistValue({
@@ -852,40 +828,25 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
             // to store Req in Buffer Table
             try {
-				var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
-				recParentBuffer.setValue({ fieldId: 'custrecord_record_type_', value: 5 }); // Appvantage Integration
-				recParentBuffer.setValue({ fieldId: 'custrecord_request', value: JSON.stringify(entry) });
-				recParentBuffer.setValue({ fieldId: 'custrecord_error', value: res.statusMessage });
-				if (res.statusCode != 200 && res.statusCode != 201) {
-					recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 4 }); // Error
-				} else {
-					recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 2 });  // Success
-				}
-				recParentBuffer.save();
-			} catch (e) {
-				log.debug('Error updating Buffer Table: ', e.message);
-			}
+                var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
+                recParentBuffer.setValue({ fieldId: 'custrecord_record_type_', value: 5 }); // Appvantage Integration
+                recParentBuffer.setValue({ fieldId: 'custrecord_request', value: JSON.stringify(entry) });
+                recParentBuffer.setValue({ fieldId: 'custrecord_error', value: res.statusMessage });
+                if (res.statusCode != 200 && res.statusCode != 201) {
+                    recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 4 }); // Error
+                } else {
+                    recParentBuffer.setValue({ fieldId: 'custrecord_status_cust_buffer', value: 2 });  // Success
+                }
+                recParentBuffer.save();
+            } catch (e) {
+                log.debug('Error updating Buffer Table: ', e.message);
+            }
 
         });
-       
+
         return response;
     }
 
-
-
-
-
-    function getCountryCode(countryName) {
-        var map = {
-            'United States': 'US',
-            'India': 'IN',
-            'Singapore': 'SG',
-            'Australia': 'AU',
-            'United Kingdom': 'GB'
-            // Add more as needed
-        };
-        return map[countryName] || 'US'; // fallback default
-    }
     function parseDateFromDDMMYYYY(str) {
         if (!str || typeof str !== 'string') return null;
 
@@ -907,64 +868,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
         return null;
     }
-    function findSalesOrder(sfid) {
-        var existingSO = search.create({
-            type: record.Type.SALES_ORDER,
-            filters: [["custbody_advs_salesforceid", "is", sfid]],
-            columns: ['internalid']
-        }).run().getRange({ start: 0, end: 1 });
-        return existingSO.length ? existingSO[0].getValue({ name: 'internalid' }) : null;
-    }
-    function findSelected_PackageRecord(SalesOrderID) {
-        var childSearch = search.create({
-            type: 'customrecord_save_vsa_package',
-            filters: [['custrecord_vsa_package', 'anyof', SalesOrderID]],
-            columns: ['internalid']
-        }).run().getRange({ start: 0, end: 1 });
-        return childSearch.length ? childSearch[0].getValue({ name: 'internalid' }) : null;
-    }
-    function findSelected_Package_Item_Record(SalesforceID) {
-        var childSearch = search.create({
-            type: 'customrecord_save_vsa_package_item',
-            filters: [['custrecord_selected_pckgitem_sfid', 'is', SalesforceID]],
-            columns: ['internalid']
-        }).run().getRange({ start: 0, end: 1 });
-        return childSearch.length ? childSearch[0].getValue({ name: 'internalid' }) : null;
-    }
-    function find_VehicleMaster_toadd_online(subsidiary, itemId) {
-        var vinRecordId = '';
-        var vinSearch = search.create({
-            type: 'customrecord_advs_vm',
-            filters: [
-                ['custrecord_st_v_m_model_variant', 'anyof', itemId],
-                'AND',
-                ['custrecord_advs_vm_reservation_status', 'anyof', '3'], // Stock
-                'AND',
-                ['custrecord_advs_vm_subsidary', 'anyof', subsidiary],
-                'AND',
-                ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
-                'AND',
-                ["custrecord_advs_st_sales_ord_link", "anyof", "@NONE@"],
-                'AND',
-                ["custrecord_advs_vm_vehicle_status", "anyof", "1"] // New Vehicle
-            ],
-
-            columns: [
-                search.createColumn({ name: 'name' }),
-                search.createColumn({ name: 'internalid' }),
-                search.createColumn({
-                    name: 'custrecord_advs_st_pur_rec_date',
-                    sort: search.Sort.ASC
-                })
-            ]
-        });
-        var resultSet = vinSearch.run().getRange({ start: 0, end: 1 });
-        log.error("SO Vechile Master resultSet", resultSet);
-        if (resultSet && resultSet.length > 0) {
-            vinRecordId = resultSet[0].getValue('internalid');
-        }
-        return vinRecordId;
-    }
 
     function getIntrrnalIdByText(listScriptId, labelText) {
         var results = search.create({
@@ -975,29 +878,50 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
         return results.length > 0 ? results[0].getValue('internalid') : null;
     }
-    function getEmployeeIdByEmail(email) {
-        if (!email) return null;
-        var s = search.create({
-            type: search.Type.EMPLOYEE,
-            filters: [['email', 'is', email]],
+    function get_id_model(name, dms_brandID) {
+        var itemId = null;
+
+        var cleanName = (name || '').trim();
+        log.error('Get Model', name + ' cleanName ' + cleanName);
+        var results = search.create({
+            type: 'serializedinventoryitem',
+            filters: [['itemid', 'is', name]],
             columns: ['internalid']
-        })
-            .run()
-            .getRange({ start: 0, end: 1 });
-        return s.length ? s[0].getValue({ name: 'internalid' }) : null;
+        }).run().getRange({ start: 0, end: 1 });
+
+        if (results && results.length > 0) {
+            log.error('Item found', results[0].getValue('internalid'));
+            itemId = results[0].getValue('internalid');
+        } else {
+            var rec = record.create({
+                type: record.Type.SERIALIZED_INVENTORY_ITEM,
+                isDynamic: true
+            });
+
+
+
+            rec.setValue({ fieldId: 'itemid', value: cleanName });
+            rec.setValue({ fieldId: 'displayname', value: name });
+            // rec.setValue({ fieldId: 'customform', value: 398 }); // ADVS Model Form
+            rec.setValue({ fieldId: 'isserialitem', value: true });
+            rec.setValue({ fieldId: 'custitem_advs_st_vehicle_make', value: dms_brandID });
+            rec.setValue({ fieldId: 'subsidiary', value: 19 });  // EPOPL Subsidiary
+            rec.setValue({ fieldId: 'includechildren', value: true });
+            rec.setValue({ fieldId: 'custitem_advs_inventory_type', value: 1 });  // Inventory Type - Model
+            rec.setValue({ fieldId: 'custitem_advs_st_is_model', value: true });
+            rec.setValue({ fieldId: 'custitem_advs_st_available_for_sale', value: true });
+            rec.setValue({ fieldId: 'department', value: 7 });   // Used Car
+            rec.setValue({ fieldId: 'cogsaccount', value: 53 }); // 3200 Opening Balance
+            rec.setValue({ fieldId: 'assetaccount', value: 217 }); //26000000 Inventory
+
+            itemId = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+            log.error('Item created', itemId);
+        }
+
+        return itemId;
     }
 
-    function getVendorIdByEmail(email) {
-        if (!email) return null;
-        var s = search.create({
-            type: search.Type.VENDOR,
-            filters: [['email', 'is', email]],
-            columns: ['internalid']
-        })
-            .run()
-            .getRange({ start: 0, end: 1 });
-        return s.length ? s[0].getValue({ name: 'internalid' }) : null;
-    }
+
 
     function parseCustomDate(str) {
         // Example input: "28/07/2025 4:40:00 pm"

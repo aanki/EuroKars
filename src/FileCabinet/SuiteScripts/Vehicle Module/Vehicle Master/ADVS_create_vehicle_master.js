@@ -88,7 +88,7 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                 }
 
                 var VIN_Master_ID = SearchEquipment(VINNumber);
-               // var quniueNoSegmentid = generateVSNumber();
+                // var quniueNoSegmentid = generateVSNumber();
                 if (!VIN_Master_ID) {
                     log.debug('Processing PO Line', 'PoId: ' + PoId + ', VIN: ' + VINNumber + ', VariantID: ' + VariantID + ', ModelID: ' + ModelID + ', ExteriorCOlor: ' + ExteriorCOlor + ', MakeId: ' + MakeId);// + ' quniueNoSegmentid: ' + quniueNoSegmentid
                     // Create new custom record
@@ -105,8 +105,8 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_department', value: department });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_location_code', value: Location });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_vehicle_status', value: 1 }); // Inventory
-                    newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_invoice_date', value: PoDate });
-                    newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_order', value: PoId });
+                    // newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_invoice_date', value: PoDate });
+                    // newRec.setValue({ fieldId: 'custrecord_advs_vm_purchase_order', value: PoId });
                     newRec.setValue({ fieldId: 'custrecord_permit_number', value: permitNumber });
                     //newRec.setValue({ fieldId: 'cseg_advs_sto_num', value: quniueNoSegmentid });
                     newRec.setValue({ fieldId: 'custrecord_advs_vm_engine_number', value: engineNumber });
@@ -161,7 +161,7 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                             value: 1
                         });
                         inventoryDetail.commitLine({ sublistId: 'inventoryassignment' });
-                   
+
                         poRecObj.commitLine({ sublistId: 'item' });
                         break;
                     }
@@ -170,9 +170,20 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
                     enableSourcing: true,
                     ignoreMandatoryFields: true
                 });
+                // submit field on PO to link to vehicle master
+                record.submitFields({
+                    type: 'customrecord_advs_vm',
+                    id: VIN_Master_ID,
+                    values: {
+                         custrecord_advs_vm_purchase_invoice_date: PoDate,
+                         custrecord_advs_vm_purchase_order: POUpdated
+                    },
+                    options: { enableSourcing: false, ignoreMandatoryFields: true }
+                });
+
                 log.debug('PO saved', POUpdated);
 
-                
+
 
             } catch (e) {
                 log.error('Record Creation Failed', e.message);
@@ -180,9 +191,6 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
 
             return true;
         });
-
-
-       
 
         function SearchEquipment(VIN) {
             if (!VIN || VIN.trim() === '') VIN = '';
@@ -198,59 +206,66 @@ define(['N/search', 'N/record', 'N/runtime'], function (search, record, runtime)
             });
             return equiId;
         }
-        function generateVSNumber() {
-            // log.debug('generateVSNumber', 'Generating next VS- number');
-            var counterRec = search.create({
-                type: 'customrecord_unique_number_counter',
-                columns: ['internalid', 'custrecord_unique_last_number', 'custrecord_unique_prefix']
-            }).run().getRange({ start: 0, end: 1 });
+        // function generateVSNumber() {
+        //     // log.debug('generateVSNumber', 'Generating next VS- number');
+        //     var counterRec = search.create({
+        //         type: 'customrecord_unique_number_counter',
+        //         columns: ['internalid', 'custrecord_unique_last_number', 'custrecord_unique_prefix']
+        //     }).run().getRange({ start: 0, end: 1 });
 
-            var lastNum = 0;
-            var preFix = '';
-            var recId;
-            if (counterRec.length > 0) {
-                recId = counterRec[0].id;
-                lastNum = parseInt(counterRec[0].getValue('custrecord_unique_last_number')) || 0;
-                preFix = counterRec[0].getValue('custrecord_unique_prefix');
-            } else {
-                var rec = record.create({ type: 'customrecord_unique_number_counter' });
-                rec.setValue({ fieldId: 'custrecord_unique_last_number', value: 1 });
-                recId = rec.save();
-                lastNum = 1;
-            }
+        //     var lastNum = 0;
+        //     var preFix = '';
+        //     var recId;
+        //     if (counterRec.length > 0) {
+        //         recId = counterRec[0].id;
+        //         lastNum = parseInt(counterRec[0].getValue('custrecord_unique_last_number')) || 0;
+        //         preFix = counterRec[0].getValue('custrecord_unique_prefix');
+        //     } else {
+        //         var rec = record.create({ type: 'customrecord_unique_number_counter' });
+        //         rec.setValue({ fieldId: 'custrecord_unique_last_number', value: 1 });
+        //         recId = rec.save();
+        //         lastNum = 1;
+        //     }
 
-            var nextNum = lastNum + 1;
-            //var nextVSId = preFix + nextNum.toString().padStart(7, '0');
-            var paddedNum = padStartES5(nextNum, 7, '0'); // Equivalent of .padStart(7, '0')
-            var nextVSId = preFix + paddedNum;
+        //     var nextNum = lastNum + 1;
+        //     //var nextVSId = preFix + nextNum.toString().padStart(7, '0');
+        //     var paddedNum = padStartES5(nextNum, 7, '0'); // Equivalent of .padStart(7, '0')
+        //     var nextVSId = preFix + paddedNum;
 
-            // Save new number
-            var counterRecord = record.load({ type: 'customrecord_unique_number_counter', id: recId });
-            counterRecord.setValue({ fieldId: 'custrecord_unique_last_number', value: nextNum });
-            counterRecord.save();
+        //     // Save new number
+        //     var counterRecord = record.load({ type: 'customrecord_unique_number_counter', id: recId });
+        //     counterRecord.setValue({ fieldId: 'custrecord_unique_last_number', value: nextNum });
+        //     counterRecord.save();
 
-            // Now Create Segment Record
-            var segmentRec = record.create({
-                type: 'customrecord_cseg_advs_sto_num',
-                isDynamic: true
-            });
-            segmentRec.setValue({
-                fieldId: 'name', // system field required for custom segments
-                value: nextVSId
-            });
-            var segmentId = segmentRec.save();
+        //     // Now Create Segment Record
+        //     var segmentRec = record.create({
+        //         type: 'customrecord_cseg_advs_sto_num',
+        //         isDynamic: true
+        //     });
+        //     segmentRec.setValue({
+        //         fieldId: 'name', // system field required for custom segments
+        //         value: nextVSId
+        //     });
+        //     var segmentId = segmentRec.save();
 
-            return segmentId;
-        }
+        //     return segmentId;
+        // }
 
-        function padStartES5(str, targetLength, padChar) {
-            str = String(str);
-            while (str.length < targetLength) {
-                str = padChar + str;
-            }
-            return str;
-        }
+        // function padStartES5(str, targetLength, padChar) {
+        //     str = String(str);
+        //     while (str.length < targetLength) {
+        //         str = padChar + str;
+        //     }
+        //     return str;
+        // }
     }
+
+
+
 
     return { execute };
 });
+
+
+
+

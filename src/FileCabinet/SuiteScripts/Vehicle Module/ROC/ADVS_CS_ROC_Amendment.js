@@ -63,13 +63,16 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
                     var selectedId = $(this).val(); // internalid now
                     var $row = $(this).closest("tr");
                     var $amountField = $row.find(".itemAmount");
+                    var $impactLine = $row.find(".impactLine");
                     var amount = "";
+                    var impactLine = "";
 
                     // First, search in all_diff_items
                     if (Array.isArray(all_diff_items)) {
                         var found = all_diff_items.find(item => item.SelecteditemID == selectedId);
                         if (found) {
                             amount = found.Selectedcost;
+                            impactLine = found.SelectedpackageImpactLine;
                         }
                     }
                     // If not found, search in selected_items
@@ -77,15 +80,17 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
                         var found2 = selected_items.find(item => item.SelecteditemID == selectedId);
                         if (found2) {
                             amount = found2.Selectedcost;
+                            impactLine = found2.SelectedpackageImpactLine;
                         }
                     }
                     var itemType = $row.find(".rocItemType").val();
                     if (itemType == '2') {  // Remove items
-                        //amount = -Math.abs(amount);
+                        
                         amount =-parseFloat(amount);
                     }
 
                     $amountField.val(amount || "");
+                    $impactLine.val(impactLine || "");
                     updateNetPrice();
                 });
 
@@ -204,6 +209,9 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
         <td class="revised-column">
             <input type="text" class="form-input itemAmount" placeholder="$0.00" readonly>
         </td>
+        
+            <input type="hidden" class="form-input impactLine"  readonly>
+       
         <td class="revised-column" style="text-align: center;">
             <button type="button" class="remove-item-btn" style="background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
         </td>
@@ -311,16 +319,20 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
             $('#roc-items-tbody tr').each(function () {
                 var $row = $(this);
                 var selectedItem = $row.find('select').val();
-               // var selecteditemName = $row.find('select option:selected').text(); // name (text)
-                var selecteditemName = $row.find('select.diffItemsSelect option:selected').text() || "";     
+                var selecteditemName = $row.find('select.diffItemsSelect option:selected').text() || ""; 
+                var selecteditemValue = $row.find('select.diffItemsSelect').val() || "";
+    
                 var amount = $row.find('input.itemAmount').val();
+                var impactLine = $row.find('input.impactLine').val();
                 var itemTypeText = $row.find('.rocItemType option:selected').text() || "";  
 
-                if (selectedItem || itemName || amount) {
+                if (selectedItem || selecteditemName || amount) {
                     items.push({
                         selectedItem: itemTypeText,
                         itemName: selecteditemName,
                         amount: amount,
+                        selecteditemValue: selecteditemValue,
+                        impactLine: impactLine,
                         selecteditemName: selecteditemName
                     });
                 }

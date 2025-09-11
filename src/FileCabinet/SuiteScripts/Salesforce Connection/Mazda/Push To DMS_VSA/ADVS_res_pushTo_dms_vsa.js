@@ -245,12 +245,12 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                 sublistId: 'item',
                                 fieldId: 'custcol_ps_vsa_package'
                             });
-                            
-                            if (inventoryType == 1 ) {
 
-                                if(vin){
+                            if (inventoryType == 1) {
+
+                                if (vin) {
                                     res.statusCode = 200;
-                                    res.vehicleStockDmsId=vin;
+                                    res.vehicleStockDmsId = vin;
                                     res.dmsId = salesOrderId;
                                     res.statusMessage = 'Stock is already assigned for this model';
                                     response.push(res);
@@ -339,7 +339,7 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                                     return;
                                 }
                             }
-                            
+
 
                             // else {
                             //     res.statusCode = 500;
@@ -635,7 +635,6 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
                         rec.setValue({ fieldId: 'custrecord_call_amndmnt_api', value: entry.callAmenmentAPI });
                         rec.setValue({ fieldId: 'custrecord_hlf_api_triggered', value: entry.hlfAPITriggered });
                         var HLFRec = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
-
 
                         res.dmsId = SoId;
                         res.HLFdmsId = HLFRec;
@@ -2146,6 +2145,8 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
             ['custrecord_advs_vm_reservation_status', 'anyof', '3'], // Stock
             'AND',
             ['custrecord_advs_vm_subsidary', 'anyof', subsidiary],
+            "AND",
+            ['isinactive', 'is', 'F'],
             'AND',
             ["custrecord_advs_st_pur_rec_link", "noneof", "@NONE@"],
             'AND',
@@ -2158,8 +2159,6 @@ define(['N/record', 'N/search', 'N/log', 'N/file'], function (record, search, lo
             filters.push('AND');
             filters.push([
                 ['custrecord_advs_spec_package', 'anyof', vsa_pckg]
-                // 'OR',
-                // ['custrecord_advs_spec_package', 'anyof', '@NONE@']
             ]);
         }
         if (Ext_Colour) {

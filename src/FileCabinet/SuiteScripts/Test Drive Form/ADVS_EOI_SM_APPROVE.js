@@ -22,7 +22,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                     const soRec = record.load({ type: 'salesorder', id: RecordID, isDynamic: true });
                     const discountStatus = soRec.getValue('custbody_package_approval_status');
                     const discountStatusText = soRec.getText('custbody_package_approval_status');
-                    if (discountStatus === '6' || discountStatus === '7') {        // Approved Rejected
+                    if (discountStatus === '2' || discountStatus === '3') {        // Approved Rejected
                         context.response.write(`VSA has already been ${discountStatusText}.`);
                         return;
                     }
@@ -200,11 +200,22 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                 var flag = context.request.parameters.custparam_flag;
                 var action = context.request.parameters.custparam_action;
                 var RecordID = context.request.parameters.custparam_recid;
+                var Record_Type = context.request.parameters.custparam_rectype;
                 var Remarks = context.request.parameters.custpage_remark;
+                
+               if(!flag){
+                var body = context.request.body;
+                var data = JSON.parse(body);
+                log.error('POST parameters', data);
+                if (data) {
+                    flag = data.custparam_flag;
+                    RecordID = data.custparam_recid;
+                }
+               }
+                log.error("flag", flag);
 
-
-                if (flag == 2) {
-
+                if (flag == 2) { // Ankit for Approval VSA Special Discount
+                     log.error("flag entered", flag);
                     const soRec = record.load({ type: 'salesorder', id: RecordID, isDynamic: true });
                     // Fetch fields
                     const discountStatus = soRec.getValue('custbody_package_approval_status');
@@ -256,7 +267,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                             soRec.setValue({ fieldId: 'custbody_packg_current_level_apprv', value: nextLevel });
                             soRec.setValue({ fieldId: 'custbody_package_current_approver', value: currentApproverId });
                             soRec.setValue({ fieldId: 'custbody_package_next_approver', value: nextApproverId }); // Set if you support preview
-                            soRec.setValue({ fieldId: 'custbody_package_approval_status', value: 5 }); // In Progress
+                            soRec.setValue({ fieldId: 'custbody_package_approval_status', value: 1 }); // In Progress
                             soRec.save();
 
                             context.response.write(msg);
@@ -264,6 +275,127 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                         }
 
                     }
+
+                } else if (data.custparam_flag == 3) {// Ankit for UPdate VSA from ROC Approval
+
+                    if (RecordID) { // ROC record ID
+
+                        var AdditionalDisItemID = 14818; // for Additional
+                        var OptOutItemID = 14914;     // for CashinLieu
+
+                        var customrecord_rocSearchObj = search.create({
+                            type: "customrecord_roc",
+                            filters:
+                                [
+                                    ["internalid", "anyof", RecordID]
+                                ],
+                            columns:
+                                [
+                                    search.createColumn({ name: "custrecord_orignal_net_selling_price", label: "Original Net Selling Price" }),
+                                    search.createColumn({ name: "custrecord_revised_net_price", label: "Revised  Net Selling Price" }),
+                                    search.createColumn({ name: "custrecord_vsa_roc", label: "Original VSA" }),
+                                    search.createColumn({
+                                        name: "name",
+                                        join: "CUSTRECORD_ROC_HEADER",
+                                        label: "Name"
+                                    }),
+                                    search.createColumn({
+                                        name: "custrecord_roc_item_amount",
+                                        join: "CUSTRECORD_ROC_HEADER",
+                                        label: "Item Amount"
+                                    }),
+                                    search.createColumn({
+                                        name: "custrecord_impact_line",
+                                        join: "CUSTRECORD_ROC_HEADER",
+                                        label: "Impact line"
+                                    })
+                                ]
+                        });
+                        var soId = null;
+                        var impactMap = {};
+                        var impactLine = '';
+                        var searchResultCount = customrecord_rocSearchObj.runPaged().count;
+                        log.debug("customrecord_rocSearchObj result count", searchResultCount);
+                        customrecord_rocSearchObj.run().each(function (result) {
+
+                            if (!soId) {
+                                soId = result.getValue({ name: "custrecord_vsa_roc" });
+                            }
+                             impactLine = result.getValue({ name: "custrecord_impact_line", join: "CUSTRECORD_ROC_HEADER" });
+                            var amount = parseFloat(result.getValue({ name: "custrecord_roc_item_amount", join: "CUSTRECORD_ROC_HEADER" })) || 0;
+
+                            if (impactLine) {
+                                if (!impactMap[impactLine]) {
+                                    impactMap[impactLine] = 0;
+                                }
+                                impactMap[impactLine] += amount;
+                            }
+
+                            return true;
+                        });
+
+
+
+                        log.error("ROC Impact Lines", JSON.stringify(impactMap) + ' soId ' + soId);
+
+                        if (soId) {
+                            var soRec = record.load({ type: record.Type.SALES_ORDER, id: soId, isDynamic: true });
+                            // Process each Impact Line
+                            Object.keys(impactMap).forEach(function (line) {
+                                var targetItem = (line === "Additional") ? AdditionalDisItemID : (line === "CashinLieu") ? OptOutItemID : null;
+                                if (!targetItem) return;
+
+                                var foundLine = -1;
+                                var lineCount = soRec.getLineCount({ sublistId: "item" });
+
+                                for (var i = 0; i < lineCount; i++) {
+                                    var itemId = soRec.getSublistValue({ sublistId: "item", fieldId: "item", line: i });
+                                    if (parseInt(itemId) === targetItem) {
+                                        foundLine = i;
+                                        break;
+                                    }
+                                }
+                                if (foundLine > -1) {
+                                    // Update existing line
+                                    soRec.selectLine({ sublistId: "item", line: foundLine });
+                                    var exit_amount = parseFloat(soRec.getCurrentSublistValue({sublistId: "item",fieldId: "rate"})) || 0;
+                                    var new_rate = exit_amount + impactMap[impactLine];
+                                    soRec.setCurrentSublistValue({ sublistId: "item", fieldId: "rate", value: new_rate });
+                                    soRec.commitLine({ sublistId: "item" });
+                                } else {
+                                    var InventoryType = '';
+                                    if (itemId == AdditionalDisItemID) {
+                                        InventoryType = 15;
+                                    } else {
+                                        InventoryType = 8;
+                                    }
+                                    // Add new line
+                                    soRec.selectNewLine({ sublistId: "item" });
+                                    soRec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol_advs_selected_inventory_type', value: InventoryType });
+                                    soRec.setCurrentSublistValue({ sublistId: "item", fieldId: "item", value: targetItem });
+                                    soRec.setCurrentSublistValue({ sublistId: "item", fieldId: "rate", value: impactMap[line] });
+                                    soRec.commitLine({ sublistId: "item" });
+                                }
+                            });
+
+                            var soIdSaved = soRec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+                            log.error("Updated Sales Order", soIdSaved);
+                            if (soIdSaved) {
+                                record.submitFields({
+                                    type: 'customrecord_roc',
+                                    id: RecordID,
+                                    values: {
+                                        custrecord_vsa_updated: true // Approved
+                                    }
+                                });
+                            }
+
+
+                        }
+
+                    }
+
+
 
                 }
                 else {
@@ -533,5 +665,5 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
             return setupData;
         };
         return { onRequest };
-        
+
     });
