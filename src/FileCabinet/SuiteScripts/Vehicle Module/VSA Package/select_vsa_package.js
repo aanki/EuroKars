@@ -159,9 +159,9 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     "<body>";
 
                 html += "<div class='container mt-5'>" +
-                    "<div class='header fade-in'>" +
-                    "<h3 id='titleText' class='text-center mt-3' style='color: #000000;'>Select Package For Model " + ModelText + "</h3>";
-                " <div class='header-actions'>";
+                        "<div class='header fade-in'>" +
+                        "<h3 id='titleText' class='text-center mt-3' style='color: #000000;'>Select Package For Model " + ModelText + "</h3>";
+                        "<div class='header-actions'>";
                 html += "<div id='bottomButtons' style='margin-top: 20px; display: flex; gap: 10px; align-items: center;'>" +
                     "<button id='btnsubmit' type='submit' class='btn btn-primary' onclick='submitPackage()' style='display:none; width:auto;'>SUBMIT</button>" +
                     "<button id='btnback' class='btn btn-secondary' onclick='location.reload()'  style='display:none;'>BACK</button>" +
@@ -171,7 +171,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     "</div>" +
                     "</div>";
                 html += '<div id="pckg-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">' +
-                    '<div class="loader-spinner"></div></div>';
+                        '<div class="loader-spinner"></div></div>';
 
                 //Table for Avail Colour
                 html += "<div id='availColourTable' class='container mt-5'style='display:none;'>" +
@@ -200,15 +200,15 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "</tbody></table></div></div>";
 
                 html += "<div class='container mt-3 form-wrapper'>" +
-                    "<form id='packageForm'>";
-
+                        "<form id='packageForm'>";
+               
                 html += "<nav>" +
                     "<div id='tabNavWrapper' class=' fade-in' style='display: none;'>" +
                     "<div class=\"tabs\" id=\"nav-tab\" role=\"tablist\">" +
-                    "<button class=\"tab active\" id=\"nav-home-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-home\" type=\"button\" role=\"tab\" aria-controls=\"nav-home\" aria-selected=\"true\" > 📦 Package Items</button>" +
-                    "<button class=\"tab\" id=\"nav-finance-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-finance\" type=\"button\" role=\"tab\" aria-controls=\"nav-finance\" aria-selected=\"false\"> 💰 Finance</button>" +
+                    "<button class=\"tab \" id=\"nav-home-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-home\" type=\"button\" role=\"tab\" aria-controls=\"nav-home\" aria-selected=\"false\" > 📦 Package Items</button>" +
+                    "<button class=\"tab\" id=\"nav-finance-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-finance\" type=\"button\" role=\"tab\" aria-controls=\"nav-finance\" aria-selected=\"false\" > 💰 Finance</button>" +
                     "<button class=\"tab\" id=\"nav-insurance-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-insurance\" type=\"button\" role=\"tab\" aria-controls=\"nav-insurance\" aria-selected=\"false\"> 🛡️ Insurance</button>" +
-                    "<button class=\"tab\" id=\"nav-configurator-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-configurator\" type=\"button\" role=\"tab\" aria-controls=\"nav-configurator\" aria-selected=\"false\"> ⚙️ Configurator</button>" +
+                    "<button class=\"tab active\" id=\"nav-configurator-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-configurator\" type=\"button\" role=\"tab\" aria-controls=\"nav-configurator\" aria-selected=\"true\"> ⚙️ Configurator</button>" +
                     "</div>" +
                     "</div>" +
                     "</nav>" +
@@ -216,7 +216,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     //Tab Main DIV
                     "<div class=\"tab-content border border-top-0 bg-white p-3\" id=\"nav-tabContent\">" +
                     //First Tab DIv
-                    "<div class=\"tab-pane fade show active\" id=\"nav-home\" role=\"tabpanel\" aria-labelledby=\"nav-home-tab\">";
+                    "<div class=\"tab-pane fade \" id=\"nav-home\" role=\"tabpanel\" aria-labelledby=\"nav-home-tab\">";
 
                 html += "<table class='vehicle-table'>" +
                     "<thead>" +
@@ -333,7 +333,12 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 var searchResultCount = customrecord_vsa_packageSearchObj.runPaged().count;
                 log.debug("customrecord_vsa_packageSearchObj result count", searchResultCount + " model id " + ModelId + " SelectedPckgHeadID " + SelectedPckgHeadID + " recordId " + recordId + " TransactionType " + transactionType);
                 if (searchResultCount === 0) {
+                    html += "<script>";
+                    html += "var loader = document.getElementById('pckg-loader');";
+                    html += "if(loader) loader.style.display = 'none';";
+                    html += "</script>";
                     html += "<p style='color: red; font-weight: bold;'>No Package found for selected Model: " + ModelText + "</p>";
+
                     context.response.write(html);
                     return;
                 }
@@ -356,7 +361,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     var parentAdopter = result.getValue({ name: 'custrecord_adopter_discount_vsa' });
                     var parentSCWD_limit = result.getValue({ name: 'custrecord_scwd' });
                     var chldName = result.getValue({ name: "name", join: "CUSTRECORD_MASTER_PACKG" });
-                    var chlditemType = result.getValue({ name: "custrecord_pckg_item_type", join: "CUSTRECORD_MASTER_PACKG" });
+                    var childItemType = result.getValue({ name: "custrecord_pckg_item_type", join: "CUSTRECORD_MASTER_PACKG" });
                     var childCostGroup = result.getValue({ name: "custrecord_pckg_iem_cost_group", join: "CUSTRECORD_MASTER_PACKG" });
                     var childCostGroupText = result.getText({ name: "custrecord_pckg_iem_cost_group", join: "CUSTRECORD_MASTER_PACKG" });
                     var childCost = result.getValue({ name: "custrecord_pckg_item_cost", join: "CUSTRECORD_MASTER_PACKG" });
@@ -405,7 +410,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                                 parentId: parentId,
                                 childInternalID: childInternalID,
                                 childName: chldName,
-                                chlditemType: chlditemType,
+                                chlditemType: childItemType,
                                 childCostGroup: childCostGroup,
                                 childCostGroupText: childCostGroupText,
                                 childCost: childCost,
@@ -665,6 +670,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "var Customer = " + JSON.stringify(Customer) + ";";
 
                 html += "var transtype = " + JSON.stringify(transactionType) + ";";
+                html += "var subsidiaryId = " + JSON.stringify(subsidiaryId) + ";";
                 html += "var SOrecordId = " + recordId + ";";
                 html += "var isPrefilled = " + (SelectedPckgHeadID ? "true" : "false") + ";";
                 html += "var SelectedPckgHeadID = '" + SelectedPckgHeadID + "';";
@@ -678,7 +684,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "var Fin_Commi_rate = '';";
 
                 html += "var financerate = " + JSON.stringify(financerate) + ";";
-
                 html += "const categoryMap = {exterior: '2',interior: '3'};";
 
                 html += "  var itemDataNew = [];";
@@ -731,7 +736,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 // Option Base Price
                 html += "const baseprice = document.getElementById('baseprice');";
                 html += "baseprice.innerText = Number(listprice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });" +
-
                     "const nongaurnateelamnt = document.getElementById('nongaurnateelamnt');" +
                     "nongaurnateelamnt.innerText = coedisL.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2 });" +
                     "const totalAmount = document.getElementById('totalAmount');" +
@@ -747,30 +751,30 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "    totalAmount.innerText = prefillAddtinalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
                 html += "    addtionalAmount.innerText = selectedAddtionalprefill.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
 
-              // Adopter prefill
-               html += "       var adopterrow = document.getElementById('row_adopterrow');";
-               html += "        var radio = document.getElementById('adopterdis');";
-               html += "        if (data.preAdopter < 0) {"; 
-               html += "            radio.checked = true;";
-               html += "            const adopterAmount = document.getElementById('adopteramount');";
-               html += "            adopterrow.style.display = '';";
-               html += "        adopterAmount.innerText = Number(data.preAdopter).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
-               html += "        }";
-              
-               // TradeIN prefill
-               html += "    var tradeInAmount_field = document.getElementById('tradeInAmount_field');";
-               html += "    if (tradeInAmount_field && data.pre_TradeIN <0) {";
-               html += "    var tradeRow = document.getElementById('row_tradeinrow');";
-               html += "        tradeInAmount_field.value = parseFloat(data.pre_TradeIN || 0).toFixed(2);";
-               html += "        var radio = document.getElementById('tradeIN');";
-               html += "        if (tradeInAmount_field && tradeInAmount_field.value) {"; // FIXED variable
-               html += "            radio.checked = true;";
-               html += "            document.getElementById('tradeInAmountWrapper').style.display = 'block';";
-               html += "            tradeRow.style.display = '';";
-               html += "        }";
-               html += "        updateTradeINAmount(tradeInAmount_field);";
-               html += "    }";
-               // CashInLuie prefill
+                // Adopter prefill
+                html += "       var adopterrow = document.getElementById('row_adopterrow');";
+                html += "        var radio = document.getElementById('adopterdis');";
+                html += "        if (data.preAdopter < 0) {";
+                html += "            radio.checked = true;";
+                html += "            const adopterAmount = document.getElementById('adopteramount');";
+                html += "            adopterrow.style.display = '';";
+                html += "        adopterAmount.innerText = Number(data.preAdopter).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
+                html += "        }";
+
+                // TradeIN prefill
+                html += "    var tradeInAmount_field = document.getElementById('tradeInAmount_field');";
+                html += "    if (tradeInAmount_field && data.pre_TradeIN <0) {";
+                html += "    var tradeRow = document.getElementById('row_tradeinrow');";
+                html += "        tradeInAmount_field.value = parseFloat(data.pre_TradeIN || 0).toFixed(2);";
+                html += "        var radio = document.getElementById('tradeIN');";
+                html += "        if (tradeInAmount_field && tradeInAmount_field.value) {"; // FIXED variable
+                html += "            radio.checked = true;";
+                html += "            document.getElementById('tradeInAmountWrapper').style.display = 'block';";
+                html += "            tradeRow.style.display = '';";
+                html += "        }";
+                html += "        updateTradeINAmount(tradeInAmount_field);";
+                html += "    }";
+                // CashInLuie prefill
                 html += "    var cashinoptout = document.getElementById('cashinoptout');";
                 html += "    if (cashinoptout && data.selectedCashInLiueprefill) {";
                 html += "      cashinoptout.innerText = Number(data.selectedCashInLiueprefill).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });;";
@@ -802,8 +806,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      configAmount.innerText = parseFloat(data.preFinance_ConfigAmount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
                 html += "      updateOptionSummary();";
                 html += "    }";
-
-
                 html += "  } else {";
                 //  html += "  totalAmount.innerText = Number(listprice).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
                 // html += "  addtionalAmount.innerText = '0';";
@@ -818,7 +820,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "var packgItem_data = child_Object[parentId];";
                 html += "if (!packgItem_data) {container.innerHTML = '<p style=\"color: red;\">No Item found for Package: ' + escapeHtml(pckgName) + '</p>'; return; }";
                 html += "var allAccHtml = '';";
-
 
                 html += "for (var costGroup in packgItem_data) {";
                 html += "var items = packgItem_data[costGroup];";
@@ -845,12 +846,23 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 //-----
                 html += "accHtml += '<div class=\"panel\" style=\"display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; margin-top: 12px; border-bottom: 1px solid #ccc; padding-bottom: 8px;\">';";
-
                 html += "accHtml += '<div><span>' + escapeHtml(items[i].childName) + '  </span><span style=\"color: green; font-weight: bold;\">' + costValue + '</span></div>'; ";
 
-                //---------Adding lock or slider based on checkbox
-                html += "if (items[i].chlditemType=='1') {";
+                //---------Adding lock or slider based on checkbox and added in Selected Item If locked
+                html += "if (items[i].chlditemType=='1') {"; // FIXED
                 html += "  accHtml += '<i class=\"fas fa-lock\" style=\"margin-left: 10px; color: #999;\"></i>';";
+
+                html += "    itemDataNew.push({";
+                html += "      item_name: items[i].childName,";
+                html += "      item_cost: items[i].childCost,";
+                html += "      OptinValue: items[i].childOptIN,";
+                html += "      OptoutValue: items[i].childOptOUt,";
+                html += "      includePrice: items[i].childIncludePrice,";
+                html += "      childItemType: items[i].childItemType,";
+                html += "      item_costGroup: items[i].childCostGroup,";
+                html += "      is_selected: 'true'";
+                html += "    });";
+
                 html += "} else {";
                 html += "  accHtml += '<label class=\"switch\" style=\"margin-left: 10px;\">';";
                 html += "  accHtml += '<input type=\"checkbox\" class=\"item-checkbox\" " +
@@ -878,7 +890,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "      var checkbox = document.querySelector('.item-checkbox[data-name=\"' + savedItem.item_name + '\"]');";
                 html += "      if (checkbox){ ";
                 html += " checkbox.checked = true;";
-
                 html += "    itemDataNew.push({";
                 html += "      item_name: savedItem.item_name,";
                 html += "      item_cost: savedItem.cost,";
@@ -925,30 +936,30 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "}";
                 html += "}";
 
-                html += "function showTable() {" +
-                    "itemDataNew = [];" +
-                    "itemData_Option_config = [];" +
-                    "total_discountRebate = 0;" +
-                    "var table = document.querySelector('.vehicle-table');" +
-                    "if (table) table.style.display = 'table';" +
-                    "var detailsSection = document.getElementById('detailsSection');" +
-                    "if (detailsSection) detailsSection.style.display = 'none';" +
-                    "var totaltable = document.getElementById('totaltable');" +
-                    "if (totaltable) totaltable.style.display = 'none';" +
-                    "document.getElementById('btnback').style.display = 'none';" +
-                    "document.getElementById('btnsubmit').style.display = 'none';" +
-                    "document.getElementById('packgOption').style.display = 'none';" +
-                    "var titleText = document.getElementById('titleText');" +
-                    "if (titleText) titleText.textContent = 'Select Package for Model ' + ModelText;" +
-                    "hideTabsAndReset();" +
-                    "}";
-                // Hide Tab and Open First Tab
-                html += "function hideTabsAndReset() {";
-                html += "  document.getElementById('availColourTable').style.display = 'none';";
-                html += "  document.getElementById('tabNavWrapper').style.display = 'none';";
-                html += "  var homeTab = new bootstrap.Tab(document.getElementById('nav-home-tab'));";
-                html += "  homeTab.show();";
-                html += "}";
+                // html += "function showTable() {" +
+                //     "itemDataNew = [];" +
+                //     "itemData_Option_config = [];" +
+                //     "total_discountRebate = 0;" +
+                //     "var table = document.querySelector('.vehicle-table');" +
+                //     "if (table) table.style.display = 'table';" +
+                //     "var detailsSection = document.getElementById('detailsSection');" +
+                //     "if (detailsSection) detailsSection.style.display = 'none';" +
+                //     "var totaltable = document.getElementById('totaltable');" +
+                //     "if (totaltable) totaltable.style.display = 'none';" +
+                //     "document.getElementById('btnback').style.display = 'none';" +
+                //     "document.getElementById('btnsubmit').style.display = 'none';" +
+                //     "document.getElementById('packgOption').style.display = 'none';" +
+                //     "var titleText = document.getElementById('titleText');" +
+                //     "if (titleText) titleText.textContent = 'Select Package for Model ' + ModelText;" +
+                //     "hideTabsAndReset();" +
+                //     "}";
+                // // Hide Tab and Open First Tab
+                // html += "function hideTabsAndReset() {";
+                // html += "  document.getElementById('availColourTable').style.display = 'none';";
+                // html += "  document.getElementById('tabNavWrapper').style.display = 'none';";
+                // html += "  var homeTab = new bootstrap.Tab(document.getElementById('nav-home-tab'));";
+                // html += "  homeTab.show();";
+                // html += "}";
 
                 // Radio togel for Total Gaurnate and Non Guaranteed
                 html += "  function toggleCOEDiscount() {";
@@ -1171,6 +1182,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 // html += "    updateTotalAmount();";
                 // html += "    });";
                 // html += "  }";
+
                 html += '  const configureTab = document.getElementById("nav-configurator-tab");';
                 html += '  if (configureTab) {';
                 html += '    configureTab.addEventListener("shown.bs.tab", function () {';
@@ -1395,7 +1407,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     "document.getElementById('colourTopupAmount').innerText = formattedAmount;" +
                     "updateTotalAmount();" +
                     "}";
-
                 // click on Submit button
                 html += "function submitPackage() {";
 
@@ -1536,7 +1547,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "  });";
 
                 html += "}";
-
                 // html += "  var cell = document.getElementById('parentListPriceCell');";
                 // html += "  var value = parseFloat(cell.innerText) || 0;";
                 // html += "  cell.innerText = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});";
@@ -1588,7 +1598,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += '          return;';
                 html += '        }';
 
-                html += '        for (const subcategory in categoryData) {';
+                html += ' for (const subcategory in categoryData) {';
                 html += '          const items = categoryData[subcategory];';
 
                 html += '          const accHtml = `<button type="button" class="accordion" aria-expanded="false"><span class="arrow">▶</span> ${subcategory}</button>`;';
@@ -1857,30 +1867,22 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     html += "      </tr>";
                 }
 
+                  
                 html += "    </tbody>";
                 html += "  </table>";
                 html += "</div>";
-
                 html += "  </div>";
                 // html += "  </div>";
 
-                //  --- Configutor Tab--------------------------------------
+                //  --- Configutor Tab-------------------------------------
 
-                html += "<div class=\"tab-pane fade\" id=\"nav-configurator\" role=\"tabpanel\" aria-labelledby=\"nav-configurator-tab\" style=\"background-color: white; padding: 20px;\">";
+                html += "<div class=\"tab-pane fade show active\" id=\"nav-configurator\" role=\"tabpanel\" aria-labelledby=\"nav-configurator-tab\" style=\"background-color: white; padding: 20px;\">";
 
                 html += '<div class="row">';
                 // Left Column: Dropdown Categories -->
                 html += '  <div class="col-md-3">';
                 html += "  <label><strong>Type</strong></label>";
                 html += '    <div id="category-list" class="list-group menu" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">';
-                // // html += '      <a href="#" class="list-group-item list-group-item-action category-item" data-category="exterior">Exterior</a>';
-                // html += '<a href="#" class="list-group-item list-group-item-action category-item" data-category="exterior">';
-                // html += '  Exterior <span class="badge badge-pill badge-primary" id="badge-exterior" style="float: right; background:rgb(75, 142, 98); color: #fff;">0</span>';
-                // html += '</a>';
-                // // html += '      <a href="#" class="list-group-item list-group-item-action category-item" data-category="interior">Inetrior</a>';
-                // html += '<a href="#" class="list-group-item list-group-item-action category-item" data-category="interior">';
-                // html += '  Interior <span class="badge badge-pill badge-primary" id="badge-interior" style="float: right; background:rgb(75, 142, 98); color: #fff;">0</span>';
-                // html += '</a>';
 
                 html += '    </div>';
                 html += '  </div>';
@@ -2105,7 +2107,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 //    "</div>" +
                 //     "</div>" ;
 
-
                 "</div>";
                 //--------------------------------
                 html += "</div>";
@@ -2274,7 +2275,8 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             fieldId: "custrecord_save_item_cost_group",
                             value: item.item_costGroup
                         });
-                        var includePriceFlag = (item.includePrice === "true");
+                        var includePriceFlag = (item.includePrice === true || item.includePrice === "true");
+
                         rec.setCurrentSublistValue({
                             sublistId: child_table,
                             fieldId: "custrecord_selected_pckgitem_includepric",
@@ -2285,6 +2287,13 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             fieldId: "custrecord_type_item_selected",
                             value: item.type
                         });
+                        var itemvalue = includePriceFlag ? 14928 : 14929;
+                        rec.setCurrentSublistValue({
+                            sublistId: child_table,
+                            fieldId: "custrecord_advs_item_mapping",
+                            value: itemvalue
+                        });
+
                         rec.commitLine({ sublistId: child_table });
 
                     });
