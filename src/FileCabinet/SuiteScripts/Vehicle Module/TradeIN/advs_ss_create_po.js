@@ -44,7 +44,6 @@ function suitelet(request, response) {
     }
   
     var typeValueF = request.getParameter("custparam_type_record_e");
-
     var TypeFiled = form.addField("custpage_type_record_e", "SELECT", "TYPE");
 
     TypeFiled.addSelectOption('', '', true);
@@ -180,7 +179,6 @@ function populateAppvantageLine(sublist, rec, line) {
 
 function processData(typeValueF, selectedSubsidiary, selectedPurchaser, sublist, line) {
 
-
     if (!line) line = 1;
 
     if (typeValueF == "1" || typeValueF == 1) {
@@ -206,8 +204,7 @@ function processData(typeValueF, selectedSubsidiary, selectedPurchaser, sublist,
         ]);
 
         tradeInSearch.forEachResult(function (rec) {
-            populateTradeInLine(sublist, rec, line++);
-
+          populateTradeInLine(sublist, rec, line++);
 
             return true;
         });
