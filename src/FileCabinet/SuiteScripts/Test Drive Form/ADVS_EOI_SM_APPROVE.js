@@ -41,6 +41,51 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                         form.addSubmitButton({ label: 'Approve' });
                     }
 
+                } else if (Flag == 4) {
+
+                    // Approval for EPOPL VPA
+                    var action = context.request.parameters.custparam_action;
+                    var RecordID = context.request.parameters.custparam_recid;
+                    var custparam_approver = context.request.parameters.custparam_approver;
+                    var custparam_role = context.request.parameters.custparam_role;
+                    if (!RecordID || !action) {
+                        context.response.write('Invalid or missing parameters.');
+                        return;
+                    }
+                    if (custparam_role == 'SM') {
+                        var res = is_epopl_PM_approved(RecordID, custparam_role);
+                        if (res.approved) {
+                            context.response.write(`VPA has already been ${res.status}. By ${res.updatedby}`);
+                            return;
+                        }
+                    } else if (custparam_role == 'PM') {
+                        var res = is_epopl_PM_approved(RecordID, 'SM');
+                        log.error('res', res);
+                        if (res.statusID == 3) {                          // PM can not updated if Its rejected by SM
+                            context.response.write(`VPA has already been ${res.status}. By ${res.updatedby}`);
+                            return;
+                        }
+                        var res = is_epopl_PM_approved(RecordID, 'PM');
+                        if (res.approved) {
+                            context.response.write(`VPA has already been ${res.status}. By ${res.updatedby}`);
+                            return;
+                        }
+                    }
+                    addHiddenFieldsToForm(form, Flag, action, RecordID, custparam_approver, custparam_role);
+                    form.addField({
+                        id: 'custpage_remark',
+                        type: serverWidget.FieldType.TEXTAREA,
+                        label: 'Remarks',
+                    });
+                    if (action === 'Reject') {
+                        form.title = 'Reject Action';
+                        form.addSubmitButton({ label: 'Reject' });
+                    }
+                    else if (action === 'Approve') {
+                        form.title = 'Approve Action';
+                        form.addSubmitButton({ label: 'Approve' });
+                    }
+
                 }
                 if (Flag == 1) {
 
@@ -202,20 +247,20 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                 var RecordID = context.request.parameters.custparam_recid;
                 var Record_Type = context.request.parameters.custparam_rectype;
                 var Remarks = context.request.parameters.custpage_remark;
-                
-               if(!flag){
-                var body = context.request.body;
-                var data = JSON.parse(body);
-                log.error('POST parameters', data);
-                if (data) {
-                    flag = data.custparam_flag;
-                    RecordID = data.custparam_recid;
+
+                if (!flag) {
+                    var body = context.request.body;
+                    var data = JSON.parse(body);
+                    log.error('POST parameters', data);
+                    if (data) {
+                        flag = data.custparam_flag;
+                        RecordID = data.custparam_recid;
+                    }
                 }
-               }
                 log.error("flag", flag);
 
                 if (flag == 2) { // Ankit for Approval VSA Special Discount
-                     log.error("flag entered", flag);
+                    log.error("flag entered", flag);
                     const soRec = record.load({ type: 'salesorder', id: RecordID, isDynamic: true });
                     // Fetch fields
                     const discountStatus = soRec.getValue('custbody_package_approval_status');
@@ -276,7 +321,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
 
                     }
 
-                } else if (data.custparam_flag == 3) {// Ankit for UPdate VSA from ROC Approval
+                } else if (flag == 3) {// Ankit for UPdate VSA from ROC Approval
 
                     if (RecordID) { // ROC record ID
 
@@ -321,7 +366,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                             if (!soId) {
                                 soId = result.getValue({ name: "custrecord_vsa_roc" });
                             }
-                             impactLine = result.getValue({ name: "custrecord_impact_line", join: "CUSTRECORD_ROC_HEADER" });
+                            impactLine = result.getValue({ name: "custrecord_impact_line", join: "CUSTRECORD_ROC_HEADER" });
                             var amount = parseFloat(result.getValue({ name: "custrecord_roc_item_amount", join: "CUSTRECORD_ROC_HEADER" })) || 0;
 
                             if (impactLine) {
@@ -333,8 +378,6 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
 
                             return true;
                         });
-
-
 
                         log.error("ROC Impact Lines", JSON.stringify(impactMap) + ' soId ' + soId);
 
@@ -358,7 +401,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                                 if (foundLine > -1) {
                                     // Update existing line
                                     soRec.selectLine({ sublistId: "item", line: foundLine });
-                                    var exit_amount = parseFloat(soRec.getCurrentSublistValue({sublistId: "item",fieldId: "rate"})) || 0;
+                                    var exit_amount = parseFloat(soRec.getCurrentSublistValue({ sublistId: "item", fieldId: "rate" })) || 0;
                                     var new_rate = exit_amount + impactMap[impactLine];
                                     soRec.setCurrentSublistValue({ sublistId: "item", fieldId: "rate", value: new_rate });
                                     soRec.commitLine({ sublistId: "item" });
@@ -389,17 +432,57 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                                     }
                                 });
                             }
+                        }
+                    }
+                }
+                else if (flag == 4) {
 
+                    // Approval for EPOPL VPA on click Approve or REJECT
+                    var custparam_approver = context.request.parameters.custparam_epopl;
+                    var custparam_epopl_role = context.request.parameters.custparam_epopl_role;
+                    var next_msg = '';
+                    if (action === 'Reject') {
+                        create_epopl_apprv_record(RecordID, custparam_approver, Remarks, 3, custparam_epopl_role);
+                    }
+                    else if (action === 'Approve') {
+                        create_epopl_apprv_record(RecordID, custparam_approver, Remarks, 2, custparam_epopl_role);
+                        var emailsetup = GetEmailSetup_epopl_Approver();
 
+                        var res = is_epopl_PM_approved(RecordID, 'PM');
+                        log.error("EPOPL res", res);
+                        if (!res.approved) {
+                            send_emailSpprover_pm_epopl(RecordID, emailsetup, custparam_approver);
+                            next_msg = ' ,Notification has been triggred to next Approver ' + emailsetup.PMrecevierText;
+
+                        } else {
+                            // Last PM Approved done now email send to link VSA 
+                            var recipientsSM = [];
+                            if (emailsetup.SMrecevier) {
+                                var recipients = emailsetup.SMrecevier.split(',');
+                                for (var i = 0; i < recipients.length; i++) {
+                                    recipientsSM[i] = recipients[i].trim();
+                                }
+                            }
+                            log.error("EPOPL recipientsSM", recipientsSM);
+                            var poRec = record.load({ type: record.Type.PURCHASE_ORDER, id: RecordID });
+                            var poNumber = poRec.getValue({ fieldId: 'tranid' }) || '';
+                            email.send({
+                                author: emailsetup.Sender,
+                                recipients: recipientsSM,
+                                subject: 'VPA has been approved. Please link this VPA#' + poNumber,
+                                body: 'VPA has been approved. Please link this VPA# <b>' + poNumber + '</b>',
+                            });
+                            context.response.write('VPA hass been ' + res.status);
+                            return;
                         }
 
                     }
-
-
-
+                    log.error("EPOPL Approval", custparam_approver + ' RecordID ' + RecordID + ' action ' + action);
+                    context.response.write('VPA hass been ' + action + 'ed' + next_msg);
+                    return;
                 }
-                else {
 
+                else {
                     var action = context.request.parameters.custpage_action;
                     var recId = context.request.parameters.custpage_recid;
                     if (action === 'Reject' && recId) {
@@ -420,7 +503,6 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                     else {
                         try {
                             var record_id = context.request.parameters.custpage_rec_id;
-
 
                             // Load and update record to mark "Approved"
                             record.submitFields({
@@ -455,7 +537,7 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
             }
         };
 
-        function addHiddenFieldsToForm(form, Flag, action, RecordID) {
+        function addHiddenFieldsToForm(form, Flag, action, RecordID, EPOPL_Approver, EPOPL_Approver_Role) {
             form.addField({
                 id: 'custparam_flag',
                 type: serverWidget.FieldType.TEXT,
@@ -476,6 +558,24 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                 label: 'Record'
             }).defaultValue = RecordID;
             form.getField('custparam_recid').updateDisplayType({ displayType: serverWidget.FieldDisplayType.HIDDEN });
+
+            if (EPOPL_Approver) {
+                form.addField({
+                    id: 'custparam_epopl',
+                    type: serverWidget.FieldType.TEXT,
+                    label: 'Approver'
+                }).defaultValue = EPOPL_Approver;
+                form.getField('custparam_epopl').updateDisplayType({ displayType: serverWidget.FieldDisplayType.HIDDEN });
+            }
+            if (EPOPL_Approver_Role) {
+                form.addField({
+                    id: 'custparam_epopl_role',
+                    type: serverWidget.FieldType.TEXT,
+                    label: 'Approver Role'
+                }).defaultValue = EPOPL_Approver_Role;
+                form.getField('custparam_epopl_role').updateDisplayType({ displayType: serverWidget.FieldDisplayType.HIDDEN });
+            }
+
         }
 
         function add_child_approval_record(rec, child_table, RecordID, date, approved_by, approved_level, remarks) {
@@ -529,6 +629,124 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
                 rec.removeLine({ sublistId: 'item', line: foundLine });
             }
         }
+        function create_epopl_apprv_record(RecordID, custparam_approver, Remarks, actionID, Role) {
+            var childRec = record.create({ type: 'customrecord_epopl_vpa_approval', isDynamic: true });
+            childRec.setValue({ fieldId: 'custrecord_vpa_epopl', value: RecordID });
+            childRec.setValue({ fieldId: 'custrecord_epopl_date', value: new Date() });
+            childRec.setValue({ fieldId: 'custrecord_epopl_approved_rejby', value: custparam_approver });
+            childRec.setValue({ fieldId: 'custrecord_epopl_remarks', value: Remarks });
+            childRec.setValue({ fieldId: 'custrecord_epopl_approved_status', value: actionID });
+            childRec.setValue({ fieldId: 'custrecord_role_epopl', value: Role });
+            childRec.save({ ignoreMandatoryFields: true });
+        }
+        function is_epopl_PM_approved(RecordID, Role) {
+            var resultObj = {
+                approved: false,
+                status: '',
+                statusID: '',
+                updatedby: ''
+            };
+            var approvalSearch = search.create({
+                type: 'customrecord_epopl_vpa_approval',
+                filters: [
+                    ['custrecord_vpa_epopl', 'anyof', RecordID],
+                    'AND',
+                    [
+                        ['custrecord_epopl_approved_status', 'anyof', 2],
+                        'OR',
+                        ['custrecord_epopl_approved_status', 'anyof', 3]
+                    ],
+                    'AND',
+                    ['custrecord_role_epopl', 'is', Role]
+                ],
+                columns: ['internalid', 'custrecord_epopl_approved_status', 'custrecord_epopl_approved_rejby']
+            });
+            approvalSearch.run().each(function (result) {
+                resultObj.status = result.getText({ name: "custrecord_epopl_approved_status" });
+                resultObj.updatedby = result.getText({ name: "custrecord_epopl_approved_rejby" });
+                resultObj.statusID = result.getValue({ name: "custrecord_epopl_approved_status" });
+                resultObj.approved = true;
+                return false;
+            });
+
+            return resultObj;
+        }
+        function send_emailSpprover_pm_epopl(poid, emailSetup, sender) {
+
+            var baseUrl = url.resolveScript({
+                deploymentId: 'customdeploy_advs_ssvg_eoi_sm_approve',
+                scriptId: 'customscript_advs_eoi_sm_approve',
+                returnExternalUrl: true
+
+            });
+            var poRec = record.load({ type: record.Type.PURCHASE_ORDER, id: poid });
+            var poNumber = poRec.getValue({ fieldId: 'tranid' }) || '';
+            var vendorName = poRec.getText({ fieldId: 'entity' }) || '';
+            var custpage_eff = poRec.getValue({ fieldId: 'custbody_sales_effciency_comm' }) || '';
+            var custpage_radio = poRec.getValue({ fieldId: 'custbody_sales_eff_option' }) || '';
+            var custpage_sales = poRec.getValue({ fieldId: 'custbody_advs_sales_comm' }) || '';
+            var TradeInValue = poRec.getValue({ fieldId: 'custbody_advs_trade_in' }) || '';
+            var OverTradeValue = poRec.getValue({ fieldId: 'custbody_advs_over_trade' }) || '';
+            var TradeCostValue = poRec.getValue({ fieldId: 'custbody_advs_trade_cost' }) || '';
+            var vin = '';
+
+            var subject = emailSetup.EmailSubject;
+            var smEmailBody = emailSetup.EmailBody;
+            subject = subject.replace('@VPAno@', poNumber || '');
+            smEmailBody = smEmailBody.replace('@VPAno@', poNumber || '');
+            smEmailBody = smEmailBody.replace('@vendor@', vendorName || '');
+            smEmailBody = smEmailBody.replace('@chasis@', vin || '');
+            smEmailBody = smEmailBody.replace('@salesefecomm@', custpage_eff || '');
+            smEmailBody = smEmailBody.replace('@salesefecommtype@', custpage_radio || '');
+            smEmailBody = smEmailBody.replace('@salescomm@', custpage_sales || '');
+            smEmailBody = smEmailBody.replace('@tradein@', TradeInValue || '');
+            smEmailBody = smEmailBody.replace('@overtrade@', OverTradeValue || '');
+            smEmailBody = smEmailBody.replace('@cost@', TradeCostValue || '');
+            if (emailSetup.PMrecevier) {
+
+                var recipientss = emailSetup.PMrecevier.split(',');
+
+                for (var i = 0; i < recipientss.length; i++) {
+                    var approverId = recipientss[i].trim();
+
+                    var approveUrl = baseUrl + '&custparam_action=Approve&custparam_flag=4'
+                        + '&custparam_recid=' + poid
+                        + '&custparam_approver=' + approverId
+                        + '&custparam_role=PM';
+
+                    var rejectUrl = baseUrl + '&custparam_action=Reject&custparam_flag=4'
+                        + '&custparam_recid=' + poid
+                        + '&custparam_approver=' + approverId
+                        + '&custparam_role=PM';
+
+                    var smEmailBodyBase = smEmailBody;
+
+                    smEmailBodyBase +=
+                        "<html><head></head><body>" +
+                        "<a href=\"" + approveUrl + "\" " +
+                        "style=\"display:inline-block;padding:10px 20px;margin:5px;font-size:14px;" +
+                        "color:#fff;background-color:#34ab56;border-radius:5px;text-decoration:none;font-family:sans-serif;\">" +
+                        "Approve</a>" +
+                        "&nbsp;&nbsp;&nbsp;" +
+                        "<a href=\"" + rejectUrl + "\" " +
+                        "style=\"display:inline-block;padding:10px 20px;margin:5px;font-size:14px;" +
+                        "color:#fff;background-color:#e76f51;border-radius:5px;text-decoration:none;font-family:sans-serif;\">" +
+                        "Reject</a>" +
+                        "</body></html>";
+                    log.error("EPOPL approverId", approverId);
+                    email.send({
+                        author: emailSetup.Sender,
+                        recipients: approverId,
+                        subject: subject + ' (PM)',
+                        body: smEmailBodyBase,
+                    });
+                    log.error("Email send to PM", 'YEs');
+
+                }
+            }
+
+        }
+
 
         function send_email_for_approver(JsonEmail, SO_ID, approver_name, approver_id) {
 
@@ -664,6 +882,47 @@ define(['N/ui/serverWidget', 'N/record', 'N/redirect', 'N/log', 'N/search', 'N/e
 
             return setupData;
         };
+
+        function GetEmailSetup_epopl_Approver() {
+            var setupData = {};
+            const searchObj = search.create({
+                type: "customrecord_epopl_vpa_email_setup",
+                filters: [
+                    ["isinactive", "is", "F"]
+                ],
+                columns: [
+                    "internalid",
+                    "custrecord_email_sub_epopl",
+                    "custrecord_email_body_epopl",
+                    "custrecord_sales_manager_epopl",
+                    "custrecord_purchase_manager_epopl",
+                    "custrecord_epopl_sender"
+
+                ]
+            });
+
+            var emailBody = '', emailSubject = '';
+            searchObj.run().each(function (result) {
+
+                emailBody = result.getValue("custrecord_email_body_epopl");
+                emailSubject = result.getValue("custrecord_email_sub_epopl");
+                SMrecevier = result.getValue("custrecord_sales_manager_epopl");
+                PMrecevier = result.getValue("custrecord_purchase_manager_epopl");
+                PMrecevierText = result.getText("custrecord_purchase_manager_epopl");
+                Sender = result.getValue("custrecord_epopl_sender");
+
+                return false;
+            });
+
+            setupData.EmailBody = emailBody;
+            setupData.EmailSubject = emailSubject;
+            setupData.SMrecevier = SMrecevier;
+            setupData.PMrecevier = PMrecevier;
+            setupData.PMrecevierText = PMrecevierText;
+            setupData.Sender = Sender;
+
+            return setupData;
+        }
         return { onRequest };
 
     });

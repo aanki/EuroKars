@@ -111,11 +111,9 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
                             showNotification('Please provide both customer and sales signatures before accepting.', 'warning');
                             return;
                         }
-
                         const $btn = $(this);
                         const originalText = $btn.text();
                         $btn.html('Submitting...').addClass('btn-spinner').prop('disabled', true);
-
 
                         var updatePayload = {
                             action: 'updateSignatures',
@@ -284,7 +282,6 @@ define(['SuiteBundles/Bundle 555729/advs_lib/src/advs_lib_default_funtions_v2.js
             const canvas = $canvas[0];
             const ctx = canvas.getContext('2d');
             $canvas.hide();
-
             const typedName = prompt("Type your name for the signature:");
             if (typedName) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);

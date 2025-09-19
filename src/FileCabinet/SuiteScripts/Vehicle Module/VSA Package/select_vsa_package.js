@@ -205,10 +205,10 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                 html += "<nav>" +
                     "<div id='tabNavWrapper' class=' fade-in' style='display: none;'>" +
                     "<div class=\"tabs\" id=\"nav-tab\" role=\"tablist\">" +
-                    "<button class=\"tab \" id=\"nav-home-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-home\" type=\"button\" role=\"tab\" aria-controls=\"nav-home\" aria-selected=\"false\" > 📦 Package Items</button>" +
+                    "<button class=\"tab active\" id=\"nav-home-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-home\" type=\"button\" role=\"tab\" aria-controls=\"nav-home\" aria-selected=\"true\" > 📦 Package Items</button>" +
                     "<button class=\"tab\" id=\"nav-finance-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-finance\" type=\"button\" role=\"tab\" aria-controls=\"nav-finance\" aria-selected=\"false\" > 💰 Finance</button>" +
                     "<button class=\"tab\" id=\"nav-insurance-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-insurance\" type=\"button\" role=\"tab\" aria-controls=\"nav-insurance\" aria-selected=\"false\"> 🛡️ Insurance</button>" +
-                    "<button class=\"tab active\" id=\"nav-configurator-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-configurator\" type=\"button\" role=\"tab\" aria-controls=\"nav-configurator\" aria-selected=\"true\"> ⚙️ Configurator</button>" +
+                    "<button class=\"tab \" id=\"nav-configurator-tab\" data-bs-toggle=\"tab\" data-bs-target=\"#nav-configurator\" type=\"button\" role=\"tab\" aria-controls=\"nav-configurator\" aria-selected=\"false\"> ⚙️ Configurator</button>" +
                     "</div>" +
                     "</div>" +
                     "</nav>" +
@@ -216,7 +216,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     //Tab Main DIV
                     "<div class=\"tab-content border border-top-0 bg-white p-3\" id=\"nav-tabContent\">" +
                     //First Tab DIv
-                    "<div class=\"tab-pane fade \" id=\"nav-home\" role=\"tabpanel\" aria-labelledby=\"nav-home-tab\">";
+                    "<div class=\"tab-pane fade show active\" id=\"nav-home\" role=\"tabpanel\" aria-labelledby=\"nav-home-tab\">";
 
                 html += "<table class='vehicle-table'>" +
                     "<thead>" +
@@ -1876,7 +1876,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
 
                 //  --- Configutor Tab-------------------------------------
 
-                html += "<div class=\"tab-pane fade show active\" id=\"nav-configurator\" role=\"tabpanel\" aria-labelledby=\"nav-configurator-tab\" style=\"background-color: white; padding: 20px;\">";
+                html += "<div class=\"tab-pane fade \" id=\"nav-configurator\" role=\"tabpanel\" aria-labelledby=\"nav-configurator-tab\" style=\"background-color: white; padding: 20px;\">";
 
                 html += '<div class="row">';
                 // Left Column: Dropdown Categories -->
@@ -2384,7 +2384,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                     soRec.setValue({ fieldId: 'custbody_advs_insurance_co_rate_rn', value: Insurance_commiRateRN });
                 }
 
-
                 //Update Rate on
                 soRec.selectLine({ sublistId: 'item', line: LineNum });
                 soRec.setCurrentSublistValue({
@@ -2459,7 +2458,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         itemUpdateMap.push({ id: AdopterDisItemID, rate: adopteramount });
                     }
 
-
                     // First Remove existing Rebate Discount Lines
                     var itemIdsToDelete = [FinanceRebateItemID, InsuranceRebateItemID, OpcDiscountItemID, SCWDItemID, specialDiscountItemID, addtionalItemID,
                         DiffColourItemID, AdopterDisItemID, TradeINItemID, OptOutItemID, DiscountRebateItemID];
@@ -2527,9 +2525,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             fieldId: 'rate',
                             value: itemRate
                         });
-
                         soRec.commitLine({ sublistId: 'item' });
-
                     }
                 }
                 try {
@@ -2551,7 +2547,6 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                             deploymentId: 'customdeploy_advs_ssvg_eoi_sm_approve',
                             scriptId: 'customscript_advs_eoi_sm_approve',
                             returnExternalUrl: true
-
                         });
 
                         var ApproveURL = "&custparam_recid=" + SO_ID + "&custparam_action=Approve&custparam_flag=2";
@@ -2607,10 +2602,7 @@ define(['N/ui/serverWidget', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/e
                         error: e.message || e.toString()
                     }));
                 }
-
             }
-
-
         }
 
         function GetEmailSetup_Approver() {

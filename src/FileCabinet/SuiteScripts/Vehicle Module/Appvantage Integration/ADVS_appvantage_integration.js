@@ -15,8 +15,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
         var items = Array.isArray(request) ? request : [request];
         var response = [];
         var child_table = 'recmachcustrecord_parent';
-
-
         var sucessMsg = '';
 
         items.forEach(function (entry) {
@@ -33,18 +31,18 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     var VehDMS_ID = entry.dmsid;
 
                     // Mandatory key
-
-                    if (!entry.chassisno || !entry.vehicle_make || !entry.vehicle_model || !entry.engine_no || !entry.vehicle_license_plate) {
+                    if (!entry.chassisno || !entry.vehicle_make || !entry.vehicle_model || !entry.vehicle_license_plate) {
                         res.statusCode = 500;
-                        res.statusMessage = 'Required:  chassisno, vehicle_make, vehicle_model  ,engine # , license palte #';
+                        res.statusMessage = 'Required:  chassisno, vehicle_make, vehicle_model  , license palte #';
                         response.push(res);
                         return;
                     }
 
+
                     if (VehDMS_ID) {
                         var vehicleRecordObj = record.load({
                             type: "customrecord_advs_vm",
-                            id: VehDMS_ID, // need to confirrm 
+                            id: VehDMS_ID, 
                             isDynamic: true
                         });
                         sucessMsg = "Vehicle Master updated successfully with ID: ";
@@ -52,22 +50,12 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         var vehicleRecordObj = record.create({ type: "customrecord_advs_vm", isDynamic: true });
                         sucessMsg = "Vehicle Master created successfully with ID: ";
                     }
-
-                 
                     vehicleRecordObj.setValue({fieldId: "name",value: entry.chassisno});
                     vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_reservation_status",value: 8 }); // on Hold
                     vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_subsidary", value: 19  }); // Pre Owned 
                     vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_vehicle_status",value: 1  }); // Old Vehicle
                     vehicleRecordObj.setValue({fieldId: "custrecord_appvantage",value: true});
                     vehicleRecordObj.setValue({fieldId: "custrecord_send_salesforce_vm",value: false});
-
-                    var dms_brandID = '';
-                    if (entry.brand) {
-                        dms_brandID = getIntrrnalIdByText("customrecord_advs_brands", entry.brand);
-                        if (dms_brandID) {
-                            vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_vehicle_brand",value: dms_brandID });
-                        }
-                    }
 
                     var model_id = get_id_model(entry.vehicle_model, dms_brandID);
                     if (entry.vehicle_model) {
@@ -76,13 +64,13 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             vehicleRecordObj.setValue({ fieldId: "custrecord_st_v_m_model_variant", value: model_id });
                         }
                     }
+
                     vehicleRecordObj.setValue({ fieldId: "custrecord_advs_vm_license_no_compressed", value: entry.vehicle_license_plate });
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_advs_vm_engine_number",
                         value: entry.engine_no
                     });
                     // }
-
                     // if (entry.mileage) {
                     vehicleRecordObj.setValue({
                         fieldId: "custrecord_advs_vm_mileage",
@@ -94,8 +82,14 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: model_id
                         });
                     }
+                     var dms_brandID = '';
+                    if (entry.vehicle_make) {
+                         dms_brandID = get_id_brand(entry.vehicle_make);
+                        if (dms_brandID) {
+                            vehicleRecordObj.setValue({fieldId: "custrecord_advs_vm_vehicle_brand",value: dms_brandID });
+                        }
+                    }
                     // }
-
 
                     var AppvantageSublist = "recmachcustrecord_appvantage_vm_link";
 
@@ -138,9 +132,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
 
                     if (entry.created_on) {
 
-                        // log.error("entry.created_on", entry.created_on);
                         var createdon = parseCustomDate(entry.created_on);
-                        // log.error("createdon", createdon);
 
                         vehicleRecordObj.setCurrentSublistValue({
                             sublistId: AppvantageSublist,
@@ -194,7 +186,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
                     // if (entry.purchase_transaction_number) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -202,8 +193,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.purchase_transaction_number
                     });
                     // }
-
-
                     if (entry.transaction_action) {
                         vehicleRecordObj.setCurrentSublistValue({
                             sublistId: AppvantageSublist,
@@ -211,8 +200,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: getIntrrnalIdByText("customrecord_advs_appvantage_action_list", entry.transaction_action)
                         });
                     }
-
-
 
                     if (entry.updated_on) {
 
@@ -239,12 +226,8 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
-
                     if (entry.deregistration_date) {
-
                         var deregistration_date = parseCustomDate(entry.deregistration_date);
-
                         vehicleRecordObj.setCurrentSublistValue({
                             sublistId: AppvantageSublist,
                             fieldId: "custrecord_advs_intended_der_date",
@@ -290,8 +273,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.open_market_value
                     });
                     // }
-
-
                     if (entry.orignal_registration_date) {
                         var orignal_registration_date = parseCustomDate(entry.orignal_registration_date);
 
@@ -317,6 +298,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         fieldId: "custrecord_advs_appvanytage_transfer_c",
                         value: entry.transfer_count
                     });
+                    vehicleRecordObj.setCurrentSublistValue({sublistId:AppvantageSublist,fieldId:"abc",value:123});
                     // }
 
                     // if (entry.actual_arf_paid) {
@@ -346,9 +328,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         });
                     }
 
-
-
-
                     // if (entry.opc_cash_rebate_amount) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -357,7 +336,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
                     // if (entry.parf_eligibility) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -365,8 +343,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.parf_eligibility
                     });
                     // }
-
-
 
                     if (entry.parf_eligibility_expiry_date) {
                         var parf_eligibility_expiry_date = parseCustomDate(entry.parf_eligibility_expiry_date);
@@ -427,7 +403,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.pqp_paid
                     });
                     // }
-
                     // if (entry.coe_rebate) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -435,7 +410,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.coe_rebate
                     });
                     // }
-
                     // if (entry.total_rebate_amount) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -443,7 +417,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.total_rebate_amount
                     });
                     // }
-
                     // if (entry.lta_message) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -451,7 +424,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.lta_message
                     });
                     // }
-
                     if (entry.import_method) {
                         vehicleRecordObj.setCurrentSublistValue({
                             sublistId: AppvantageSublist,
@@ -459,7 +431,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: getIntrrnalIdByText("customrecord_advs_import_method", entry.import_method)
                         });
                     }
-
                     // if (entry.set_of_key) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -474,9 +445,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     //         value: "0"
                     //     });
                     // }
-
-
-
                     if (entry.user_guide) {
                         vehicleRecordObj.setCurrentSublistValue({
                             sublistId: AppvantageSublist,
@@ -490,8 +458,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: false
                         });
                     }
-
-
 
                     // if (entry.dealer_one) {
                     vehicleRecordObj.setCurrentSublistValue({
@@ -517,7 +483,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
                     // if (entry.dealer_two_price) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -525,7 +490,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.dealer_two_price
                     });
                     // }
-
                     // if (entry.dealer_three) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -541,8 +505,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.dealer_three_price
                     });
                     // }
-
-
                     // if (entry.new_car_vsa) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -575,8 +537,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.handover_location
                     });
                     // }
-
-
                     if (entry.actual_handover_date) {
                         var actual_handover_date = parseCustomDate(entry.actual_handover_date);
                         vehicleRecordObj.setCurrentSublistValue({
@@ -592,7 +552,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.handover_remark
                     });
                     // }
-
                     // if (entry.awarded_dealer) {
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -618,7 +577,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                     });
                     // }
 
-
                     if (entry.open_bid_on) {
 
                         var open_bid_on = parseCustomDate(entry.open_bid_on);
@@ -628,7 +586,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: open_bid_on
                         });
                     }
-
 
                     if (entry.close_bid_on) {
 
@@ -667,6 +624,14 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         fieldId: "custrecord_advs_appvantage_ass_sc",
                         value: entry.assignedSc
                     });
+
+                    // if (entry.brand) {
+                    //     vehicleRecordObj.setCurrentSublistValue({
+                    //         sublistId: AppvantageSublist,
+                    //         fieldId: "custrecord_advs_appvantage_brand",
+                    //         value: getIntrrnalIdByText("customrecord_advs_brands", entry.brand)
+                    //     });
+                    // }
 
                     if (entry.brand) {
                         vehicleRecordObj.setCurrentSublistValue({
@@ -721,7 +686,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                             value: getIntrrnalIdByText("customrecord_advs_delivery_period", entry.delivery_period)
                         });
                     }
-
 
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -791,6 +755,11 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         fieldId: "custrecord_advs_appvantage_t_set_of_key",
                         value: entry.target_set_of_keys
                     });
+                    vehicleRecordObj.setCurrentSublistValue({
+                        sublistId: AppvantageSublist,
+                        fieldId: "custrecord_motor_number",
+                        value: entry.motor_no
+                    });
 
                     vehicleRecordObj.setCurrentSublistValue({
                         sublistId: AppvantageSublist,
@@ -798,14 +767,13 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                         value: entry.target_handbook
                     });
 
-
                     vehicleRecordObj.commitLine({
                         sublistId: AppvantageSublist,
                         ignoreRecalc: true
                     });
                     var UserCompID = vehicleRecordObj.save({
                         enableSourcing: true,
-                        ignoreMandatoryFields: true
+                        ignoreMandatoryFields: false
                     });
 
                     res.statusCode = 200;
@@ -825,7 +793,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                 response.push(res);
                 return;
             }
-
             // to store Req in Buffer Table
             try {
                 var recParentBuffer = record.create({ type: 'customrecord_buffer_sf_api_table', isDynamic: true });
@@ -898,8 +865,6 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
                 isDynamic: true
             });
 
-
-
             rec.setValue({ fieldId: 'itemid', value: cleanName });
             rec.setValue({ fieldId: 'displayname', value: name });
             // rec.setValue({ fieldId: 'customform', value: 398 }); // ADVS Model Form
@@ -913,6 +878,7 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
             rec.setValue({ fieldId: 'department', value: 7 });   // Used Car
             rec.setValue({ fieldId: 'cogsaccount', value: 53 }); // 3200 Opening Balance
             rec.setValue({ fieldId: 'assetaccount', value: 217 }); //26000000 Inventory
+            rec.setValue({ fieldId: 'custitem_appvantage', value: true }); 
 
             itemId = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
             log.error('Item created', itemId);
@@ -921,6 +887,36 @@ define(['N/record', 'N/search', 'N/log', 'N/format'], function (record, search, 
         return itemId;
     }
 
+     function get_id_brand(name) {
+        var makeId = null;
+        var cleanName = (name || '').trim();
+       
+        var results = search.create({
+            type: 'customrecord_advs_brands',
+            filters: [['name', 'is', name]],
+            columns: ['internalid']
+        }).run().getRange({ start: 0, end: 1 });
+
+        if (results && results.length > 0) {
+            log.error('makeId found', results[0].getValue('internalid'));
+            makeId = results[0].getValue('internalid');
+        } else {
+            var rec = record.create({type: 'customrecord_advs_brands',isDynamic: true});
+            rec.setValue({ fieldId: 'name', value: name });
+            rec.setValue({ fieldId: 'displayname', value: name });
+            rec.setValue({ fieldId: 'custrecord_used_epopl', value: true }); 
+            //Creame Brand/Make Segment
+            var recSeg = record.create({type: 'customrecord_cseg_advs_make_segm',isDynamic: true});
+            recSeg.setValue({ fieldId: 'name', value: name });
+            var make_seg = recSeg.save({ enableSourcing: true, ignoreMandatoryFields: true });
+            //----Created
+            rec.setValue({ fieldId: 'custrecord_advs_st_make_segment', value: make_seg });
+            makeId = rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+            log.error('makeId created', makeId);
+        }
+
+        return makeId;
+    }
 
 
     function parseCustomDate(str) {

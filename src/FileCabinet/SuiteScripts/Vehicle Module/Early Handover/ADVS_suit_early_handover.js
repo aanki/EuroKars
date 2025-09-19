@@ -88,8 +88,6 @@ define(['N/ui/serverWidget', 'N/file', 'N/email', 'N/log', 'N/search', 'N/record
                 return false;
             });
 
-
-
             var optionsLoc = '<option value="">Select Location</option>';
             var Search = search.create({
                 type: 'location',
@@ -167,17 +165,13 @@ define(['N/ui/serverWidget', 'N/file', 'N/email', 'N/log', 'N/search', 'N/record
         </div>
 
         <form id="handoverFormID" class="form-content">
-            <!-- Status Indicators -->
-            <div class="status-section">
+           
+            <div class="status-section" style="display:none;">
     <label class="status-indicator status-no-top-up">
-        <input type="radio" name="status" value="no_topup">
-        No Top Up for Settlement
-    </label>
+        <input type="radio" name="status" value="no_topup">No Top Up for Settlement</label>
 
     <label class="status-indicator status-top-up-required">
-        <input type="radio" name="status" value="topup_required">
-        Top Up required
-    </label>
+        <input type="radio" name="status" value="topup_required">Top Up required</label>
 </div>
 
             <div class="form-grid">
@@ -220,6 +214,11 @@ define(['N/ui/serverWidget', 'N/file', 'N/email', 'N/log', 'N/search', 'N/record
                     </div>
 
                     <div class="form-group">
+                        <label>New Car retention no.</label>
+                        <input type="text" class="form-control" name="new_car_ret" >
+                    </div>
+
+                    <div class="form-group">
                         <label>Handover Date <span class="required">*</span></label>
                         <input type="date" class="form-control" name="handover_date" required>
                     </div>
@@ -246,7 +245,6 @@ define(['N/ui/serverWidget', 'N/file', 'N/email', 'N/log', 'N/search', 'N/record
                         <label>VPA Trade-in Value</label>
                         <div class="amount-input">
                             <input type="number" class="form-control" name="vpa_trade_value">
-                                
                         </div>
                     </div>
 
@@ -254,7 +252,6 @@ define(['N/ui/serverWidget', 'N/file', 'N/email', 'N/log', 'N/search', 'N/record
                         <label>Overtrade amount </label>
                         <div class="amount-input highlight-yellow">
                             <input type="number" class="form-control" name="overtrade_amount">
-                                
                         </div>
                       
                     </div>
